@@ -20,3 +20,5 @@ py-compile
 .deps
 Makefile
 stamp-h1
+bigfiles.pc
+libtool

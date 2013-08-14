@@ -22,25 +22,23 @@ AM_INIT_AUTOMAKE
 
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES(yes)])
 
-if make --help 2>&1 | grep -q no-print-directory; then
-   AM_MAKEFLAGS="$AM_MAKEFLAGS --no-print-directory";
-fi
-
-if make --help 2>&1 | grep -q quiet; then
-   AM_MAKEFLAGS="$AM_MAKEFLAGS --quiet"
-fi
-
-if libtool --help 2>&1 | grep -q quiet; then
-   AM_LIBTOOLFLAGS="--quiet";
-fi
-
 AC_CONFIG_HEADERS([config.h])
 
 AC_CONFIG_FILES([Makefile
-                storage/Makefile
-                storage/glusterfs/Makefile
-                storage/swift/Makefile
-                storage/hdfs/Makefile])
+                bigfiles.pc
+                bigfile/Makefile
+                bigfile/src/Makefile
+                plugins/Makefile
+                plugins/glusterfs/Makefile
+                plugins/glusterfs/src/Makefile
+                plugins/swift/Makefile
+                plugins/swift/src/Makefile
+                plugins/hdfs/Makefile
+                plugins/hdfs/src/Makefile
+                libbigfiles/Makefile
+                libbigfiles/src/Makefile
+                tests/Makefile
+                tests/src/Makefile])
 
 AC_CANONICAL_HOST
 
@@ -54,11 +52,10 @@ AC_ARG_WITH(pkgconfigdir,
             [pkgconfigdir='${libdir}/pkgconfig'])
 AC_SUBST(pkgconfigdir)
 
-# LEX needs a check
-AC_PROG_LEX
-if test  "x${LEX}" != "xflex" -a "x${FLEX}" != "xlex"; then
-   AC_MSG_ERROR([Flex or lex required to build glusterfs.])
-fi
+PKG_CHECK_MODULES([GFAPI], [glusterfs-api >= 5])
+
+AC_SUBST(GFAPI_CFLAGS)
+AC_SUBST(GFAPI_LIBS)
 
 dnl
 dnl Word sizes...
@@ -76,27 +73,9 @@ AC_SUBST(SIZEOF_INT)
 AC_SUBST(SIZEOF_LONG)
 AC_SUBST(SIZEOF_LONG_LONG)
 
-# YACC needs a check
-AC_PROG_YACC
-if test "x${YACC}" = "xbyacc" -o "x${YACC}" = "xyacc" -o "x${YACC}" = "x"; then
-   AC_MSG_ERROR([GNU Bison required to build glusterfs.])
-fi
-
 AC_CHECK_TOOL([LD],[ld])
 
-AC_CHECK_LIB([pthread], [pthread_mutex_init], , AC_MSG_ERROR([Posix threads library is required to build glusterfs]))
-
 AC_CHECK_FUNC([dlopen], [has_dlopen=yes], AC_CHECK_LIB([dl], [dlopen], , AC_MSG_ERROR([Dynamic linking library required to build glusterfs])))
-
-
-AC_CHECK_HEADERS([glusterfs/api/glfs.h])
-
-dnl Mac OS X does not have spinlocks
-AC_CHECK_FUNC([pthread_spin_init], [have_spinlock=yes])
-if test "x${have_spinlock}" = "xyes"; then
-   AC_DEFINE(HAVE_SPINLOCK, 1, [define if found spinlock])
-fi
-AC_SUBST(HAVE_SPINLOCK)
 
 dnl some os may not have GNU defined strnlen function
 AC_CHECK_FUNC([strnlen], [have_strnlen=yes])
@@ -107,7 +86,6 @@ AC_SUBST(HAVE_STRNLEN)
 
 dnl FreeBSD > 5 has execinfo as a Ported library for giving a workaround
 dnl solution to GCC backtrace functionality
-
 AC_CHECK_HEADERS([execinfo.h], [have_backtrace=yes],
                AC_CHECK_LIB([execinfo], [backtrace], [have_backtrace=yes]))
 dnl               AC_MSG_ERROR([libexecinfo not found libexecinfo required.])))
@@ -117,7 +95,7 @@ if test "x${have_backtrace}" = "xyes"; then
 fi
 AC_SUBST(HAVE_BACKTRACE)
 
-dnl glusterfs prints memory usage to stderr by sending it SIGUSR1
+dnl check for memory statistics function
 AC_CHECK_FUNC([malloc_stats], [have_malloc_stats=yes])
 if test "x${have_malloc_stats}" = "xyes"; then
    AC_DEFINE(HAVE_MALLOC_STATS, 1, [define if found malloc_stats])
@@ -230,17 +208,17 @@ esac
 AC_SUBST(CFLAGS)
 
 BUILD_READLINE=no
-AC_CHECK_LIB([readline -lcurses],[readline],[RLLIBS="-lreadline -lcurses"])
-AC_CHECK_LIB([readline -ltermcap],[readline],[RLLIBS="-lreadline -ltermcap"])
-AC_CHECK_LIB([readline -lncurses],[readline],[RLLIBS="-lreadline -lncurses"])
+AC_CHECK_LIB([readline -lcurses], [readline], [RLLIBS="-lreadline -lcurses"])
+AC_CHECK_LIB([readline -ltermcap], [readline], [RLLIBS="-lreadline -ltermcap"])
+AC_CHECK_LIB([readline -lncurses], [readline], [RLLIBS="-lreadline -lncurses"])
 
 if test "x$RLLIBS" != "x"; then
    AC_DEFINE(HAVE_READLINE, 1, [readline enabled CLI])
    BUILD_READLINE=yes
 fi
 
-dnl bfsh section
-BUILD_BFSH=yes
+dnl bigfile section
+BUILD_BIGFILE=yes
 have_python2=no
 have_Python_h=no
 
@@ -249,43 +227,43 @@ if echo $PYTHON_VERSION | grep ^2; then
   have_python2=yes
 fi
 AC_CHECK_HEADERS([python$PYTHON_VERSION/Python.h],[have_Python_h=yes],[])
-AC_ARG_ENABLE([bfsh],
-              AS_HELP_STRING([--disable-bfsh],
-                             [disable bfsh]))
-case x$enable_bfsh in
+AC_ARG_ENABLE([bigfile],
+              AS_HELP_STRING([--disable-bigfile],
+                             [disable bigfile]))
+case x$enable_bigfile in
    xyes)
       if test "x$have_python2" = "xyes" -a "x$have_Python_h" = "xyes"; then
-         BUILD_BFSH=yes
+         BUILD_BIGFILE=yes
       else
-         AC_MSG_ERROR([bfsh requires python-devel/python-dev package and python2.x])
+         AC_MSG_ERROR([bigfile requires python-devel/python-dev package and python2.x])
       fi
       ;;
    xno)
       ;;
    *)
       if test "x$have_python2" = "xyes" -a "x$have_Python_h" = "xyes"; then
-         BUILD_BFSH=yes
+         BUILD_BIGFILE=yes
       else
          AC_MSG_WARN([
         ---------------------------------------------------------------------------------
-         cannot build bfsh. python 2.x and python-devel/python-dev package are required.
+         cannot build bigfile. python 2.x and python-devel/python-dev package are required.
         ---------------------------------------------------------------------------------])
       fi
       ;;
 esac
 
-if test "x$BUILD_BFSH" = "xyes"; then
+if test "x$BUILD_BIGFILE" = "xyes"; then
    BUILD_PYTHON_INC=`$PYTHON -c "from distutils import sysconfig; print sysconfig.get_python_inc()"`
    BUILD_PYTHON_LIB=python$PYTHON_VERSION
-   BFSH_SUBDIR=bfsh
-   BFSH_SUBDIR_MAKEFILE=bfsh/Makefile
-   BFSH_SUBDIR_SRC_MAKEFILE=bfsh/src/Makefile
-   echo "building bfsh with -isystem $BUILD_PYTHON_INC -l $BUILD_PYTHON_LIB"
+   BIGFILE_SUBDIR=bigfile
+   BIGFILE_SUBDIR_MAKEFILE=bigfile/Makefile
+   BIGFILE_SUBDIR_SRC_MAKEFILE=bigfile/src/Makefile
+   echo "building bigfile with -isystem $BUILD_PYTHON_INC -l $BUILD_PYTHON_LIB"
    AC_SUBST(BUILD_PYTHON_INC)
    AC_SUBST(BUILD_PYTHON_LIB)
-   AC_SUBST(BFSH_SUBDIR)
-   AC_SUBST(BFSH_SUBDIR_MAKEFILE)
-   AC_SUBST(BFSH_SUBDIR_SRC_MAKEFILE)
+   AC_SUBST(BIGFILE_SUBDIR)
+   AC_SUBST(BIGFILE_SUBDIR_MAKEFILE)
+   AC_SUBST(BIGFILE_SUBDIR_SRC_MAKEFILE)
 fi
 # end glupy section
 
@@ -307,5 +285,5 @@ echo
 echo "Bigfiles configure summary"
 echo "==========================="
 echo "readline             : $BUILD_READLINE"
-echo "bfsh                 : $BUILD_BFSH"
+echo "bigfile              : $BUILD_BIGFILE"
 echo

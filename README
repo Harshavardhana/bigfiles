@@ -1,4 +1,4 @@
-Bigfiles - Large file support for various storage solutions.
+Bigfiles - Large file support for distributed storage systems
 
 Copyright (c) 2013 Red Hat, Inc. <http://www.redhat.com>
 
