@@ -1,14 +1,9 @@
 dnl  Copyright (c) 2013 Red Hat, Inc. <http://www.redhat.com>
 dnl  This file is part of BigFiles.
-
-dnl  Author: Harshavardhana <fharshav@redhat.com>
-
 dnl  Licensed under the Apache License, Version 2.0 (the "License");
 dnl  you may not use this file except in compliance with the License.
-dnl     You may obtain a copy of the License at
-
+dnl  You may obtain a copy of the License at
 dnl         http://www.apache.org/licenses/LICENSE-2.0
-
 dnl  Unless required by applicable law or agreed to in writing, software
 dnl  distributed under the License is distributed on an "AS IS" BASIS,
 dnl  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,6 +16,18 @@ AC_INIT([bigfiles],[0.1alpha],[fharshav@redhat.com],,[https://github.com/harshav
 AM_INIT_AUTOMAKE
 
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES(yes)])
+
+if make --help 2>&1 | grep -q no-print-directory; then
+   AM_MAKEFLAGS="$AM_MAKEFLAGS --no-print-directory";
+fi
+
+if make --help 2>&1 | grep -q quiet; then
+   AM_MAKEFLAGS="$AM_MAKEFLAGS --quiet"
+fi
+
+if libtool --help 2>&1 | grep -q quiet; then
+   AM_LIBTOOLFLAGS="--quiet";
+fi
 
 AC_CONFIG_HEADERS([config.h])
 
@@ -111,11 +118,6 @@ case $host_os in
         CFLAGS+=" -D_INCOMPLETE_XOPEN_C063"
         ;;
 esac
-AC_CHECK_FUNC([linkat], [have_linkat=yes])
-if test "x${have_linkat}" = "xyes"; then
-   AC_DEFINE(HAVE_LINKAT, 1, [define if found linkat])
-fi
-AC_SUBST(HAVE_LINKAT)
 
 dnl Check for argp
 AC_CHECK_HEADER([argp.h], AC_DEFINE(HAVE_ARGP, 1, [have argp]))
@@ -132,28 +134,7 @@ AC_SUBST(ARGP_STANDALONE_LDADD)
 
 AC_CHECK_HEADER([malloc.h], AC_DEFINE(HAVE_MALLOC_H, 1, [have malloc.h]))
 
-AC_CHECK_FUNC([llistxattr], [have_llistxattr=yes])
-if test "x${have_llistxattr}" = "xyes"; then
-   AC_DEFINE(HAVE_LLISTXATTR, 1, [define if llistxattr exists])
-fi
-
-AC_CHECK_FUNC([fdatasync], [have_fdatasync=yes])
-if test "x${have_fdatasync}" = "xyes"; then
-   AC_DEFINE(HAVE_FDATASYNC, 1, [define if fdatasync exists])
-fi
-
-AC_CHECK_FUNC([fallocate], [have_fallocate=yes])
-if test "x${have_fallocate}" = "xyes"; then
-   AC_DEFINE(HAVE_FALLOCATE, 1, [define if fallocate exists])
-fi
-
-AC_CHECK_FUNC([posix_fallocate], [have_posix_fallocate=yes])
-if test "x${have_posix_fallocate}" = "xyes"; then
-   AC_DEFINE(HAVE_POSIX_FALLOCATE, 1, [define if posix_fallocate exists])
-fi
-
-dnl Check the distribution where you are compiling glusterfs on
-
+dnl Check the distribution
 BF_DISTRIBUTION=
 AC_CHECK_FILE([/etc/debian_version])
 AC_CHECK_FILE([/etc/SuSE-release])
@@ -207,6 +188,7 @@ esac
 
 AC_SUBST(CFLAGS)
 
+dnl readline check
 BUILD_READLINE=no
 AC_CHECK_LIB([readline -lcurses], [readline], [RLLIBS="-lreadline -lcurses"])
 AC_CHECK_LIB([readline -ltermcap], [readline], [RLLIBS="-lreadline -ltermcap"])
@@ -217,8 +199,8 @@ if test "x$RLLIBS" != "x"; then
    BUILD_READLINE=yes
 fi
 
-dnl bigfile section
-BUILD_BIGFILE=yes
+dnl bigfile section - enabled by default
+BUILD_BIGFILE=no
 have_python2=no
 have_Python_h=no
 
@@ -227,45 +209,22 @@ if echo $PYTHON_VERSION | grep ^2; then
   have_python2=yes
 fi
 AC_CHECK_HEADERS([python$PYTHON_VERSION/Python.h],[have_Python_h=yes],[])
-AC_ARG_ENABLE([bigfile],
-              AS_HELP_STRING([--disable-bigfile],
-                             [disable bigfile]))
-case x$enable_bigfile in
-   xyes)
-      if test "x$have_python2" = "xyes" -a "x$have_Python_h" = "xyes"; then
-         BUILD_BIGFILE=yes
-      else
-         AC_MSG_ERROR([bigfile requires python-devel/python-dev package and python2.x])
-      fi
-      ;;
-   xno)
-      ;;
-   *)
-      if test "x$have_python2" = "xyes" -a "x$have_Python_h" = "xyes"; then
-         BUILD_BIGFILE=yes
-      else
-         AC_MSG_WARN([
-        ---------------------------------------------------------------------------------
-         cannot build bigfile. python 2.x and python-devel/python-dev package are required.
-        ---------------------------------------------------------------------------------])
-      fi
-      ;;
-esac
+
+if test "x$have_python2" = "xyes" -a "x$have_Python_h" = "xyes"; then
+   BUILD_BIGFILE=yes
+else
+   AC_MSG_ERROR([bigfile requires python-devel/python-dev package - disabling proactively])
+fi
 
 if test "x$BUILD_BIGFILE" = "xyes"; then
    BUILD_PYTHON_INC=`$PYTHON -c "from distutils import sysconfig; print sysconfig.get_python_inc()"`
    BUILD_PYTHON_LIB=python$PYTHON_VERSION
    BIGFILE_SUBDIR=bigfile
-   BIGFILE_SUBDIR_MAKEFILE=bigfile/Makefile
-   BIGFILE_SUBDIR_SRC_MAKEFILE=bigfile/src/Makefile
    echo "building bigfile with -isystem $BUILD_PYTHON_INC -l $BUILD_PYTHON_LIB"
    AC_SUBST(BUILD_PYTHON_INC)
    AC_SUBST(BUILD_PYTHON_LIB)
    AC_SUBST(BIGFILE_SUBDIR)
-   AC_SUBST(BIGFILE_SUBDIR_MAKEFILE)
-   AC_SUBST(BIGFILE_SUBDIR_SRC_MAKEFILE)
 fi
-# end glupy section
 
 AC_SUBST(BF_HOST_OS)
 AC_SUBST(BF_CFLAGS)
