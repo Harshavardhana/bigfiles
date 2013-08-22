@@ -69,21 +69,16 @@ usage ()
         return ret;
 }
 
-int
-main ()
-{
-        int    ret = 0;
-
-        ret = init();
-        if (ret)
-                fprintf (stderr, "glfs_init: returned error %d\n", ret);
-
-        ret = usage();
-        if (ret)
-                fprintf (stderr, "usage(): returned error %d\n", ret);
-
-        /* Close finally */
-        ret = fini();
-
-        return ret;
-}
+struct volume_options options[] = {
+        { .key  = {"volfile-server"},
+          .type = OPTION_TYPE_BOOL
+        },
+        { .key  = {"log-file"},
+          .type = OPTION_TYPE_PATH
+        },
+        { .key  = {"transport-type"},
+          .type = OPTION_TYPE_STR,
+          .default_type = "tcp"
+        }
+        { .key = {NULL} },
+};

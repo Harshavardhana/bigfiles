@@ -1,0 +1,455 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="744.09448819"
+   height="1052.3622047"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.3.1 r9886"
+   sodipodi:docname="BigFiles-Architecture.svg">
+  <defs
+     id="defs4">
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Lend"
+       style="overflow:visible;">
+      <path
+         id="path5287"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;"
+         transform="scale(0.8) rotate(180) translate(12.5,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Lend"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow2Lend"
+       style="overflow:visible;">
+      <path
+         id="path5305"
+         style="fill-rule:evenodd;stroke-width:0.62500000;stroke-linejoin:round;"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         transform="scale(1.1) rotate(180) translate(1,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Lstart"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow2Lstart"
+       style="overflow:visible">
+      <path
+         id="path5302"
+         style="fill-rule:evenodd;stroke-width:0.62500000;stroke-linejoin:round"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         transform="scale(1.1) translate(1,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lstart"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Lstart"
+       style="overflow:visible">
+      <path
+         id="path5284"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt"
+         transform="scale(0.8) translate(12.5,0)" />
+    </marker>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.979899"
+     inkscape:cx="367.98625"
+     inkscape:cy="453.76491"
+     inkscape:document-units="px"
+     inkscape:current-layer="g6816"
+     showgrid="false"
+     inkscape:window-width="1855"
+     inkscape:window-height="1056"
+     inkscape:window-x="1431"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <g
+       id="g6512"
+       transform="translate(31.819805,30.304576)">
+      <rect
+         y="642.9837"
+         x="137.31618"
+         height="1.8266666"
+         width="412.85715"
+         id="rect2988"
+         style="fill:#ffffff;fill-rule:evenodd;stroke:#000000;stroke-width:0.7995832;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+         inkscape:export-filename="/home/harsha/repos/BigFiles.git/BigFiles-Architecture.png"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text3760"
+         y="655.61676"
+         x="140.92349"
+         style="font-size:12px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         xml:space="preserve"
+         inkscape:export-filename="/home/harsha/repos/BigFiles.git/BigFiles-Architecture.png"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90"><tspan
+           style="font-size:10px;font-weight:bold;-inkscape-font-specification:Sans Bold"
+           y="655.61676"
+           x="140.92349"
+           id="tspan3762"
+           sodipodi:role="line">Storage Adapters</tspan></text>
+      <g
+         id="g6497">
+        <g
+           id="g6730"
+           inkscape:export-filename="/home/harsha/repos/BigFiles.git/BigFiles-Architecture.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90">
+          <rect
+             y="666.64789"
+             x="138.42859"
+             height="35.714302"
+             width="72.14286"
+             id="rect3758"
+             style="fill:#ffffff;stroke:#000000;stroke-opacity:1" />
+          <text
+             transform="scale(1.0019945,0.99800948)"
+             sodipodi:linespacing="125%"
+             id="text3764"
+             y="688.1402"
+             x="153.42348"
+             style="font-size:12.02393341px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+             xml:space="preserve"><tspan
+               style="font-size:10.01994514px"
+               y="688.1402"
+               x="153.42348"
+               id="tspan3766"
+               sodipodi:role="line">LocalFS</tspan></text>
+        </g>
+        <g
+           id="g6735"
+           transform="translate(-23.063782,0)"
+           inkscape:export-filename="/home/harsha/repos/BigFiles.git/BigFiles-Architecture.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90">
+          <rect
+             y="665.72437"
+             x="246.68372"
+             height="35.714302"
+             width="72.14286"
+             id="rect3758-5"
+             style="fill:#ffffff;stroke:#000000;stroke-opacity:1" />
+          <text
+             transform="scale(1.0019945,0.99800948)"
+             sodipodi:linespacing="125%"
+             id="text3764-9"
+             y="688.22705"
+             x="258.06915"
+             style="font-size:12.02393341px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+             xml:space="preserve"><tspan
+               style="font-size:10.01994514px"
+               y="688.22705"
+               x="258.06915"
+               id="tspan3766-1"
+               sodipodi:role="line">GlusterFS</tspan></text>
+        </g>
+        <g
+           id="g6740"
+           transform="translate(-46.127594,0)"
+           inkscape:export-filename="/home/harsha/repos/BigFiles.git/BigFiles-Architecture.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90">
+          <rect
+             y="666.18616"
+             x="354.93887"
+             height="35.714302"
+             width="72.14286"
+             id="rect3758-5-0"
+             style="fill:#ffffff;stroke:#000000;stroke-opacity:1" />
+          <text
+             transform="scale(1.0019945,0.99800948)"
+             sodipodi:linespacing="125%"
+             id="text3764-9-2"
+             y="687.21484"
+             x="374.91306"
+             style="font-size:12.02393341px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+             xml:space="preserve"><tspan
+               style="font-size:10.01994514px"
+               y="687.21484"
+               x="374.91306"
+               id="tspan3766-1-9"
+               sodipodi:role="line">HDFS</tspan></text>
+        </g>
+        <g
+           id="g6745"
+           inkscape:export-filename="/home/harsha/repos/BigFiles.git/BigFiles-Architecture.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90">
+          <rect
+             y="666.73456"
+             x="479.194"
+             height="35.714302"
+             width="72.14286"
+             id="rect3758-5-0-9"
+             style="fill:#ffffff;stroke:#000000;stroke-opacity:1" />
+          <text
+             transform="scale(1.0019945,0.99800948)"
+             sodipodi:linespacing="125%"
+             id="text3764-9-2-0"
+             y="688.22711"
+             x="491.85559"
+             style="font-size:12.02393341px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+             xml:space="preserve"><tspan
+               style="font-size:10.01994514px"
+               y="688.22711"
+               x="491.85559"
+               id="tspan3766-1-9-7"
+               sodipodi:role="line">FutureFS</tspan></text>
+        </g>
+        <path
+           style="fill:none;stroke:#000000;stroke-width:1.6451329;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:3.29026582, 3.29026582;stroke-dashoffset:0"
+           d="m 415.0405,683.15142 30.06712,-0.50508"
+           id="path6487"
+           inkscape:connector-type="polyline"
+           inkscape:connector-curvature="0"
+           inkscape:export-filename="/home/harsha/repos/BigFiles.git/BigFiles-Architecture.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90" />
+        <text
+           xml:space="preserve"
+           style="font-size:12px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+           x="307.08636"
+           y="607.39001"
+           id="text6573"
+           sodipodi:linespacing="125%"
+           transform="translate(-31.819805,-30.304576)"><tspan
+             sodipodi:role="line"
+             id="tspan6575"
+             x="307.08636"
+             y="607.39001" /></text>
+        <g
+           id="g6786"
+           transform="translate(2.5253814,27.779195)"
+           inkscape:export-filename="/home/harsha/repos/BigFiles.git/BigFiles-Architecture.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90">
+          <rect
+             y="558.72321"
+             x="201.31442"
+             height="35.714302"
+             width="293.94983"
+             id="rect3758-4"
+             style="fill:#ffffff;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+          <text
+             sodipodi:linespacing="125%"
+             id="text6577"
+             y="577.59052"
+             x="276.595"
+             style="font-size:12px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+             xml:space="preserve"><tspan
+               style="font-size:10px;font-weight:bold;-inkscape-font-specification:Sans Bold"
+               y="577.59052"
+               x="276.595"
+               id="tspan6579"
+               sodipodi:role="line">BigFiles Library Interface</tspan></text>
+        </g>
+        <g
+           id="g6791"
+           transform="translate(-23.738585,45.456865)">
+          <g
+             transform="translate(-107.07617,3.5355339)"
+             id="g6618"
+             inkscape:export-filename="/home/harsha/repos/BigFiles.git/BigFiles-Architecture.png"
+             inkscape:export-xdpi="90"
+             inkscape:export-ydpi="90">
+            <rect
+               style="fill:#ffffff;stroke:#000000;stroke-width:0.75591272;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+               id="rect6612"
+               width="41.961624"
+               height="90.534241"
+               x="329.90057"
+               y="421.33157" />
+            <text
+               xml:space="preserve"
+               style="font-size:12px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+               x="-500.88348"
+               y="353.67307"
+               id="text6614"
+               sodipodi:linespacing="125%"
+               transform="matrix(0,-1,1,0,0,0)"><tspan
+                 sodipodi:role="line"
+                 id="tspan6616"
+                 x="-500.88348"
+                 y="353.67307"
+                 style="font-size:10px;font-weight:normal;-inkscape-font-specification:Sans">BigFile Shell</tspan></text>
+          </g>
+          <g
+             transform="translate(-41.379587,4.420699)"
+             id="g6618-8"
+             inkscape:export-filename="/home/harsha/repos/BigFiles.git/BigFiles-Architecture.png"
+             inkscape:export-xdpi="90"
+             inkscape:export-ydpi="90">
+            <rect
+               style="fill:#ffffff;stroke:#000000;stroke-width:0.75591272;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+               id="rect6612-8"
+               width="41.961624"
+               height="90.534241"
+               x="329.90057"
+               y="421.33157" />
+            <text
+               xml:space="preserve"
+               style="font-size:12px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+               x="-505.42917"
+               y="353.168"
+               id="text6614-5"
+               sodipodi:linespacing="125%"
+               transform="matrix(0,-1,1,0,0,0)"><tspan
+                 sodipodi:role="line"
+                 id="tspan6616-2"
+                 x="-505.42917"
+                 y="353.168"
+                 style="font-size:10px;font-weight:normal;-inkscape-font-specification:Sans">Java/JS Bindings</tspan></text>
+          </g>
+          <g
+             transform="translate(24.317001,4.420699)"
+             id="g6618-1"
+             inkscape:export-filename="/home/harsha/repos/BigFiles.git/BigFiles-Architecture.png"
+             inkscape:export-xdpi="90"
+             inkscape:export-ydpi="90">
+            <rect
+               style="fill:#ffffff;stroke:#000000;stroke-width:0.75591272;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+               id="rect6612-6"
+               width="41.961624"
+               height="90.534241"
+               x="329.90057"
+               y="421.33157" />
+            <text
+               xml:space="preserve"
+               style="font-size:12px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+               x="-507.44946"
+               y="353.67307"
+               id="text6614-0"
+               sodipodi:linespacing="125%"
+               transform="matrix(0,-1,1,0,0,0)"><tspan
+                 sodipodi:role="line"
+                 id="tspan6616-9"
+                 x="-507.44946"
+                 y="353.67307"
+                 style="font-size:10px;font-weight:normal;-inkscape-font-specification:Sans">Python Bindings</tspan></text>
+          </g>
+          <g
+             transform="translate(155.71011,4.4206994)"
+             id="g6618-5">
+            <rect
+               style="fill:#ffffff;stroke:#000000;stroke-width:0.75591272;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+               id="rect6612-64"
+               width="41.961624"
+               height="90.534241"
+               x="329.90057"
+               y="421.33157"
+               inkscape:export-filename="/home/harsha/repos/BigFiles.git/BigFiles-Architecture.png"
+               inkscape:export-xdpi="90"
+               inkscape:export-ydpi="90" />
+            <text
+               xml:space="preserve"
+               style="font-size:12px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+               x="-506.43933"
+               y="353.67307"
+               id="text6614-7"
+               sodipodi:linespacing="125%"
+               transform="matrix(0,-1,1,0,0,0)"
+               inkscape:export-filename="/home/harsha/repos/BigFiles.git/BigFiles-Architecture.png"
+               inkscape:export-xdpi="90"
+               inkscape:export-ydpi="90"><tspan
+                 sodipodi:role="line"
+                 id="tspan6616-8"
+                 x="-506.43933"
+                 y="353.67307"
+                 style="font-size:10px;font-weight:normal;-inkscape-font-specification:Sans">Future Bindings</tspan></text>
+            <g
+               id="g6816"
+               transform="translate(0,4.0406105)">
+              <rect
+                 y="346.8956"
+                 x="148.34581"
+                 height="41.921329"
+                 width="156.57364"
+                 id="rect6810"
+                 style="fill:#ffffff;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+                 inkscape:export-filename="/home/harsha/repos/BigFiles.git/BigFiles-Architecture.png"
+                 inkscape:export-xdpi="90"
+                 inkscape:export-ydpi="90" />
+              <text
+                 sodipodi:linespacing="125%"
+                 id="text6812"
+                 y="371.64435"
+                 x="164.00317"
+                 style="font-size:12px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+                 xml:space="preserve"
+                 inkscape:export-filename="/home/harsha/repos/BigFiles.git/BigFiles-Architecture.png"
+                 inkscape:export-xdpi="90"
+                 inkscape:export-ydpi="90"><tspan
+                   y="371.64435"
+                   x="164.00317"
+                   id="tspan6814"
+                   sodipodi:role="line">BigData Apps &amp; Tools</tspan></text>
+            </g>
+          </g>
+          <path
+             inkscape:connector-curvature="0"
+             inkscape:connector-type="polyline"
+             id="path6487-4"
+             d="m 425.8614,473.29223 30.06712,-0.50508"
+             style="fill:none;stroke:#000000;stroke-width:1.6451329;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:3.29026582, 3.29026582;stroke-dashoffset:0"
+             inkscape:export-filename="/home/harsha/repos/BigFiles.git/BigFiles-Architecture.png"
+             inkscape:export-xdpi="90"
+             inkscape:export-ydpi="90" />
+        </g>
+      </g>
+    </g>
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot6489"
+       style="fill:black;stroke:none;stroke-opacity:1;stroke-width:1px;stroke-linejoin:miter;stroke-linecap:butt;fill-opacity:1;font-family:Sans;font-style:normal;font-weight:normal;font-size:12px;line-height:125%;letter-spacing:0px;word-spacing:0px"><flowRegion
+         id="flowRegion6491"><rect
+           id="rect6493"
+           width="464.67017"
+           height="69.700523"
+           x="102.53049"
+           y="653.35193" /></flowRegion><flowPara
+         id="flowPara6495" /></flowRoot>  </g>
+</svg>

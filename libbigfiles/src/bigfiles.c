@@ -19,3 +19,14 @@
 */
 
 #include "bigfiles.h"
+
+int32_t
+bf_upload()
+{
+        ;
+}
+
+bf_download()
+{
+        ;
+}
