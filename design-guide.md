@@ -5,8 +5,10 @@ BigFiles - provides very-large-file support across distributed storage systems.
 Architecture
 =====
 
-## Diagram 
-[[BigFiles-Architecture.png]]
+## Diagram
+<center>
+<img src="https://github.com/Harshavardhana/BigFiles/raw/master/BigFiles-Architecture.png" height="480" width="640" alt="BigFiles Architecture Diagram">
+</center>
 
 BigFile Format
 =====
