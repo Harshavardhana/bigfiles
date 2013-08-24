@@ -1,15 +1,69 @@
-Bigfiles - Large file support for distributed storage systems
+Introduction
+=====
+BigFiles - Very-large-file support for distributed storage systems.
 
-Copyright (c) 2013 Red Hat, Inc. <http://www.redhat.com>
+Architecture
+=====
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+## Diagram
+<center>
+<img src="https://github.com/Harshavardhana/BigFiles/raw/master/BigFiles-Architecture.png" alt="BigFiles Architecture Diagram">
+</center>
 
-    http://www.apache.org/licenses/LICENSE-2.0
+BigFile Format
+=====
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+Command-line Interface
+=====
+
+Get/Put
+~~~
+$ bigfile get [options] <FILENAME>
+$ bigfile put [options] <FILENAME>
+~~~
+
+Migrate from one storage adapter another in parallel
+~~~
+$ bigfile --hosts <hostfile> migrate <old_storage_adapter> <new_storage_adapter>
+~~~
+
+Parallel Get/Put
+~~~
+$ bigfile --parallel get [options] <FILENAME>
+$ bigfile --parallel put [options] <FILENAME>
+~~~
+
+Usage:
+~~~
+$ bigfile --help
+~~~
+
+BigFile API
+=====
+~~~
+bigfile_fops {
+...
+bigfile_open(**)
+bigfile_close(**)
+bigfile_append(**)
+...
+}
+~~~
+Storage Adapter API
+=====
+1. GlusterFS - gluster.so
+2. Local-FS - local-fs.so (Developers/Testing)
+3. HDFS - hdfs.so
+
+Security
+=====
+- data-protection/checksum
+- certificates/authentication
+
+Management and Monitoring
+=====
+- Measurement interface
+- Profiling
+
+TODO
+=====

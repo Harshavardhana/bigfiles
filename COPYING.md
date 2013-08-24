@@ -1,6 +1,4 @@
-Bigfiles - Large file support for distributed storage systems
-
-Copyright (c) 2013 Red Hat, Inc. <http://www.redhat.com>
+Copyright (c) 2013 Harshavardhana, Red Hat, Inc. <http://www.redhat.com>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
