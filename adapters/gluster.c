@@ -20,7 +20,7 @@
 #include <string.h>
 #include <time.h>
 
-#include "gfapi.h"
+#include "gluster.h"
 
 glfs_t    *fs = NULL;
 
@@ -78,7 +78,7 @@ struct volume_options options[] = {
         },
         { .key  = {"transport-type"},
           .type = OPTION_TYPE_STR,
-          .default_type = "tcp"
-        }
+          .default_value = "tcp"
+        },
         { .key = {NULL} },
 };

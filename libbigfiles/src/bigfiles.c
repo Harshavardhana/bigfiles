@@ -23,10 +23,11 @@
 int32_t
 bf_upload()
 {
-        ;
+        return 1;
 }
 
+int32_t
 bf_download()
 {
-        ;
+        return 1;
 }

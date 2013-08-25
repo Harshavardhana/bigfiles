@@ -26,4 +26,6 @@
 #include "config.h"
 #endif
 
+#include <stdint.h>
+
 #endif/* __BIGFILES_H__ */

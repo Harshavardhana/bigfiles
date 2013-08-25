@@ -36,12 +36,6 @@ AC_CONFIG_FILES([Makefile
                 bigfile/Makefile
                 bigfile/src/Makefile
                 adapters/Makefile
-                adapters/glusterfs/Makefile
-                adapters/glusterfs/src/Makefile
-                adapters/swift/Makefile
-                adapters/swift/src/Makefile
-                adapters/hdfs/Makefile
-                adapters/hdfs/src/Makefile
                 libbigfiles/Makefile
                 libbigfiles/src/Makefile
                 tests/Makefile
