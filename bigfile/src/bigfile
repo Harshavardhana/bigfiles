@@ -53,7 +53,7 @@ def get(parser, args):
         return
 
 put_help = '''
-put -m or --modified is an option that will only put files
+put - -m or --modified is an option that will only put files
     that have changed since the last put. -C <size> or --chunk-size <size>
     will upload the files in segments no larger than size.
     (see --help for more).
@@ -115,6 +115,7 @@ Examples:
                       default=False, help='Provide verbose output')
     parser.disable_interspersed_args()
     (options, args) = parse_args(parser, argv[1:])
+    parser.enable_interspersed_args()
 
     commands = ('get', 'put')
     if not args or args[0] not in commands:
