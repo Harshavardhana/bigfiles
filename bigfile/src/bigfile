@@ -31,8 +31,6 @@ try:
 except ImportError:
     import json
 
-from version import version_info
-
 get_help = '''
 get - use the -o [--output]
     <filename> option to redirect the output to a specific file or if "-" then
@@ -91,7 +89,7 @@ def parse_args(parser, args):
     return options, args
 
 if __name__ == '__main__':
-    version = version_info.version_string()
+    version = "0.1alpha"
     parser = OptionParser(version='%%prog %s' % version,
                           usage='''
 Usage: %%prog <command> [options] [args]
