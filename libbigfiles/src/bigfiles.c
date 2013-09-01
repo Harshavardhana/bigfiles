@@ -31,3 +31,8 @@ bf_download()
 {
         return 1;
 }
+
+uri()
+{
+        return 0;
+}
