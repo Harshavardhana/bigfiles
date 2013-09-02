@@ -47,10 +47,11 @@
 
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "uri.h"
 
-static void bigfile_clean_uri(URI *uri);
+static void uri_clean(URI *uri);
 
 /**
  * bigfile_rfc3986_scheme:
@@ -413,7 +414,7 @@ bigfile_rfc3986_authority(URI *uri, const char **str)
                 return 1;
         if (*cur == ':') {
                 cur++;
-                if (parse_rfc3986_port(uri, &cur) != 0)
+                if (bigfile_rfc3986_port(uri, &cur) != 0)
                         return 1;
         }
         *str = cur;
@@ -437,12 +438,12 @@ bigfile_rfc3986_authority(URI *uri, const char **str)
  * Returns 0 or the error code
  */
 static int
-rfc3986_parse_segment(const char **str, char forbid, int empty)
+bigfile_rfc3986_segment(const char **str, char forbid, int empty)
 {
         const char *cur = NULL;
         int ret         = 0;
 
-        if ((str == NULL) || (forbid == NULL)) {
+        if (str == NULL) {
                 ret = -1;
                 goto out;
         }
@@ -587,12 +588,12 @@ bigfile_rfc3986_path_rootless(URI *uri, const char **str)
 
         cur = *str;
 
-        ret = rfc3986_parse_segment(&cur, 0, 0);
+        ret = bigfile_rfc3986_segment(&cur, 0, 0);
         if (ret != 0)
                 return ret;
         while (*cur == '/') {
                 cur++;
-                ret = rfc3986_parse_segment(&cur, 0, 1);
+                ret = bigfile_rfc3986_segment(&cur, 0, 1);
                 if (ret != 0)
                         return ret;
         }
@@ -892,7 +893,7 @@ uri_parse(const char *str)
         URI *uri = NULL;
 
         if (str == NULL)
-                goto out
+                goto out;
 
         uri = uri_new();
         if (uri != NULL) {
@@ -920,7 +921,6 @@ URI *
 uri_parse_raw(const char *str, int raw)
 {
         URI *uri = NULL;
-        int ret;
 
         if (str == NULL)
                 goto out;
@@ -1558,36 +1558,34 @@ uri_string_escape(const char *str, const char *list)
         len += 20;
         ret = malloc(len);
         in = str;
-    out = 0;
-    while(*in != 0) {
-	if (len - out <= 3) {
-            temp = realloc2n(ret, &len);
-	    ret = temp;
-	}
+        out = 0;
+        while(*in != 0) {
+                if (len - out <= 3) {
+                        temp = realloc2n(ret, &len);
+                        ret = temp;
+                }
+                ch = *in;
 
-	ch = *in;
-
-	if ((ch != '@') && (!IS_UNRESERVED(ch)) && (!strchr(list, ch))) {
-	    unsigned char val;
-	    ret[out++] = '%';
-	    val = ch >> 4;
-	    if (val <= 9)
-		ret[out++] = '0' + val;
-	    else
-		ret[out++] = 'A' + val - 0xA;
-	    val = ch & 0xF;
-	    if (val <= 9)
-		ret[out++] = '0' + val;
-	    else
-		ret[out++] = 'A' + val - 0xA;
-	    in++;
-	} else {
-	    ret[out++] = *in++;
-	}
-
-    }
-    ret[out] = 0;
-    return(ret);
+                if ((ch != '@') && (!IS_UNRESERVED(ch)) && (!strchr(list, ch))) {
+                        unsigned char val;
+                        ret[out++] = '%';
+                        val = ch >> 4;
+                        if (val <= 9)
+                                ret[out++] = '0' + val;
+                        else
+                                ret[out++] = 'A' + val - 0xA;
+                        val = ch & 0xF;
+                        if (val <= 9)
+                                ret[out++] = '0' + val;
+                        else
+                                ret[out++] = 'A' + val - 0xA;
+                        in++;
+                } else {
+                        ret[out++] = *in++;
+                }
+        }
+        ret[out] = 0;
+        return(ret);
 }
 
 /************************************************************************
@@ -1612,240 +1610,238 @@ uri_string_escape(const char *str, const char *list)
  *         of error.
  */
 char *
-uri_resolve(const char *uri, const char *base) {
-    char *val = NULL;
-    int ret, len, indx, cur, out;
-    URI *ref = NULL;
-    URI *bas = NULL;
-    URI *res = NULL;
+uri_resolve(const char *uri, const char *base)
+{
+        char *val = NULL;
+        int ret, len, indx, cur, out;
+        URI *ref = NULL;
+        URI *bas = NULL;
+        URI *res = NULL;
 
-    /*
-     * 1) The URI reference is parsed into the potential four components and
-     *    fragment identifier, as described in Section 4.3.
-     *
-     *    NOTE that a completely empty URI is treated by modern browsers
-     *    as a reference to "." rather than as a synonym for the current
-     *    URI.  Should we do that here?
-     */
-    if (uri == NULL)
-	ret = -1;
-    else {
-	if (*uri) {
-	    ref = uri_new();
-	    if (ref == NULL)
-		goto done;
-	    ret = uri_parse_into(ref, uri);
-	}
-	else
-	    ret = 0;
-    }
-    if (ret != 0)
-	goto done;
-    if ((ref != NULL) && (ref->scheme != NULL)) {
-	/*
-	 * The URI is absolute don't modify.
-	 */
-	val = strdup(uri);
-	goto done;
-    }
-    if (base == NULL)
-	ret = -1;
-    else {
-	bas = uri_new();
-	if (bas == NULL)
-	    goto done;
-	ret = uri_parse_into(bas, base);
-    }
-    if (ret != 0) {
-	if (ref)
-	    val = uri_to_string(ref);
-	goto done;
-    }
-    if (ref == NULL) {
-	/*
-	 * the base fragment must be ignored
-	 */
-	if (bas->fragment != NULL) {
-	    free(bas->fragment);
-	    bas->fragment = NULL;
-	}
-	val = uri_to_string(bas);
-	goto done;
-    }
+        /*
+         * 1) The URI reference is parsed into the potential four components and
+         *    fragment identifier, as described in Section 4.3.
+         *
+         *    NOTE that a completely empty URI is treated by modern browsers
+         *    as a reference to "." rather than as a synonym for the current
+         *    URI.  Should we do that here?
+         */
+        if (uri == NULL)
+                ret = -1;
+        else {
+                if (*uri) {
+                        ref = uri_new();
+                        if (ref == NULL)
+                                goto done;
+                        ret = uri_parse_into(ref, uri);
+                }
+                else
+                        ret = 0;
+        }
+        if (ret != 0)
+                goto done;
+        if ((ref != NULL) && (ref->scheme != NULL)) {
+                /*
+                 * The URI is absolute don't modify.
+                 */
+                val = strdup(uri);
+                goto done;
+        }
+        if (base == NULL)
+                ret = -1;
+        else {
+                bas = uri_new();
+                if (bas == NULL)
+                        goto done;
+                ret = uri_parse_into(bas, base);
+        }
+        if (ret != 0) {
+                if (ref)
+                        val = uri_to_string(ref);
+                goto done;
+        }
+        if (ref == NULL) {
+                /*
+                 * the base fragment must be ignored
+                 */
+                if (bas->fragment != NULL) {
+                        free(bas->fragment);
+                        bas->fragment = NULL;
+                }
+                val = uri_to_string(bas);
+                goto done;
+        }
 
-    /*
-     * 2) If the path component is empty and the scheme, authority, and
-     *    query components are undefined, then it is a reference to the
-     *    current document and we are done.  Otherwise, the reference URI's
-     *    query and fragment components are defined as found (or not found)
-     *    within the URI reference and not inherited from the base URI.
-     *
-     *    NOTE that in modern browsers, the parsing differs from the above
-     *    in the following aspect:  the query component is allowed to be
-     *    defined while still treating this as a reference to the current
-     *    document.
-     */
-    res = uri_new();
-    if (res == NULL)
-	goto done;
-    if ((ref->scheme == NULL) && (ref->path == NULL) &&
-	((ref->authority == NULL) && (ref->server == NULL))) {
-	if (bas->scheme != NULL)
-	    res->scheme = strdup(bas->scheme);
-	if (bas->authority != NULL)
-	    res->authority = strdup(bas->authority);
-	else if (bas->server != NULL) {
-	    res->server = strdup(bas->server);
-	    if (bas->user != NULL)
-		res->user = strdup(bas->user);
-	    res->port = bas->port;
-	}
-	if (bas->path != NULL)
-	    res->path = strdup(bas->path);
-	if (ref->query != NULL)
-	    res->query = strdup (ref->query);
-	else if (bas->query != NULL)
-	    res->query = strdup(bas->query);
-	if (ref->fragment != NULL)
-	    res->fragment = strdup(ref->fragment);
-	goto step_7;
-    }
+        /*
+         * 2) If the path component is empty and the scheme, authority, and
+         *    query components are undefined, then it is a reference to the
+         *    current document and we are done.  Otherwise, the reference URI's
+         *    query and fragment components are defined as found (or not found)
+         *    within the URI reference and not inherited from the base URI.
+         *
+         *    NOTE that in modern browsers, the parsing differs from the above
+         *    in the following aspect:  the query component is allowed to be
+         *    defined while still treating this as a reference to the current
+         *    document.
+         */
+        res = uri_new();
+        if (res == NULL)
+                goto done;
+        if ((ref->scheme == NULL) && (ref->path == NULL) &&
+            ((ref->authority == NULL) && (ref->server == NULL))) {
+                if (bas->scheme != NULL)
+                        res->scheme = strdup(bas->scheme);
+                if (bas->authority != NULL)
+                        res->authority = strdup(bas->authority);
+                else if (bas->server != NULL) {
+                        res->server = strdup(bas->server);
+                        if (bas->user != NULL)
+                                res->user = strdup(bas->user);
+                        res->port = bas->port;
+                }
+                if (bas->path != NULL)
+                        res->path = strdup(bas->path);
+                if (ref->query != NULL)
+                        res->query = strdup (ref->query);
+                else if (bas->query != NULL)
+                        res->query = strdup(bas->query);
+                if (ref->fragment != NULL)
+                        res->fragment = strdup(ref->fragment);
+                goto step_7;
+        }
 
-    /*
-     * 3) If the scheme component is defined, indicating that the reference
-     *    starts with a scheme name, then the reference is interpreted as an
-     *    absolute URI and we are done.  Otherwise, the reference URI's
-     *    scheme is inherited from the base URI's scheme component.
-     */
-    if (ref->scheme != NULL) {
-	val = uri_to_string(ref);
-	goto done;
-    }
-    if (bas->scheme != NULL)
-	res->scheme = strdup(bas->scheme);
+        /*
+         * 3) If the scheme component is defined, indicating that the reference
+         *    starts with a scheme name, then the reference is interpreted as an
+         *    absolute URI and we are done.  Otherwise, the reference URI's
+         *    scheme is inherited from the base URI's scheme component.
+         */
+        if (ref->scheme != NULL) {
+                val = uri_to_string(ref);
+                goto done;
+        }
+        if (bas->scheme != NULL)
+                res->scheme = strdup(bas->scheme);
+        if (ref->query != NULL)
+                res->query = strdup(ref->query);
+        if (ref->fragment != NULL)
+                res->fragment = strdup(ref->fragment);
 
-    if (ref->query != NULL)
-	res->query = strdup(ref->query);
-    if (ref->fragment != NULL)
-	res->fragment = strdup(ref->fragment);
+        /*
+         * 4) If the authority component is defined, then the reference is a
+         *    network-path and we skip to step 7.  Otherwise, the reference
+         *    URI's authority is inherited from the base URI's authority
+         *    component, which will also be undefined if the URI scheme does not
+         *    use an authority component.
+         */
+        if ((ref->authority != NULL) || (ref->server != NULL)) {
+                if (ref->authority != NULL)
+                        res->authority = strdup(ref->authority);
+                else {
+                        res->server = strdup(ref->server);
+                        if (ref->user != NULL)
+                                res->user = strdup(ref->user);
+                        res->port = ref->port;
+                }
+                if (ref->path != NULL)
+                        res->path = strdup(ref->path);
+                goto step_7;
+        }
+        if (bas->authority != NULL)
+                res->authority = strdup(bas->authority);
+        else if (bas->server != NULL) {
+                res->server = strdup(bas->server);
+                if (bas->user != NULL)
+                        res->user = strdup(bas->user);
+                res->port = bas->port;
+        }
 
-    /*
-     * 4) If the authority component is defined, then the reference is a
-     *    network-path and we skip to step 7.  Otherwise, the reference
-     *    URI's authority is inherited from the base URI's authority
-     *    component, which will also be undefined if the URI scheme does not
-     *    use an authority component.
-     */
-    if ((ref->authority != NULL) || (ref->server != NULL)) {
-	if (ref->authority != NULL)
-	    res->authority = strdup(ref->authority);
-	else {
-	    res->server = strdup(ref->server);
-	    if (ref->user != NULL)
-		res->user = strdup(ref->user);
-            res->port = ref->port;
-	}
-	if (ref->path != NULL)
-	    res->path = strdup(ref->path);
-	goto step_7;
-    }
-    if (bas->authority != NULL)
-	res->authority = strdup(bas->authority);
-    else if (bas->server != NULL) {
-	res->server = strdup(bas->server);
-	if (bas->user != NULL)
-	    res->user = strdup(bas->user);
-	res->port = bas->port;
-    }
+        /*
+         * 5) If the path component begins with a slash character ("/"), then
+         *    the reference is an absolute-path and we skip to step 7.
+         */
+        if ((ref->path != NULL) && (ref->path[0] == '/')) {
+                res->path = strdup(ref->path);
+                goto step_7;
+        }
 
-    /*
-     * 5) If the path component begins with a slash character ("/"), then
-     *    the reference is an absolute-path and we skip to step 7.
-     */
-    if ((ref->path != NULL) && (ref->path[0] == '/')) {
-	res->path = strdup(ref->path);
-	goto step_7;
-    }
+        /*
+         * 6) If this step is reached, then we are resolving a relative-path
+         *    reference.  The relative path needs to be merged with the base
+         *    URI's path.  Although there are many ways to do this, we will
+         *    describe a simple method using a separate string buffer.
+         *
+         * Allocate a buffer large enough for the result string.
+         */
+        len = 2; /* extra / and 0 */
+        if (ref->path != NULL)
+                len += strlen(ref->path);
+        if (bas->path != NULL)
+                len += strlen(bas->path);
+        res->path = malloc(len);
+        res->path[0] = 0;
 
+        /*
+         * a) All but the last segment of the base URI's path component is
+         *    copied to the buffer.  In other words, any characters after the
+         *    last (right-most) slash character, if any, are excluded.
+         */
+        cur = 0;
+        out = 0;
+        if (bas->path != NULL) {
+                while (bas->path[cur] != 0) {
+                        while ((bas->path[cur] != 0) && (bas->path[cur] != '/'))
+                                cur++;
+                        if (bas->path[cur] == 0)
+                                break;
+                        cur++;
+                        while (out < cur) {
+                                res->path[out] = bas->path[out];
+                                out++;
+                        }
+                }
+        }
+        res->path[out] = 0;
 
-    /*
-     * 6) If this step is reached, then we are resolving a relative-path
-     *    reference.  The relative path needs to be merged with the base
-     *    URI's path.  Although there are many ways to do this, we will
-     *    describe a simple method using a separate string buffer.
-     *
-     * Allocate a buffer large enough for the result string.
-     */
-    len = 2; /* extra / and 0 */
-    if (ref->path != NULL)
-	len += strlen(ref->path);
-    if (bas->path != NULL)
-	len += strlen(bas->path);
-    res->path = g_malloc(len);
-    res->path[0] = 0;
+        /*
+         * b) The reference's path component is appended to the buffer
+         *    string.
+         */
+        if (ref->path != NULL && ref->path[0] != 0) {
+                indx = 0;
+                /*
+                 * Ensure the path includes a '/'
+                 */
+                if ((out == 0) && (bas->server != NULL))
+                        res->path[out++] = '/';
+                while (ref->path[indx] != 0) {
+                        res->path[out++] = ref->path[indx++];
+                }
+        }
+        res->path[out] = 0;
 
-    /*
-     * a) All but the last segment of the base URI's path component is
-     *    copied to the buffer.  In other words, any characters after the
-     *    last (right-most) slash character, if any, are excluded.
-     */
-    cur = 0;
-    out = 0;
-    if (bas->path != NULL) {
-	while (bas->path[cur] != 0) {
-	    while ((bas->path[cur] != 0) && (bas->path[cur] != '/'))
-		cur++;
-	    if (bas->path[cur] == 0)
-		break;
-
-	    cur++;
-	    while (out < cur) {
-		res->path[out] = bas->path[out];
-		out++;
-	    }
-	}
-    }
-    res->path[out] = 0;
-
-    /*
-     * b) The reference's path component is appended to the buffer
-     *    string.
-     */
-    if (ref->path != NULL && ref->path[0] != 0) {
-	indx = 0;
-	/*
-	 * Ensure the path includes a '/'
-	 */
-	if ((out == 0) && (bas->server != NULL))
-	    res->path[out++] = '/';
-	while (ref->path[indx] != 0) {
-	    res->path[out++] = ref->path[indx++];
-	}
-    }
-    res->path[out] = 0;
-
-    /*
-     * Steps c) to h) are really path normalization steps
-     */
-    normalize_uri_path(res->path);
+        /*
+         * Steps c) to h) are really path normalization steps
+         */
+        normalize_uri_path(res->path);
 
 step_7:
 
-    /*
-     * 7) The resulting URI components, including any inherited from the
-     *    base URI, are recombined to give the absolute form of the URI
-     *    reference.
-     */
-    val = uri_to_string(res);
+        /*
+         * 7) The resulting URI components, including any inherited from the
+         *    base URI, are recombined to give the absolute form of the URI
+         *    reference.
+         */
+        val = uri_to_string(res);
 
 done:
-    if (ref != NULL)
-	uri_free(ref);
-    if (bas != NULL)
-	uri_free(bas);
-    if (res != NULL)
-	uri_free(res);
-    return(val);
+        if (ref != NULL)
+                uri_free(ref);
+        if (bas != NULL)
+                uri_free(bas);
+        if (res != NULL)
+                uri_free(res);
+        return(val);
 }
 
 /**
@@ -1883,321 +1879,201 @@ done:
 char *
 uri_resolve_relative (const char *uri, const char * base)
 {
-    char *val = NULL;
-    int ret;
-    int ix;
-    int pos = 0;
-    int nbslash = 0;
-    int len;
-    URI *ref = NULL;
-    URI *bas = NULL;
-    char *bptr, *uptr, *vptr;
-    int remove_path = 0;
+        char *val = NULL;
+        int ret;
+        int ix;
+        int pos = 0;
+        int nbslash = 0;
+        int len;
+        URI *ref = NULL;
+        URI *bas = NULL;
+        char *bptr, *uptr, *vptr;
+        int remove_path = 0;
 
-    if ((uri == NULL) || (*uri == 0))
-	return NULL;
+        if ((uri == NULL) || (*uri == 0))
+                return NULL;
 
-    /*
-     * First parse URI into a standard form
-     */
-    ref = uri_new ();
-    if (ref == NULL)
-	return NULL;
-    /* If URI not already in "relative" form */
-    if (uri[0] != '.') {
-	ret = uri_parse_into (ref, uri);
-	if (ret != 0)
-	    goto done;		/* Error in URI, return NULL */
-    } else
-	ref->path = strdup(uri);
+        /*
+         * First parse URI into a standard form
+         */
+        ref = uri_new ();
+        if (ref == NULL)
+                return NULL;
+        /* If URI not already in "relative" form */
+        if (uri[0] != '.') {
+                ret = uri_parse_into (ref, uri);
+                if (ret != 0)
+                        goto done; /* Error in URI, return NULL */
+        } else
+                ref->path = strdup(uri);
 
-    /*
-     * Next parse base into the same standard form
-     */
-    if ((base == NULL) || (*base == 0)) {
-	val = strdup (uri);
-	goto done;
-    }
-    bas = uri_new ();
-    if (bas == NULL)
-	goto done;
-    if (base[0] != '.') {
-	ret = uri_parse_into (bas, base);
-	if (ret != 0)
-	    goto done;		/* Error in base, return NULL */
-    } else
-	bas->path = strdup(base);
+        /*
+         * Next parse base into the same standard form
+         */
+        if ((base == NULL) || (*base == 0)) {
+                val = strdup (uri);
+                goto done;
+        }
+        bas = uri_new ();
+        if (bas == NULL)
+                goto done;
+        if (base[0] != '.') {
+                ret = uri_parse_into (bas, base);
+                if (ret != 0)
+                        goto done;    /* Error in base, return NULL */
+        } else
+                bas->path = strdup(base);
+        /*
+         * If the scheme / server on the URI differs from the base,
+         * just return the URI
+         */
+        if ((ref->scheme != NULL) &&
+            ((bas->scheme == NULL) ||
+             (strcmp (bas->scheme, ref->scheme)) ||
+             (strcmp (bas->server, ref->server)))) {
+                val = strdup (uri);
+                goto done;
+        }
+        if (!strcmp(bas->path, ref->path)) {
+                val = strdup("");
+                goto done;
+        }
+        if (bas->path == NULL) {
+                val = strdup(ref->path);
+                goto done;
+        }
+        if (ref->path == NULL) {
+                ref->path = (char *) "/";
+                remove_path = 1;
+        }
 
-    /*
-     * If the scheme / server on the URI differs from the base,
-     * just return the URI
-     */
-    if ((ref->scheme != NULL) &&
-	((bas->scheme == NULL) ||
-	 (strcmp (bas->scheme, ref->scheme)) ||
-	 (strcmp (bas->server, ref->server)))) {
-	val = strdup (uri);
-	goto done;
-    }
-    if (!strcmp(bas->path, ref->path)) {
-	val = strdup("");
-	goto done;
-    }
-    if (bas->path == NULL) {
-	val = strdup(ref->path);
-	goto done;
-    }
-    if (ref->path == NULL) {
-        ref->path = (char *) "/";
-	remove_path = 1;
-    }
+        /*
+         * At this point (at last!) we can compare the two paths
+         *
+         * First we take care of the special case where either of the
+         * two path components may be missing (bug 316224)
+         */
+        if (bas->path == NULL) {
+                if (ref->path != NULL) {
+                        uptr = ref->path;
+                        if (*uptr == '/')
+                                uptr++;
+                        /* exception characters from uri_to_string */
+                        val = uri_string_escape(uptr, "/;&=+$,");
+                }
+                goto done;
+        }
+        bptr = bas->path;
+        if (ref->path == NULL) {
+                for (ix = 0; bptr[ix] != 0; ix++) {
+                        if (bptr[ix] == '/')
+                                nbslash++;
+                }
+                uptr = NULL;
+                len = 1;       /* this is for a string terminator only */
+        } else {
+                /*
+                 * Next we compare the two strings and find where they first differ
+                 */
+                if ((ref->path[pos] == '.') && (ref->path[pos+1] == '/'))
+                        pos += 2;
+                if ((*bptr == '.') && (bptr[1] == '/'))
+                        bptr += 2;
+                else if ((*bptr == '/') && (ref->path[pos] != '/'))
+                        bptr++;
+                while ((bptr[pos] == ref->path[pos]) && (bptr[pos] != 0))
+                        pos++;
+                if (bptr[pos] == ref->path[pos]) {
+                        val = strdup("");
+                        goto done; /* (I can't imagine why anyone would do this) */
+                }
 
-    /*
-     * At this point (at last!) we can compare the two paths
-     *
-     * First we take care of the special case where either of the
-     * two path components may be missing (bug 316224)
-     */
-    if (bas->path == NULL) {
-	if (ref->path != NULL) {
-	    uptr = ref->path;
-	    if (*uptr == '/')
-		uptr++;
-	    /* exception characters from uri_to_string */
-	    val = uri_string_escape(uptr, "/;&=+$,");
-	}
-	goto done;
-    }
-    bptr = bas->path;
-    if (ref->path == NULL) {
-	for (ix = 0; bptr[ix] != 0; ix++) {
-	    if (bptr[ix] == '/')
-		nbslash++;
-	}
-	uptr = NULL;
-	len = 1;	/* this is for a string terminator only */
-    } else {
-    /*
-     * Next we compare the two strings and find where they first differ
-     */
-	if ((ref->path[pos] == '.') && (ref->path[pos+1] == '/'))
-            pos += 2;
-	if ((*bptr == '.') && (bptr[1] == '/'))
-            bptr += 2;
-	else if ((*bptr == '/') && (ref->path[pos] != '/'))
-	    bptr++;
-	while ((bptr[pos] == ref->path[pos]) && (bptr[pos] != 0))
-	    pos++;
+                /*
+                 * In URI, "back up" to the last '/' encountered.  This will be the
+                 * beginning of the "unique" suffix of URI
+                 */
+                ix = pos;
+                if ((ref->path[ix] == '/') && (ix > 0))
+                        ix--;
+                else if ((ref->path[ix] == 0) && (ix > 1) &&
+                         (ref->path[ix - 1] == '/'))
+                        ix -= 2;
+                for (; ix > 0; ix--) {
+                        if (ref->path[ix] == '/')
+                                break;
+                }
+                if (ix == 0) {
+                        uptr = ref->path;
+                } else {
+                        ix++;
+                        uptr = &ref->path[ix];
+                }
 
-	if (bptr[pos] == ref->path[pos]) {
-	    val = strdup("");
-	    goto done;		/* (I can't imagine why anyone would do this) */
-	}
+                /*
+                 * In base, count the number of '/' from the differing point
+                 */
+                if (bptr[pos] != ref->path[pos]) {/* check for trivial URI == base */
+                        for (; bptr[ix] != 0; ix++) {
+                                if (bptr[ix] == '/')
+                                        nbslash++;
+                        }
+                }
+                len = strlen (uptr) + 1;
+        }
 
-	/*
-	 * In URI, "back up" to the last '/' encountered.  This will be the
-	 * beginning of the "unique" suffix of URI
-	 */
-	ix = pos;
-	if ((ref->path[ix] == '/') && (ix > 0))
-	    ix--;
-	else if ((ref->path[ix] == 0) && (ix > 1) && (ref->path[ix - 1] == '/'))
-	    ix -= 2;
-	for (; ix > 0; ix--) {
-	    if (ref->path[ix] == '/')
-		break;
-	}
-	if (ix == 0) {
-	    uptr = ref->path;
-	} else {
-	    ix++;
-	    uptr = &ref->path[ix];
-	}
+        if (nbslash == 0) {
+                if (uptr != NULL)
+                        /* exception characters from uri_to_string */
+                        val = uri_string_escape(uptr, "/;&=+$,");
+                goto done;
+        }
 
-	/*
-	 * In base, count the number of '/' from the differing point
-	 */
-	if (bptr[pos] != ref->path[pos]) {/* check for trivial URI == base */
-	    for (; bptr[ix] != 0; ix++) {
-		if (bptr[ix] == '/')
-		    nbslash++;
-	    }
-	}
-	len = strlen (uptr) + 1;
-    }
+        /*
+         * Allocate just enough space for the returned string -
+         * length of the remainder of the URI, plus enough space
+         * for the "../" groups, plus one for the terminator
+         */
+        val = malloc (len + 3 * nbslash);
+        vptr = val;
+        /*
+         * Put in as many "../" as needed
+         */
+        for (; nbslash>0; nbslash--) {
+                *vptr++ = '.';
+                *vptr++ = '.';
+                *vptr++ = '/';
+        }
+        /*
+         * Finish up with the end of the URI
+         */
+        if (uptr != NULL) {
+                if ((vptr > val) && (len > 0) &&
+                    (uptr[0] == '/') && (vptr[-1] == '/')) {
+                        memcpy (vptr, uptr + 1, len - 1);
+                        vptr[len - 2] = 0;
+                } else {
+                        memcpy (vptr, uptr, len);
+                        vptr[len - 1] = 0;
+                }
+        } else {
+                vptr[len - 1] = 0;
+        }
 
-    if (nbslash == 0) {
-	if (uptr != NULL)
-	    /* exception characters from uri_to_string */
-	    val = uri_string_escape(uptr, "/;&=+$,");
-	goto done;
-    }
-
-    /*
-     * Allocate just enough space for the returned string -
-     * length of the remainder of the URI, plus enough space
-     * for the "../" groups, plus one for the terminator
-     */
-    val = g_malloc (len + 3 * nbslash);
-    vptr = val;
-    /*
-     * Put in as many "../" as needed
-     */
-    for (; nbslash>0; nbslash--) {
-	*vptr++ = '.';
-	*vptr++ = '.';
-	*vptr++ = '/';
-    }
-    /*
-     * Finish up with the end of the URI
-     */
-    if (uptr != NULL) {
-        if ((vptr > val) && (len > 0) &&
-	    (uptr[0] == '/') && (vptr[-1] == '/')) {
-	    memcpy (vptr, uptr + 1, len - 1);
-	    vptr[len - 2] = 0;
-	} else {
-	    memcpy (vptr, uptr, len);
-	    vptr[len - 1] = 0;
-	}
-    } else {
-	vptr[len - 1] = 0;
-    }
-
-    /* escape the freshly-built path */
-    vptr = val;
-	/* exception characters from uri_to_string */
-    val = uri_string_escape(vptr, "/;&=+$,");
-    free(vptr);
+        /* escape the freshly-built path */
+        vptr = val;
+        /* exception characters from uri_to_string */
+        val = uri_string_escape(vptr, "/;&=+$,");
+        free(vptr);
 
 done:
-    /*
-     * Free the working variables
-     */
-    if (remove_path != 0)
-        ref->path = NULL;
-    if (ref != NULL)
-	uri_free (ref);
-    if (bas != NULL)
-	uri_free (bas);
-
-    return val;
-}
-
-/*
- * Utility functions to help parse and assemble query strings.
- */
-
-struct QueryParams *
-query_params_new (int init_alloc)
-{
-    struct QueryParams *ps;
-
-    if (init_alloc <= 0) init_alloc = 1;
-
-    ps = g_new(QueryParams, 1);
-    ps->n = 0;
-    ps->alloc = init_alloc;
-    ps->p = g_new(QueryParam, ps->alloc);
-
-    return ps;
-}
-
-/* Ensure there is space to store at least one more parameter
- * at the end of the set.
- */
-static int
-query_params_append (struct QueryParams *ps,
-               const char *name, const char *value)
-{
-    if (ps->n >= ps->alloc) {
-        ps->p = g_renew(QueryParam, ps->p, ps->alloc * 2);
-        ps->alloc *= 2;
-    }
-
-    ps->p[ps->n].name = strdup(name);
-    ps->p[ps->n].value = strdup(value);
-    ps->p[ps->n].ignore = 0;
-    ps->n++;
-
-    return 0;
-}
-
-void
-query_params_free (struct QueryParams *ps)
-{
-    int i;
-
-    for (i = 0; i < ps->n; ++i) {
-        free (ps->p[i].name);
-        free (ps->p[i].value);
-    }
-    free (ps->p);
-    free (ps);
-}
-
-struct QueryParams *
-query_params_parse (const char *query)
-{
-    struct QueryParams *ps;
-    const char *end, *eq;
-
-    ps = query_params_new (0);
-    if (!query || query[0] == '\0') return ps;
-
-    while (*query) {
-        char *name = NULL, *value = NULL;
-
-        /* Find the next separator, or end of the string. */
-        end = strchr (query, '&');
-        if (!end)
-            end = strchr (query, ';');
-        if (!end)
-            end = query + strlen (query);
-
-        /* Find the first '=' character between here and end. */
-        eq = strchr (query, '=');
-        if (eq && eq >= end) eq = NULL;
-
-        /* Empty section (eg. "&&"). */
-        if (end == query)
-            goto next;
-
-        /* If there is no '=' character, then we have just "name"
-         * and consistent with CGI.pm we assume value is "".
+        /*
+         * Free the working variables
          */
-        else if (!eq) {
-            name = uri_string_unescape (query, end - query, NULL);
-            value = NULL;
-        }
-        /* Or if we have "name=" here (works around annoying
-         * problem when calling uri_string_unescape with len = 0).
-         */
-        else if (eq+1 == end) {
-            name = uri_string_unescape (query, eq - query, NULL);
-            value = g_new0(char, 1);
-        }
-        /* If the '=' character is at the beginning then we have
-         * "=value" and consistent with CGI.pm we _ignore_ this.
-         */
-        else if (query == eq)
-            goto next;
-
-        /* Otherwise it's "name=value". */
-        else {
-            name = uri_string_unescape (query, eq - query, NULL);
-            value = uri_string_unescape (eq+1, end - (eq+1), NULL);
-        }
-
-        /* Append to the parameter set. */
-        query_params_append (ps, name, value);
-        free(name);
-        free(value);
-
-    next:
-        query = end;
-        if (*query) query ++; /* skip '&' separator */
-    }
-
-    return ps;
+        if (remove_path != 0)
+                ref->path = NULL;
+        if (ref != NULL)
+                uri_free (ref);
+        if (bas != NULL)
+                uri_free (bas);
+        return val;
 }

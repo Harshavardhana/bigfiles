@@ -1,4 +1,58 @@
 /**
+ * Summary: library of generic URI related routines
+ * Description: library of generic URI related routines
+ *              Implements RFC 2396
+ *
+ *  Copyright (C) 1998-2012 Daniel Veillard.  All Rights Reserved.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
+ * DANIEL VEILLARD BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+ * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * Except as contained in this notice, the name of Daniel Veillard shall not
+ * be used in advertising or otherwise to promote the sale, use or other
+ * dealings in this Software without prior written authorization from him.
+ *
+ * daniel@veillard.com
+ *
+ * Copyright (C) 2013 Red Hat, Inc. <http://www.redhat.com>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+
+ * http://www.apache.org/licenses/LICENSE-2.0
+
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Author: Harshavardhana <fharshav@redhat.com>
+ *
+ */
+
+#ifndef __URI_H__
+#define __URI_H__
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+/**
  * MAX_URI_LENGTH:
  *
  * The definition of the URI regexp in the above RFC has no size limit
@@ -151,3 +205,50 @@
 #define ISA_PCHAR(p)							\
      (ISA_UNRESERVED(p) || ISA_PCT_ENCODED(p) || ISA_SUB_DELIM(p) ||	\
       ((*(p) == ':')) || ((*(p) == '@')))
+
+
+/**
+ * URI:
+ *
+ * A parsed URI reference. This is a struct containing the various fields
+ * as described in RFC 2396 but separated for further processing.
+ */
+
+typedef struct _URI URI;
+typedef URI *URIptr;
+struct _URI {
+        char *scheme;       /* the URI scheme */
+        char *opaque;       /* opaque part */
+        char *authority;    /* the authority part */
+        char *server;       /* the server part */
+        char *user;         /* the user part */
+        int port;           /* the port number */
+        char *path;         /* the path string */
+        char *fragment;     /* the fragment identifier */
+        int  cleanup;       /* parsing potentially unclean URI */
+        char *query;        /* the query string (as it appears in the URI) */
+        char *query_raw;    /* the query string (as it appears in the URI) */
+};
+
+/************************************************************************
+*                                                                      *
+*                      Generic URI structure functions                 *
+*                                                                      *
+************************************************************************/
+
+int uri_parse_into(URI *, const char *);
+char * uri_resolve_relative (const char *, const char *);
+URI *uri_parse(const char *);
+URI *uri_parse_raw(const char *, int);
+URI *uri_new(void);
+char *uri_to_string(URI *);
+void uri_free(URI *);
+char *uri_string_unescape(const char *, int, char *);
+char *uri_string_escape(const char *, const char *);
+char *uri_resolve(const char *, const char *);
+char *uri_resolve_relative (const char *, const char *);
+
+#ifdef __cplusplus
+}
+#endif
+#endif /* __URI_H__ */

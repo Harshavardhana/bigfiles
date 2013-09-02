@@ -19,6 +19,7 @@
 */
 
 #include "bigfiles.h"
+#include "uri.h"
 
 int32_t
 bf_upload()
@@ -32,6 +33,7 @@ bf_download()
         return 1;
 }
 
+int32_t
 uri()
 {
         return 0;
