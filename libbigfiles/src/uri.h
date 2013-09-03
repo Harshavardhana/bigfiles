@@ -49,9 +49,6 @@
 #ifndef __URI_H__
 #define __URI_H__
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 /**
  * MAX_URI_LENGTH:
  *
@@ -106,27 +103,26 @@ extern "C" {
  */
 
 #define IS_MARK(x) (((x) == '-') || ((x) == '_') || ((x) == '.') ||     \
-    ((x) == '!') || ((x) == '~') || ((x) == '*') || ((x) == '\'') ||    \
-    ((x) == '(') || ((x) == ')'))
+                    ((x) == '!') || ((x) == '~') || ((x) == '*') ||     \
+                    ((x) == '\'') || ((x) == '(') || ((x) == ')'))
 
 /*
  * unwise = "{" | "}" | "|" | "\" | "^" | "`"
  */
 
 #define IS_UNWISE(p)                                                    \
-      (((*(p) == '{')) || ((*(p) == '}')) || ((*(p) == '|')) ||         \
-       ((*(p) == '\\')) || ((*(p) == '^')) || ((*(p) == '[')) ||        \
-       ((*(p) == ']')) || ((*(p) == '`')))
+        (((*(p) == '{')) || ((*(p) == '}')) || ((*(p) == '|')) ||       \
+         ((*(p) == '\\')) || ((*(p) == '^')) || ((*(p) == '[')) ||      \
+         ((*(p) == ']')) || ((*(p) == '`')))
 /*
  * reserved = ";" | "/" | "?" | ":" | "@" | "&" | "=" | "+" | "$" | "," |
  *            "[" | "]"
  */
 
 #define IS_RESERVED(x) (((x) == ';') || ((x) == '/') || ((x) == '?') || \
-        ((x) == ':') || ((x) == '@') || ((x) == '&') || ((x) == '=') || \
-        ((x) == '+') || ((x) == '$') || ((x) == ',') || ((x) == '[') || \
-        ((x) == ']'))
-
+                        ((x) == ':') || ((x) == '@') || ((x) == '&') || \
+                        ((x) == '=') || ((x) == '+') || ((x) == '$') || \
+                        ((x) == ',') || ((x) == '[') || ((x) == ']'))
 /*
  * unreserved = alphanum | mark
  */
@@ -151,35 +147,35 @@ extern "C" {
 
 
 /************************************************************************
- *									*
- *                         RFC 3986 parser				*
- *									*
+ *                                                                      *
+ *                         RFC 3986 parser                              *
+ *                                                                      *
  ************************************************************************/
 
 #define ISA_DIGIT(p) ((*(p) >= '0') && (*(p) <= '9'))
-#define ISA_ALPHA(p) (((*(p) >= 'a') && (*(p) <= 'z')) ||		\
+#define ISA_ALPHA(p) (((*(p) >= 'a') && (*(p) <= 'z')) ||       \
                       ((*(p) >= 'A') && (*(p) <= 'Z')))
-#define ISA_HEXDIG(p)							\
-       (ISA_DIGIT(p) || ((*(p) >= 'a') && (*(p) <= 'f')) ||		\
-        ((*(p) >= 'A') && (*(p) <= 'F')))
+#define ISA_HEXDIG(p)                                                   \
+        (ISA_DIGIT(p) || ((*(p) >= 'a') && (*(p) <= 'f')) ||            \
+         ((*(p) >= 'A') && (*(p) <= 'F')))
 
 /*
  *    sub-delims    = "!" / "$" / "&" / "'" / "(" / ")"
  *                     / "*" / "+" / "," / ";" / "="
  */
-#define ISA_SUB_DELIM(p)						\
-      (((*(p) == '!')) || ((*(p) == '$')) || ((*(p) == '&')) ||		\
-       ((*(p) == '(')) || ((*(p) == ')')) || ((*(p) == '*')) ||		\
-       ((*(p) == '+')) || ((*(p) == ',')) || ((*(p) == ';')) ||		\
-       ((*(p) == '=')) || ((*(p) == '\'')))
+#define ISA_SUB_DELIM(p)                                                \
+        (((*(p) == '!')) || ((*(p) == '$')) || ((*(p) == '&')) ||       \
+         ((*(p) == '(')) || ((*(p) == ')')) || ((*(p) == '*')) ||       \
+         ((*(p) == '+')) || ((*(p) == ',')) || ((*(p) == ';')) ||       \
+         ((*(p) == '=')) || ((*(p) == '\'')))
 
 /*
  *    gen-delims    = ":" / "/" / "?" / "#" / "[" / "]" / "@"
  */
-#define ISA_GEN_DELIM(p)						\
-      (((*(p) == ':')) || ((*(p) == '/')) || ((*(p) == '?')) ||         \
-       ((*(p) == '#')) || ((*(p) == '[')) || ((*(p) == ']')) ||         \
-       ((*(p) == '@')))
+#define ISA_GEN_DELIM(p)                                                \
+        (((*(p) == ':')) || ((*(p) == '/')) || ((*(p) == '?')) ||       \
+         ((*(p) == '#')) || ((*(p) == '[')) || ((*(p) == ']')) ||       \
+         ((*(p) == '@')))
 
 /*
  *    reserved      = gen-delims / sub-delims
@@ -189,35 +185,74 @@ extern "C" {
 /*
  *    unreserved    = ALPHA / DIGIT / "-" / "." / "_" / "~"
  */
-#define ISA_UNRESERVED(p)						\
-      ((ISA_ALPHA(p)) || (ISA_DIGIT(p)) || ((*(p) == '-')) ||		\
-       ((*(p) == '.')) || ((*(p) == '_')) || ((*(p) == '~')))
+#define ISA_UNRESERVED(p)                                               \
+        ((ISA_ALPHA(p)) || (ISA_DIGIT(p)) || ((*(p) == '-')) ||         \
+         ((*(p) == '.')) || ((*(p) == '_')) || ((*(p) == '~')))
 
 /*
  *    pct-encoded   = "%" HEXDIG HEXDIG
  */
-#define ISA_PCT_ENCODED(p)						\
-     ((*(p) == '%') && (ISA_HEXDIG(p + 1)) && (ISA_HEXDIG(p + 2)))
+#define ISA_PCT_ENCODED(p)                                              \
+        ((*(p) == '%') && (ISA_HEXDIG(p + 1)) && (ISA_HEXDIG(p + 2)))
 
 /*
  *    pchar         = unreserved / pct-encoded / sub-delims / ":" / "@"
  */
-#define ISA_PCHAR(p)							\
-     (ISA_UNRESERVED(p) || ISA_PCT_ENCODED(p) || ISA_SUB_DELIM(p) ||	\
-      ((*(p) == ':')) || ((*(p) == '@')))
+#define ISA_PCHAR(p)                                                    \
+        (ISA_UNRESERVED(p) ||                                           \
+         ISA_PCT_ENCODED(p) ||                                          \
+         ISA_SUB_DELIM(p) ||                                            \
+         ((*(p) == ':')) || ((*(p) == '@')))
 
+#define FREE(ptr)                               \
+        if (ptr != NULL) {                      \
+                free ((void *)ptr);             \
+                ptr = (void *)0xeeeeeeee;       \
+        }
+
+#define BF_URI_TRIM(uri)                        \
+        if (uri != NULL) {                      \
+                if (uri->scheme != NULL)        \
+                        FREE(uri->scheme);      \
+                if (uri->server != NULL)        \
+                        FREE(uri->server);      \
+                if (uri->user != NULL)          \
+                        FREE(uri->user);        \
+                if (uri->path != NULL)          \
+                        FREE(uri->path);        \
+                if (uri->fragment != NULL)      \
+                        FREE(uri->fragment);    \
+                if (uri->opaque != NULL)        \
+                        FREE(uri->opaque);      \
+                if (uri->authority != NULL)     \
+                        FREE(uri->authority);   \
+                if (uri->query != NULL)         \
+                        FREE(uri->query);       \
+        }
+
+#define BF_URI_FREE(uri)                        \
+        if (uri != NULL) {                      \
+                BF_URI_TRIM(uri);               \
+                FREE(uri);                      \
+        }
+
+
+#define is_hex(c)                                       \
+        (((c >= '0') && (c <= '9')) ||                  \
+         ((c >= 'a') && (c <= 'f')) ||                  \
+         ((c >= 'A') && (c <= 'F')))
 
 /**
- * URI:
+ * bURI:
  *
- * A parsed URI reference. This is a struct containing the various fields
+ * A parsed bURI reference. This is a struct containing the various fields
  * as described in RFC 2396 but separated for further processing.
  */
 
-typedef struct _URI URI;
-typedef URI *URIptr;
-struct _URI {
-        char *scheme;       /* the URI scheme */
+typedef struct _bURI bURI;
+typedef bURI *bURIptr;
+struct _bURI {
+        char *scheme;       /* the bURI scheme */
         char *opaque;       /* opaque part */
         char *authority;    /* the authority part */
         char *server;       /* the server part */
@@ -225,9 +260,9 @@ struct _URI {
         int port;           /* the port number */
         char *path;         /* the path string */
         char *fragment;     /* the fragment identifier */
-        int  cleanup;       /* parsing potentially unclean URI */
-        char *query;        /* the query string (as it appears in the URI) */
-        char *query_raw;    /* the query string (as it appears in the URI) */
+        int  cleanup;       /* parsing potentially unclean bURI */
+        char *query;        /* the query string (as it appears in the bURI) */
+        char *query_raw;    /* the query string (as it appears in the bURI) */
 };
 
 /************************************************************************
@@ -236,19 +271,15 @@ struct _URI {
 *                                                                      *
 ************************************************************************/
 
-int uri_parse_into(URI *, const char *);
-char * uri_resolve_relative (const char *, const char *);
-URI *uri_parse(const char *);
-URI *uri_parse_raw(const char *, int);
-URI *uri_new(void);
-char *uri_to_string(URI *);
-void uri_free(URI *);
-char *uri_string_unescape(const char *, int, char *);
-char *uri_string_escape(const char *, const char *);
-char *uri_resolve(const char *, const char *);
-char *uri_resolve_relative (const char *, const char *);
+int bigfile_uri_parse_into(bURI *, const char *);
+char *bigfile_uri_resolve_relative (const char *, const char *);
+bURI *bigfile_uri_parse(const char *);
+bURI *bigfile_uri_parse_raw(const char *, int);
+bURI *bigfile_uri_new(void);
+char *bigfile_uri_to_string(bURI *);
+char *bigfile_uri_string_unescape(const char *, int, char *);
+char *bigfile_uri_string_escape(const char *, const char *);
+char *bigfile_uri_resolve(const char *, const char *);
+char *bigfile_uri_resolve_relative (const char *, const char *);
 
-#ifdef __cplusplus
-}
-#endif
 #endif /* __URI_H__ */

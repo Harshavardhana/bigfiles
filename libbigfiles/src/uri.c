@@ -50,8 +50,7 @@
 #include <stdlib.h>
 
 #include "uri.h"
-
-static void uri_clean(URI *uri);
+#include "utils.h"
 
 /**
  * bigfile_rfc3986_scheme:
@@ -66,7 +65,7 @@ static void uri_clean(URI *uri);
  */
 
 static int
-bigfile_rfc3986_scheme(URI *uri, const char **str)
+bigfile_rfc3986_scheme(bURI *uri, const char **str)
 {
         const char *cur = NULL;
 
@@ -77,7 +76,8 @@ bigfile_rfc3986_scheme(URI *uri, const char **str)
                 return 2;
         cur++;
         while (ISA_ALPHA(cur) || ISA_DIGIT(cur) ||
-               (*cur == '+') || (*cur == '-') || (*cur == '.')) cur++;
+               (*cur == '+') || (*cur == '-') || (*cur == '.'))
+                cur++;
         if (uri != NULL) {
                 if (uri->scheme != NULL)
                         free(uri->scheme);
@@ -103,7 +103,7 @@ bigfile_rfc3986_scheme(URI *uri, const char **str)
  * Returns 0 or the error code
  */
 static int
-bigfile_rfc3986_fragment(URI *uri, const char **str)
+bigfile_rfc3986_fragment(bURI *uri, const char **str)
 {
         const char *cur = NULL;
 
@@ -122,8 +122,9 @@ bigfile_rfc3986_fragment(URI *uri, const char **str)
                 if (uri->cleanup & 2)
                         uri->fragment = strndup(*str, cur - *str);
                 else
-                        uri->fragment = uri_string_unescape(*str, cur - *str,
-                                                            NULL);
+                        uri->fragment = bigfile_uri_string_unescape(*str,
+                                                                    cur - *str,
+                                                                    NULL);
         }
 
         *str = cur;
@@ -142,7 +143,7 @@ bigfile_rfc3986_fragment(URI *uri, const char **str)
  * Returns 0 or the error code
  */
 static int
-bigfile_rfc3986_query(URI *uri, const char **str)
+bigfile_rfc3986_query(bURI *uri, const char **str)
 {
         const char *cur = NULL;
 
@@ -160,7 +161,7 @@ bigfile_rfc3986_query(URI *uri, const char **str)
                 if (uri->cleanup & 2)
                         uri->query = strndup(*str, cur - *str);
                 else
-                        uri->query = uri_string_unescape(*str, cur - *str,
+                        uri->query = bigfile_uri_string_unescape(*str, cur - *str,
                                                          NULL);
                 /* Save the raw bytes of the query as well.
                  * See: http://mail.gnome.org/archives/xml/2007-April/thread.html#00114
@@ -186,7 +187,7 @@ bigfile_rfc3986_query(URI *uri, const char **str)
  * Returns 0 or the error code
  */
 static int
-bigfile_rfc3986_port(URI *uri, const char **str)
+bigfile_rfc3986_port(bURI *uri, const char **str)
 {
         const char *cur = NULL;
         if (str == NULL)
@@ -222,7 +223,7 @@ bigfile_rfc3986_port(URI *uri, const char **str)
  */
 
 static int
-bigfile_rfc3986_user_info(URI *uri, const char **str)
+bigfile_rfc3986_user_info(bURI *uri, const char **str)
 {
         const char *cur = NULL;
 
@@ -239,7 +240,7 @@ bigfile_rfc3986_user_info(URI *uri, const char **str)
                         if (uri->cleanup & 2)
                                 uri->user = strndup(*str, cur - *str);
                         else
-                                uri->user = uri_string_unescape(*str,
+                                uri->user = bigfile_uri_string_unescape(*str,
                                                                 cur - *str,
                                                                 NULL);
                 }
@@ -306,7 +307,7 @@ bigfile_rfc3986_dec_octet(const char **str)
  * Returns 0 or the error code
  */
 static int
-bigfile_rfc3986_host(URI *uri, const char **str)
+bigfile_rfc3986_host(bURI *uri, const char **str)
 {
         const char *cur  = NULL;
         const char *host = NULL;
@@ -371,7 +372,7 @@ found:
                         if (uri->cleanup & 2)
                                 uri->server = strndup(host, cur - host);
                         else
-                                uri->server = uri_string_unescape(host,
+                                uri->server = bigfile_uri_string_unescape(host,
                                                                   cur - host,
                                                                   NULL);
                 } else
@@ -394,7 +395,7 @@ found:
  * Returns 0 or the error code
  */
 static int
-bigfile_rfc3986_authority(URI *uri, const char **str)
+bigfile_rfc3986_authority(bURI *uri, const char **str)
 {
         const char *cur = NULL;
         int ret         = 0;
@@ -473,7 +474,7 @@ out:
  * Returns 0 or the error code
  */
 static int
-bigfile_rfc3986_path_ab_empty(URI *uri, const char **str)
+bigfile_rfc3986_path_ab_empty(bURI *uri, const char **str)
 {
         const char *cur = NULL;
         int ret         = 0;
@@ -498,7 +499,7 @@ bigfile_rfc3986_path_ab_empty(URI *uri, const char **str)
                         if (uri->cleanup & 2)
                                 uri->path = strndup(*str, cur - *str);
                         else
-                                uri->path = uri_string_unescape(*str,
+                                uri->path = bigfile_uri_string_unescape(*str,
                                                                 cur - *str,
                                                                 NULL);
                 } else {
@@ -523,7 +524,7 @@ out:
  * Returns 0 or the error code
  */
 static int
-bigfile_rfc3986_path_absolute(URI *uri, const char **str)
+bigfile_rfc3986_path_absolute(bURI *uri, const char **str)
 {
         const char *cur = NULL;
         int ret         = 0;
@@ -556,7 +557,7 @@ bigfile_rfc3986_path_absolute(URI *uri, const char **str)
                         if (uri->cleanup & 2)
                                 uri->path = strndup(*str, cur - *str);
                         else
-                                uri->path = uri_string_unescape(*str,
+                                uri->path = bigfile_uri_string_unescape(*str,
                                                                 cur - *str,
                                                                 NULL);
                 } else {
@@ -581,7 +582,7 @@ out:
  * Returns 0 or the error code
  */
 static int
-bigfile_rfc3986_path_rootless(URI *uri, const char **str)
+bigfile_rfc3986_path_rootless(bURI *uri, const char **str)
 {
         const char *cur;
         int ret;
@@ -603,7 +604,7 @@ bigfile_rfc3986_path_rootless(URI *uri, const char **str)
                         if (uri->cleanup & 2)
                                 uri->path = strndup(*str, cur - *str);
                         else
-                                uri->path = uri_string_unescape(*str,
+                                uri->path = bigfile_uri_string_unescape(*str,
                                                                 cur - *str,
                                                                 NULL);
                 } else {
@@ -627,7 +628,7 @@ bigfile_rfc3986_path_rootless(URI *uri, const char **str)
  * Returns 0 or the error code
  */
 static int
-bigfile_rfc3986_path_no_scheme(URI *uri, const char **str)
+bigfile_rfc3986_path_no_scheme(bURI *uri, const char **str)
 {
         const char *cur;
         int ret;
@@ -651,7 +652,7 @@ bigfile_rfc3986_path_no_scheme(URI *uri, const char **str)
                         if (uri->cleanup & 2)
                                 uri->path = strndup(*str, cur - *str);
                         else
-                                uri->path = uri_string_unescape(*str,
+                                uri->path = bigfile_uri_string_unescape(*str,
                                                                 cur - *str,
                                                                 NULL);
                 } else {
@@ -678,7 +679,7 @@ bigfile_rfc3986_path_no_scheme(URI *uri, const char **str)
  * Returns 0 or the error code
  */
 static int
-bigfile_rfc3986_hier_part(URI *uri, const char **str)
+bigfile_rfc3986_hier_part(bURI *uri, const char **str)
 {
         const char *cur;
         int ret;
@@ -727,7 +728,7 @@ bigfile_rfc3986_hier_part(URI *uri, const char **str)
  * Returns 0 or the error code
  */
 static int
-bigfile_rfc3986_relative_ref(URI *uri, const char *str)
+bigfile_rfc3986_relative_ref(bURI *uri, const char *str)
 {
         int ret;
 
@@ -754,18 +755,20 @@ bigfile_rfc3986_relative_ref(URI *uri, const char *str)
         if (*str == '?') {
                 str++;
                 ret = bigfile_rfc3986_query(uri, &str);
-                if (ret != 0) return(ret);
+                if (ret != 0)
+                        return ret;
         }
         if (*str == '#') {
                 str++;
                 ret = bigfile_rfc3986_fragment(uri, &str);
-                if (ret != 0) return(ret);
+                if (ret != 0)
+                        return ret;
         }
         if (*str != 0) {
-                uri_clean(uri);
-                return(1);
+                BF_URI_TRIM(uri);
+                return 1;
         }
-        return(0);
+        return 0;
 }
 
 
@@ -782,7 +785,7 @@ bigfile_rfc3986_relative_ref(URI *uri, const char *str)
  * Returns 0 or the error code
  */
 static int
-bigfile_rfc3986(URI *uri, const char *str)
+bigfile_rfc3986(bURI *uri, const char *str)
 {
         int ret;
 
@@ -809,7 +812,7 @@ bigfile_rfc3986(URI *uri, const char *str)
                         return ret;
         }
         if (*str != 0) {
-                uri_clean(uri);
+                BF_URI_TRIM(uri);
                 return 1;
         }
         return 0;
@@ -828,24 +831,24 @@ bigfile_rfc3986(URI *uri, const char *str)
  * Returns 0 or the error code
  */
 static int
-bigfile_rfc3986_uri_reference(URI *uri, const char *str)
+bigfile_rfc3986_uri_reference(bURI *uri, const char *str)
 {
         int ret;
 
         if (str == NULL)
                 return -1;
 
-        uri_clean(uri);
+        BF_URI_TRIM(uri);
         /*
          * Try first to parse absolute refs, then fallback to relative if
          * it fails.
          */
         ret = bigfile_rfc3986(uri, str);
         if (ret != 0) {
-                uri_clean(uri);
+                BF_URI_TRIM(uri);
                 ret = bigfile_rfc3986_relative_ref(uri, str);
                 if (ret != 0) {
-                        uri_clean(uri);
+                        BF_URI_TRIM(uri);
                         return ret;
                 }
         }
@@ -854,13 +857,11 @@ bigfile_rfc3986_uri_reference(URI *uri, const char *str)
 
 
 /************************************************************************
- *									*
- *			Generic URI structure functions			*
- *									*
+ *                Generic URI structure functions                       *
  ************************************************************************/
 
 /**
- * uri_parse_into:
+ * bigfile_uri_parse_into:
  * @uri:  pointer to an URI structure
  * @str:  the string to analyze
  *
@@ -872,33 +873,33 @@ bigfile_rfc3986_uri_reference(URI *uri, const char *str)
  * Returns 0 or the error code
  */
 int
-uri_parse_into(URI *uri, const char *str)
+bigfile_uri_parse_into(bURI *uri, const char *str)
 {
         return (bigfile_rfc3986_uri_reference(uri, str));
 }
 
 /**
- * uri_parse:
- * @str:  the URI string to analyze
+ * bigfile_uri_parse:
+ * @str:  the bURI string to analyze
  *
- * Parse an URI based on RFC 3986
+ * Parse an bURI based on RFC 3986
  *
  * URI-reference = [ absoluteURI | relativeURI ] [ "#" fragment ]
  *
- * Returns a newly built URI or NULL in case of error
+ * Returns a newly built bURI or NULL in case of error
  */
-URI *
-uri_parse(const char *str)
+bURI *
+bigfile_uri_parse(const char *str)
 {
-        URI *uri = NULL;
+        bURI *uri = NULL;
 
         if (str == NULL)
                 goto out;
 
-        uri = uri_new();
+        uri = bigfile_uri_new();
         if (uri != NULL) {
-                if (uri_parse_into(uri, str)) {
-                        uri_free(uri);
+                if (bigfile_uri_parse_into(uri, str)) {
+                        BF_URI_FREE(uri);
                         goto out;
                 }
         }
@@ -907,30 +908,30 @@ out:
 }
 
 /**
- * uri_parse_raw:
- * @str:  the URI string to analyze
- * @raw:  if 1 unescaping of URI pieces are disabled
+ * bigfile_uri_parse_raw:
+ * @str:  the bURI string to analyze
+ * @raw:  if 1 unescaping of bURI pieces are disabled
  *
- * Parse an URI but allows to keep intact the original fragments.
+ * Parse an bURI but allows to keep intact the original fragments.
  *
- * URI-reference = URI / relative-ref
+ * bURI-reference = bURI / relative-ref
  *
  * Returns a newly built URI or NULL in case of error
  */
-URI *
-uri_parse_raw(const char *str, int raw)
+bURI *
+bigfile_uri_parse_raw(const char *str, int raw)
 {
-        URI *uri = NULL;
+        bURI *uri = NULL;
 
         if (str == NULL)
                 goto out;
-        uri = uri_new();
+        uri = bigfile_uri_new();
         if (uri != NULL) {
                 if (raw) {
                         uri->cleanup |= 2;
                 }
-                if (uri_parse_into(uri, str)) {
-                        uri_free(uri);
+                if (bigfile_uri_parse_into(uri, str)) {
+                        BF_URI_FREE(uri);
                         goto out;
                 }
         }
@@ -939,18 +940,18 @@ out:
 }
 
 /**
- * uri_new:
+ * bigfile_uri_new:
  *
  * Simply creates an empty URI
  *
  * Returns the new structure or NULL in case of error
  */
-URI *
-uri_new(void)
+bURI *
+bigfile_uri_new(void)
 {
-        URI *tmp_uri;
-        tmp_uri = (URI *) malloc(sizeof(URI));
-        memset(tmp_uri, 0, sizeof(URI));
+        bURI *tmp_uri;
+        tmp_uri = (bURI *) malloc(sizeof(bURI));
+        memset(tmp_uri, 0, sizeof(bURI));
         return tmp_uri;
 }
 
@@ -973,15 +974,15 @@ realloc2n(char *ret, int *max)
 }
 
 /**
- * uri_to_string:
- * @uri:  pointer to an URI
+ * bigfile_uri_to_string:
+ * @uri:  pointer to an bURI
  *
- * Save the URI as an escaped string
+ * Save the bURI as an escaped string
  *
  * Returns a new string (to be deallocated by caller)
  */
 char *
-uri_to_string(URI *uri)
+bigfile_uri_to_string(bURI *uri)
 {
         char *ret = NULL;
         char *temp;
@@ -989,7 +990,8 @@ uri_to_string(URI *uri)
         int len;
         int max;
 
-        if (uri == NULL) return(NULL);
+        if (uri == NULL)
+                return NULL;
 
         max = 80;
         ret = malloc(max + 1);
@@ -1044,13 +1046,17 @@ uri_to_string(URI *uri)
                                 while (*p != 0) {
                                         if (len + 3 >= max) {
                                                 temp = realloc2n(ret, &max);
-                                                if (temp == NULL) goto mem_error;
+                                                if (temp == NULL)
+                                                        goto mem_error;
                                                 ret = temp;
                                         }
                                         if ((IS_UNRESERVED(*(p))) ||
-                                            ((*(p) == ';')) || ((*(p) == ':')) ||
-                                            ((*(p) == '&')) || ((*(p) == '=')) ||
-                                            ((*(p) == '+')) || ((*(p) == '$')) ||
+                                            ((*(p) == ';')) ||
+                                            ((*(p) == ':')) ||
+                                            ((*(p) == '&')) ||
+                                            ((*(p) == '=')) ||
+                                            ((*(p) == '+')) ||
+                                            ((*(p) == '$')) ||
                                             ((*(p) == ',')))
                                                 ret[len++] = *p++;
                                         else {
@@ -1058,13 +1064,16 @@ uri_to_string(URI *uri)
                                                 int hi = val / 0x10;
                                                 int lo = val % 0x10;
                                                 ret[len++] = '%';
-                                                ret[len++] = hi + (hi > 9? 'A'-10 : '0');
-                                                ret[len++] = lo + (lo > 9? 'A'-10 : '0');
+                                                ret[len++] = hi +
+                                                        (hi > 9? 'A'-10 : '0');
+                                                ret[len++] = lo +
+                                                        (lo > 9? 'A'-10 : '0');
                                         }
                                 }
                                 if (len + 3 >= max) {
                                         temp = realloc2n(ret, &max);
-                                        if (temp == NULL) goto mem_error;
+                                        if (temp == NULL)
+                                                goto mem_error;
                                         ret = temp;
                                 }
                                 ret[len++] = '@';
@@ -1073,7 +1082,8 @@ uri_to_string(URI *uri)
                         while (*p != 0) {
                                 if (len >= max) {
                                         temp = realloc2n(ret, &max);
-                                        if (temp == NULL) goto mem_error;
+                                        if (temp == NULL)
+                                                goto mem_error;
                                         ret = temp;
                                 }
                                 ret[len++] = *p++;
@@ -1113,8 +1123,10 @@ uri_to_string(URI *uri)
                                         int val = *(unsigned char *)p++;
                                         int hi = val / 0x10, lo = val % 0x10;
                                         ret[len++] = '%';
-                                        ret[len++] = hi + (hi > 9? 'A'-10 : '0');
-                                        ret[len++] = lo + (lo > 9? 'A'-10 : '0');
+                                        ret[len++] = hi +
+                                                (hi > 9? 'A'-10 : '0');
+                                        ret[len++] = lo +
+                                                (lo > 9? 'A'-10 : '0');
                                 }
                         }
                 } else if (uri->scheme != NULL) {
@@ -1164,8 +1176,10 @@ uri_to_string(URI *uri)
                                         int val = *(unsigned char *)p++;
                                         int hi = val / 0x10, lo = val % 0x10;
                                         ret[len++] = '%';
-                                        ret[len++] = hi + (hi > 9? 'A'-10 : '0');
-                                        ret[len++] = lo + (lo > 9? 'A'-10 : '0');
+                                        ret[len++] = hi +
+                                                (hi > 9? 'A'-10 : '0');
+                                        ret[len++] = lo +
+                                                (lo > 9? 'A'-10 : '0');
                                 }
                         }
                 }
@@ -1214,263 +1228,22 @@ uri_to_string(URI *uri)
         }
         if (len >= max) {
                 temp = realloc2n(ret, &max);
-                if (temp == NULL) goto mem_error;
+                if (temp == NULL)
+                        goto mem_error;
                 ret = temp;
         }
         ret[len] = 0;
-        return(ret);
+        return ret;
 
 mem_error:
-        free(ret);
-        return(NULL);
+        FREE(ret);
+
+        return NULL;
 }
+
 
 /**
- * uri_clean:
- * @uri:  pointer to an URI
- *
- * Make sure the URI struct is free of content
- */
-static void
-uri_clean(URI *uri)
-{
-        if (uri == NULL) return;
-        if (uri->scheme != NULL) free(uri->scheme);
-        uri->scheme = NULL;
-        if (uri->server != NULL) free(uri->server);
-        uri->server = NULL;
-        if (uri->user != NULL) free(uri->user);
-        uri->user = NULL;
-        if (uri->path != NULL) free(uri->path);
-        uri->path = NULL;
-        if (uri->fragment != NULL) free(uri->fragment);
-        uri->fragment = NULL;
-        if (uri->opaque != NULL) free(uri->opaque);
-        uri->opaque = NULL;
-        if (uri->authority != NULL) free(uri->authority);
-        uri->authority = NULL;
-        if (uri->query != NULL) free(uri->query);
-        uri->query = NULL;
-}
-
-/**
- * uri_free:
- * @uri:  pointer to an URI
- *
- * Free up the URI struct
- */
-void
-uri_free(URI *uri)
-{
-        uri_clean(uri);
-        free(uri);
-}
-
-/************************************************************************
- *									*
- *			Helper functions				*
- *									*
- ************************************************************************/
-
-/**
- * normalize_uri_path:
- * @path:  pointer to the path string
- *
- * Applies the 5 normalization steps to a path string--that is, RFC 2396
- * Section 5.2, steps 6.c through 6.g.
- *
- * Normalization occurs directly on the string, no new allocation is done
- *
- * Returns 0 or an error code
- */
-static int
-normalize_uri_path(char *path)
-{
-        char *cur, *out;
-
-        if (path == NULL)
-                return -1;
-
-        /* Skip all initial "/" chars.  We want to get to the beginning of the
-         * first non-empty segment.
-         */
-        cur = path;
-        while (cur[0] == '/')
-                ++cur;
-        if (cur[0] == '\0')
-                return 0;
-
-        /* Keep everything we've seen so far.  */
-        out = cur;
-
-        /*
-         * Analyze each segment in sequence for cases (c) and (d).
-         */
-        while (cur[0] != '\0') {
-                /*
-                 * c) All occurrences of "./", where "." is a complete path segment,
-                 *    are removed from the buffer string.
-                 */
-                if ((cur[0] == '.') && (cur[1] == '/')) {
-                        cur += 2;
-                        /* '//' normalization should be done at this point too */
-                        while (cur[0] == '/')
-                                cur++;
-                        continue;
-                }
-
-                /*
-                 * d) If the buffer string ends with "." as a complete path segment,
-                 *    that "." is removed.
-                 */
-                if ((cur[0] == '.') && (cur[1] == '\0'))
-                        break;
-
-                /* Otherwise keep the segment.  */
-                while (cur[0] != '/') {
-                        if (cur[0] == '\0')
-                                goto done_cd;
-                        (out++)[0] = (cur++)[0];
-                }
-                /* nomalize // */
-                while ((cur[0] == '/') && (cur[1] == '/'))
-                        cur++;
-
-                (out++)[0] = (cur++)[0];
-        }
-done_cd:
-        out[0] = '\0';
-
-        /* Reset to the beginning of the first segment for the next sequence.  */
-        cur = path;
-        while (cur[0] == '/')
-                ++cur;
-        if (cur[0] == '\0')
-                return(0);
-
-        /*
-         * Analyze each segment in sequence for cases (e) and (f).
-         *
-         * e) All occurrences of "<segment>/../", where <segment> is a
-         *    complete path segment not equal to "..", are removed from the
-         *    buffer string.  Removal of these path segments is performed
-         *    iteratively, removing the leftmost matching pattern on each
-         *    iteration, until no matching pattern remains.
-         *
-         * f) If the buffer string ends with "<segment>/..", where <segment>
-         *    is a complete path segment not equal to "..", that
-         *    "<segment>/.." is removed.
-         *
-         * To satisfy the "iterative" clause in (e), we need to collapse the
-         * string every time we find something that needs to be removed.  Thus,
-         * we don't need to keep two pointers into the string: we only need a
-         * "current position" pointer.
-         */
-        while (1) {
-                char *segp, *tmp;
-
-                /* At the beginning of each iteration of this loop, "cur" points to
-                 * the first character of the segment we want to examine.
-                 */
-
-                /* Find the end of the current segment.  */
-                segp = cur;
-                while ((segp[0] != '/') && (segp[0] != '\0'))
-                        ++segp;
-
-                /* If this is the last segment, we're done (we need at least two
-                 * segments to meet the criteria for the (e) and (f) cases).
-                 */
-                if (segp[0] == '\0')
-                        break;
-
-                /* If the first segment is "..", or if the next segment _isn't_ "..",
-                 * keep this segment and try the next one.
-                 */
-                ++segp;
-                if (((cur[0] == '.') && (cur[1] == '.') && (segp == cur+3))
-                    || ((segp[0] != '.') || (segp[1] != '.')
-                        || ((segp[2] != '/') && (segp[2] != '\0')))) {
-                        cur = segp;
-                        continue;
-                }
-
-                /* If we get here, remove this segment and the next one and back up
-                 * to the previous segment (if there is one), to implement the
-                 * "iteratively" clause.  It's pretty much impossible to back up
-                 * while maintaining two pointers into the buffer, so just compact
-                 * the whole buffer now.
-                 */
-
-                /* If this is the end of the buffer, we're done.  */
-                if (segp[2] == '\0') {
-                        cur[0] = '\0';
-                        break;
-                }
-                /* Valgrind complained, strcpy(cur, segp + 3); */
-                /* string will overlap, do not use strcpy */
-                tmp = cur;
-                segp += 3;
-                while ((*tmp++ = *segp++) != 0)
-                        ;
-
-                /* If there are no previous segments, then keep going from here.  */
-                segp = cur;
-                while ((segp > path) && ((--segp)[0] == '/'))
-                        ;
-                if (segp == path)
-                        continue;
-
-                /* "segp" is pointing to the end of a previous segment; find it's
-                 * start.  We need to back up to the previous segment and start
-                 * over with that to handle things like "foo/bar/../..".  If we
-                 * don't do this, then on the first pass we'll remove the "bar/..",
-                 * but be pointing at the second ".." so we won't realize we can also
-                 * remove the "foo/..".
-                 */
-                cur = segp;
-                while ((cur > path) && (cur[-1] != '/'))
-                        --cur;
-        }
-        out[0] = '\0';
-
-        /*
-         * g) If the resulting buffer string still begins with one or more
-         *    complete path segments of "..", then the reference is
-         *    considered to be in error. Implementations may handle this
-         *    error by retaining these components in the resolved path (i.e.,
-         *    treating them as part of the final URI), by removing them from
-         *    the resolved path (i.e., discarding relative levels above the
-         *    root), or by avoiding traversal of the reference.
-         *
-         * We discard them from the final path.
-         */
-        if (path[0] == '/') {
-                cur = path;
-                while ((cur[0] == '/') && (cur[1] == '.') && (cur[2] == '.')
-                       && ((cur[3] == '/') || (cur[3] == '\0')))
-                        cur += 3;
-                if (cur != path) {
-                        out = path;
-                        while (cur[0] != '\0')
-                                (out++)[0] = (cur++)[0];
-                        out[0] = 0;
-                }
-        }
-        return 0;
-}
-
-static int is_hex(char c)
-{
-        if (((c >= '0') && (c <= '9')) ||
-            ((c >= 'a') && (c <= 'f')) ||
-            ((c >= 'A') && (c <= 'F')))
-                return 1;
-        return 0;
-}
-
-/**
- * uri_string_unescape:
+ * bigfile_uri_string_unescape:
  * @str:  the string to unescape
  * @len:   the length in bytes to unescape (or <= 0 to indicate full string)
  * @target:  optional destination buffer
@@ -1484,7 +1257,7 @@ static int is_hex(char c)
  * of error
  */
 char *
-uri_string_unescape(const char *str, int len, char *target)
+bigfile_uri_string_unescape(const char *str, int len, char *target)
 {
         char *ret, *out;
         const char *in;
@@ -1531,7 +1304,7 @@ uri_string_unescape(const char *str, int len, char *target)
 }
 
 /**
- * uri_string_escape:
+ * bigfile_uri_string_escape:
  * @str:  string to escape
  * @list: exception list string of chars not to escape
  *
@@ -1541,7 +1314,7 @@ uri_string_unescape(const char *str, int len, char *target)
  * Returns a new escaped string or NULL in case of error.
  */
 char *
-uri_string_escape(const char *str, const char *list)
+bigfile_uri_string_escape(const char *str, const char *list)
 {
         char *ret, ch;
         char *temp;
@@ -1566,7 +1339,8 @@ uri_string_escape(const char *str, const char *list)
                 }
                 ch = *in;
 
-                if ((ch != '@') && (!IS_UNRESERVED(ch)) && (!strchr(list, ch))) {
+                if ((ch != '@') && (!IS_UNRESERVED(ch)) &&
+                    (!strchr(list, ch))) {
                         unsigned char val;
                         ret[out++] = '%';
                         val = ch >> 4;
@@ -1595,7 +1369,7 @@ uri_string_escape(const char *str, const char *list)
  ************************************************************************/
 
 /**
- * uri_resolve:
+ * bigfile_uri_resolve:
  * @URI:  the URI instance found in the document
  * @base:  the base value
  *
@@ -1610,13 +1384,13 @@ uri_string_escape(const char *str, const char *list)
  *         of error.
  */
 char *
-uri_resolve(const char *uri, const char *base)
+bigfile_uri_resolve(const char *uri, const char *base)
 {
         char *val = NULL;
         int ret, len, indx, cur, out;
-        URI *ref = NULL;
-        URI *bas = NULL;
-        URI *res = NULL;
+        bURI *ref = NULL;
+        bURI *bas = NULL;
+        bURI *res = NULL;
 
         /*
          * 1) The URI reference is parsed into the potential four components and
@@ -1630,10 +1404,10 @@ uri_resolve(const char *uri, const char *base)
                 ret = -1;
         else {
                 if (*uri) {
-                        ref = uri_new();
+                        ref = bigfile_uri_new();
                         if (ref == NULL)
                                 goto done;
-                        ret = uri_parse_into(ref, uri);
+                        ret = bigfile_uri_parse_into(ref, uri);
                 }
                 else
                         ret = 0;
@@ -1650,14 +1424,14 @@ uri_resolve(const char *uri, const char *base)
         if (base == NULL)
                 ret = -1;
         else {
-                bas = uri_new();
+                bas = bigfile_uri_new();
                 if (bas == NULL)
                         goto done;
-                ret = uri_parse_into(bas, base);
+                ret = bigfile_uri_parse_into(bas, base);
         }
         if (ret != 0) {
                 if (ref)
-                        val = uri_to_string(ref);
+                        val = bigfile_uri_to_string(ref);
                 goto done;
         }
         if (ref == NULL) {
@@ -1668,7 +1442,7 @@ uri_resolve(const char *uri, const char *base)
                         free(bas->fragment);
                         bas->fragment = NULL;
                 }
-                val = uri_to_string(bas);
+                val = bigfile_uri_to_string(bas);
                 goto done;
         }
 
@@ -1684,7 +1458,7 @@ uri_resolve(const char *uri, const char *base)
          *    defined while still treating this as a reference to the current
          *    document.
          */
-        res = uri_new();
+        res = bigfile_uri_new();
         if (res == NULL)
                 goto done;
         if ((ref->scheme == NULL) && (ref->path == NULL) &&
@@ -1717,7 +1491,7 @@ uri_resolve(const char *uri, const char *base)
          *    scheme is inherited from the base URI's scheme component.
          */
         if (ref->scheme != NULL) {
-                val = uri_to_string(ref);
+                val = bigfile_uri_to_string(ref);
                 goto done;
         }
         if (bas->scheme != NULL)
@@ -1832,20 +1606,20 @@ step_7:
          *    base URI, are recombined to give the absolute form of the URI
          *    reference.
          */
-        val = uri_to_string(res);
+        val = bigfile_uri_to_string(res);
 
 done:
         if (ref != NULL)
-                uri_free(ref);
+                BF_URI_FREE(ref);
         if (bas != NULL)
-                uri_free(bas);
+                BF_URI_FREE(bas);
         if (res != NULL)
-                uri_free(res);
+                BF_URI_FREE(res);
         return(val);
 }
 
 /**
- * uri_resolve_relative:
+ * bigfile_uri_resolve_relative:
  * @URI:  the URI reference under consideration
  * @base:  the base value
  *
@@ -1877,7 +1651,7 @@ done:
  * error.
  */
 char *
-uri_resolve_relative (const char *uri, const char * base)
+bigfile_uri_resolve_relative (const char *uri, const char * base)
 {
         char *val = NULL;
         int ret;
@@ -1885,8 +1659,8 @@ uri_resolve_relative (const char *uri, const char * base)
         int pos = 0;
         int nbslash = 0;
         int len;
-        URI *ref = NULL;
-        URI *bas = NULL;
+        bURI *ref = NULL;
+        bURI *bas = NULL;
         char *bptr, *uptr, *vptr;
         int remove_path = 0;
 
@@ -1896,12 +1670,12 @@ uri_resolve_relative (const char *uri, const char * base)
         /*
          * First parse URI into a standard form
          */
-        ref = uri_new ();
+        ref = bigfile_uri_new ();
         if (ref == NULL)
                 return NULL;
         /* If URI not already in "relative" form */
         if (uri[0] != '.') {
-                ret = uri_parse_into (ref, uri);
+                ret = bigfile_uri_parse_into (ref, uri);
                 if (ret != 0)
                         goto done; /* Error in URI, return NULL */
         } else
@@ -1914,11 +1688,11 @@ uri_resolve_relative (const char *uri, const char * base)
                 val = strdup (uri);
                 goto done;
         }
-        bas = uri_new ();
+        bas = bigfile_uri_new ();
         if (bas == NULL)
                 goto done;
         if (base[0] != '.') {
-                ret = uri_parse_into (bas, base);
+                ret = bigfile_uri_parse_into (bas, base);
                 if (ret != 0)
                         goto done;    /* Error in base, return NULL */
         } else
@@ -1959,7 +1733,7 @@ uri_resolve_relative (const char *uri, const char * base)
                         if (*uptr == '/')
                                 uptr++;
                         /* exception characters from uri_to_string */
-                        val = uri_string_escape(uptr, "/;&=+$,");
+                        val = bigfile_uri_string_escape(uptr, "/;&=+$,");
                 }
                 goto done;
         }
@@ -2024,7 +1798,7 @@ uri_resolve_relative (const char *uri, const char * base)
         if (nbslash == 0) {
                 if (uptr != NULL)
                         /* exception characters from uri_to_string */
-                        val = uri_string_escape(uptr, "/;&=+$,");
+                        val = bigfile_uri_string_escape(uptr, "/;&=+$,");
                 goto done;
         }
 
@@ -2062,7 +1836,7 @@ uri_resolve_relative (const char *uri, const char * base)
         /* escape the freshly-built path */
         vptr = val;
         /* exception characters from uri_to_string */
-        val = uri_string_escape(vptr, "/;&=+$,");
+        val = bigfile_uri_string_escape(vptr, "/;&=+$,");
         free(vptr);
 
 done:
@@ -2072,8 +1846,8 @@ done:
         if (remove_path != 0)
                 ref->path = NULL;
         if (ref != NULL)
-                uri_free (ref);
+                BF_URI_FREE (ref);
         if (bas != NULL)
-                uri_free (bas);
+                BF_URI_FREE (bas);
         return val;
 }
