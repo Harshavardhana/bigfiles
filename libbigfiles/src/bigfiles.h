@@ -21,11 +21,46 @@
 #ifndef __BIGFILES_H__
 #define __BIGFILES_H__
 
-#ifndef _CONFIG_H
-#define _CONFIG_H
-#include "config.h"
+/*
+  Enforce the following flags
+*/
+
+#ifndef _FILE_OFFSET_BITS
+#define _FILE_OFFSET_BITS 64
 #endif
 
-#include <stdint.h>
+#ifndef __USE_FILE_OFFSET64
+#define __USE_FILE_OFFSET64
+#endif
 
-#endif/* __BIGFILES_H__ */
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE
+#endif
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <sys/uio.h>
+#include <unistd.h>
+#include <sys/cdefs.h>
+#include <dirent.h>
+#include <sys/statvfs.h>
+
+__BEGIN_DECLS
+
+/* The bigfile context */
+struct bfctx;
+typedef struct bfctx bfctx_t;
+
+/*
+*/
+
+int32_t bigfile_init (bfctx_t *);
+int32_t bigfile_fini (bfctx_t *);
+
+int32_t bigfile_get(void);
+int32_t bigfile_put(void);
+
+__END_DECLS
+
+#endif /* __BIGFILES_H__ */

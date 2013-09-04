@@ -1,12 +1,9 @@
 CLEANFILES = *~
 
 lib_LTLIBRARIES = libbigfiles.la
-noinst_HEADERS =
-
+noinst_HEADERS = uri.h utils.h bigfiles-private.h
 libbigfiles_HEADERS = bigfiles.h
 libbigfilesdir = $(includedir)
-
-noinstHEADERS = uri.h utils.h
 
 libbigfiles_la_SOURCES = bigfiles.c uri.c utils.c
 libbigfiles_la_LDFLAGS = -version-info 1:0:0

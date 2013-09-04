@@ -19,22 +19,32 @@
 */
 
 #include "bigfiles.h"
-#include "uri.h"
+#include "bigfiles-private.h"
 
 int32_t
-bf_upload()
+bigfile_get(void)
 {
         return 1;
 }
 
 int32_t
-bf_download()
+bigfile_put(void)
 {
         return 1;
 }
 
+
 int32_t
-uri()
+bigfile_init (struct bfctx *bf)
 {
-        return 0;
+        int  ret = -1;
+        return ret;
+}
+
+
+int
+bigfile_fini (struct bfctx *bf)
+{
+        int  ret = -1;
+        return ret;
 }
