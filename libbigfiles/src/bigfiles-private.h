@@ -33,6 +33,8 @@ struct bigfiles {
 };
 
 bigfile_ctx_t *bigfile_ctx_new ();
+int bigfile_ctx_defaults_init (bigfile_ctx_t *ctx);
+
 bfs_boolean_t is_valid_adapter (bURI *uri);
 
 #endif /* !_BIGFILES_PRIVATE_H */

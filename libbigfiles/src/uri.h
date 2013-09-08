@@ -279,7 +279,10 @@ bURI *bigfile_uri_new(void);
 char *bigfile_uri_to_string(bURI *);
 char *bigfile_uri_string_unescape(const char *, int, char *);
 char *bigfile_uri_string_escape(const char *, const char *);
+
+/* Not used moved to uri-unused.c
 char *bigfile_uri_resolve(const char *, const char *);
 char *bigfile_uri_resolve_relative (const char *, const char *);
+*/
 
 #endif /* __URI_H__ */

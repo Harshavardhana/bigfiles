@@ -75,8 +75,8 @@ bigfile_new (const char *filename)
                 return NULL;
         }
 
-        //if (bigfile_ctx_defaults_init (ctx))
-        //return NULL;
+        if (bigfile_ctx_defaults_init (ctx))
+                return NULL;
 
         bfs = calloc (1, sizeof (*bfs));
         if (!bfs)
