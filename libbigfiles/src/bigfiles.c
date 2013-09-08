@@ -18,32 +18,97 @@
   limitations under the License.
 */
 
+#include <unistd.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <inttypes.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <limits.h>
+
+#ifndef _CONFIG_H
+#define _CONFIG_H
+#include "config.h"
+#endif
+
 #include "bigfiles.h"
 #include "bigfiles-private.h"
+#include "uri.h"
 
-int32_t
-bigfile_get(void)
+static bURI *
+bigfile_parse_adapter_uri (const char *filename)
 {
-        return 1;
+        bURI *uri = NULL;
+
+        if (!filename) {
+                errno = -EINVAL;
+                goto out;
+        }
+
+        uri = bigfile_uri_parse(filename);
+        if (!uri) {
+                errno = -ENOMEM;
+                goto out;
+        }
+        if (!(is_valid_adapter(uri))) {
+                errno = -EINVAL;
+                goto out;
+        }
+
+        return uri;
+out:
+        if (uri)
+                BF_URI_FREE(uri);
+        return NULL;
 }
 
-int32_t
-bigfile_put(void)
+struct bigfiles *
+bigfile_new (const char *filename)
 {
-        return 1;
+        struct bigfiles *bfs = NULL;
+        bigfile_ctx_t   *ctx = NULL;
+        bURI            *uri = NULL;
+
+        ctx = bigfile_ctx_new();
+        if (!ctx) {
+                return NULL;
+        }
+
+        //if (bigfile_ctx_defaults_init (ctx))
+        //return NULL;
+
+        bfs = calloc (1, sizeof (*bfs));
+        if (!bfs)
+                return NULL;
+
+        uri = bigfile_parse_adapter_uri(filename);
+        if (!uri)
+                return NULL;
+
+        bfs->ctx = ctx;
+        bfs->adapter_scheme = strdup (uri->scheme);
+        bfs->adapter_port   = uri->port;
+        bfs->adapter_path   = strdup (uri->path);
+        bfs->adapter_server = strdup (uri->server);
+
+        BF_URI_FREE(uri);
+
+        return bfs;
 }
 
 
-int32_t
-bigfile_init (struct bfctx *bf)
+int
+bigfile_init (struct bigfiles *bfs)
 {
         int  ret = -1;
+
         return ret;
 }
 
 
 int
-bigfile_fini (struct bfctx *bf)
+bigfile_fini (struct bigfiles *bfs)
 {
         int  ret = -1;
         return ret;

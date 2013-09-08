@@ -20,8 +20,8 @@
 
 */
 
-#ifndef __GFAPI_H__
-#define __GFAPI_H__
+#ifndef __GLUSTER_H__
+#define __GLUSTER_H__
 
 #ifndef _CONFIG_H
 #define _CONFIG_H
@@ -30,35 +30,17 @@
 
 #include <api/glfs.h>
 
-typedef enum {
-        OPTION_TYPE_ANY = 0,
-        OPTION_TYPE_STR,
-        OPTION_TYPE_INT,
-        OPTION_TYPE_SIZET,
-        OPTION_TYPE_PERCENT,
-        OPTION_TYPE_PERCENT_OR_SIZET,
-        OPTION_TYPE_BOOL,
-        OPTION_TYPE_PATH,
-        OPTION_TYPE_TIME,
-        OPTION_TYPE_DOUBLE,
-        OPTION_TYPE_MAX,
-} volume_option_type_t;
+typedef struct BigFileGlusterState {
+        struct glfs *glfs;
+        struct glfs_fd *fd;
+} BigFileGlusterState;
 
-#define ZR_VOLUME_MAX_NUM_KEY    4
-#define ZR_OPTION_MAX_ARRAY_SIZE 64
+typedef struct GlusterConf {
+        char *server;
+        int port;
+        char *volname;
+        char *file;
+        char *transport;
+} GlusterConf;
 
-typedef struct volume_options {
-        char                    *key[ZR_VOLUME_MAX_NUM_KEY];
-        /* different key, same meaning */
-        volume_option_type_t    type;
-        double                  min;  /* 0 means no range */
-        double                  max;  /* 0 means no range */
-        char                    *value[ZR_OPTION_MAX_ARRAY_SIZE];
-        /* If specified, will check for one of
-           the value from this array */
-        char                    *default_value;
-        char                    *description; /* about the key */
-} volume_option_t;
-
-
-#endif/* __GFAPI_H__ */
+#endif/* __GLUSTER_H__ */

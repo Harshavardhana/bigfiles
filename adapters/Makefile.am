@@ -10,6 +10,7 @@ gluster_la_LIBADD = $(GFAPI_LIBS)
 
 noinst_HEADERS = gluster.h
 
+AM_CPPFLAGS =  -I$(top_srcdir)/libbigfiles/src
 AM_CFLAGS = -Wall $(GFAPI_CFLAGS)
 
 uninstall-local:

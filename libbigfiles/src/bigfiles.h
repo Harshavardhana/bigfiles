@@ -48,18 +48,58 @@
 
 __BEGIN_DECLS
 
-/* The bigfile context */
-struct bfctx;
-typedef struct bfctx bfctx_t;
+/* The Bigfile object.*/
+struct bigfiles;
+typedef struct bigfiles bigfiles_t;
 
 /*
+  SYNOPSIS
+
+  bigfile_new: Create a new API object.
+
+  DESCRIPTION
+
+  This is most likely the very first function you should use.
+  This function will create a new bigfiles_t API object in memory.
+
+  PARAMETERS
+
+  @filename: URI path specified as shown below
+
+  - Adapter type Gluster URI format - "gluster://1.2.3.4/testvol/filename"
+  - Adapter type local file format  - "file://mount_directory/filename"
+
+  RETURN VALUES
+
+  NULL   : Out of memory condition.
+  Others : Pointer to the newly created bigfiles_t API object.
+
 */
 
-int32_t bigfile_init (bfctx_t *);
-int32_t bigfile_fini (bfctx_t *);
+bigfiles_t *bigfile_new (const char *filename);
 
-int32_t bigfile_get(void);
-int32_t bigfile_put(void);
+/*
+  SYNOPSIS
+
+  bigfile_init: Initialize the 'bigfile API'
+
+  DESCRIPTION
+
+  This function initializes the bigfiles_t object.
+
+  PARAMETERS
+
+  @bfs: The bigfile API object to be initialized.
+
+  RETURN VALUES
+
+   0 : Success.
+  -1 : Failure.
+
+*/
+
+int32_t bigfile_init (bigfiles_t *);
+int32_t bigfile_fini (bigfiles_t *);
 
 __END_DECLS
 

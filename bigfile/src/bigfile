@@ -28,6 +28,7 @@ from os import environ, listdir, makedirs, utime, _exit as os_exit
 from os.path import basename, dirname, getmtime, getsize, isdir, join
 from sys import argv, exit, stderr, stdout
 from time import sleep, time, gmtime, strftime
+from utils import load_library
 
 try:
     import simplejson as json
@@ -61,11 +62,9 @@ put - -m or --modified is an option that will only put files
 '''.strip('\n')
 
 def put(parser, args):
-
     parser.add_option(
         '-C', '--chunk-size', dest='chunk_size', help='Will '
         'put files in chunks no larger than <size>')
-
     parser.add_option(
         '-m', '--modified', action='store_true', dest='modified',
         default=False, help='Will only put files that have changed since '
@@ -79,6 +78,14 @@ def put(parser, args):
 
     def _chunk():
         pass
+
+    def _uri():
+        bf_ref = load_library("bigfiles")
+        bf_ref.bigfile_uri_parse(args)
+
+
+def migrate(parser, args):
+    pass
 
 def abort(signum, frame):
     stderr.write(" Aborted\n")
