@@ -1,22 +1,21 @@
-/*
-  bigfiles.h: Common bigfiles structures
+/**
+ * Copyright (C) 2013 Red Hat, Inc. <http://www.redhat.com>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
 
-  Author: Harshavardhana <fharshav@redhat.com>
+ * http://www.apache.org/licenses/LICENSE-2.0
 
-  Copyright (c) 2013 Red Hat, Inc. <http://www.redhat.com>
-
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-
-  http://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
-*/
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Author: Harshavardhana <fharshav@redhat.com>
+ *
+ */
 
 #include <unistd.h>
 #include <string.h>
@@ -35,6 +34,7 @@
 #include "bigfiles.h"
 #include "bigfiles-private.h"
 #include "uri.h"
+#include "adapter.h"
 
 static bURI *
 bigfile_parse_adapter_uri (const char *filename)
@@ -99,10 +99,27 @@ bigfile_new (const char *filename)
 
 
 int
+bigfile_init_common (struct bigfiles *bfs)
+{
+        int  ret = -1;
+        adapter_t  *adp = NULL;
+
+        adp = adapter_new(bfs);
+        if (!adp)
+                goto out;
+
+        ret = adapter_dynload(adp);
+        if (!ret)
+                goto out;
+out:
+        return ret;
+}
+
+int
 bigfile_init (struct bigfiles *bfs)
 {
         int  ret = -1;
-
+        ret = bigfile_init_common(bfs);
         return ret;
 }
 

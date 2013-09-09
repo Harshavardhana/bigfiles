@@ -1,5 +1,4 @@
 /**
- *
  * Copyright (C) 2013 Red Hat, Inc. <http://www.redhat.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,26 +18,51 @@
 
 #include <stdio.h>
 #include <dlfcn.h>
-#include <netdb.h>
-#include <fnmatch.h>
 
 #include "adapter.h"
+
+adapter_t *
+adapter_new (struct bigfiles *bfs)
+{
+        adapter_t  *adp = NULL;
+
+        if (!bfs)
+                return NULL;
+
+        adp = calloc (1, sizeof(*adp));
+        if (!adp) {
+                errno = -ENOMEM;
+                return NULL;
+        }
+
+        adp->type = bfs->adapter_scheme;
+        return adp;
+}
 
 int
 adapter_dynload (adapter_t *adp)
 {
-        int                ret = -1;
+        int                ret = 0;
         char              *name = NULL;
         void              *handle = NULL;
 
         ret = asprintf (&name, "%s/%s.so", ADAPTERDIR, adp->type);
+        if (ret < 0)
+                goto out;
+
         handle = dlopen (name, RTLD_NOW|RTLD_GLOBAL);
+        if (!handle) {
+                ret = -1;
+                goto out;
+        }
 
         adp->dlhandle = handle;
-
         if (!(adp->fops = dlsym (handle, "fops"))) {
+                ret = -1;
                 goto out;
         }
 out:
+        if (name)
+                free (name);
         return ret;
 }

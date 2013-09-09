@@ -20,6 +20,11 @@
 #ifndef __ADAPTER_H__
 #define __ADAPTER_H__
 
+#include <stdlib.h>
+#include <errno.h>
+#include <string.h>
+#include "bigfiles-private.h"
+
 struct _adapter;
 typedef struct _adapter adapter_t;
 
@@ -38,17 +43,15 @@ struct adapter_fops {
 };
 
 struct _adapter {
-        /* Built during parsing */
-        char          *name;
-        char          *type;
-
+        char                  *type;
         /* Set after doing dlopen() */
         void                  *dlhandle;
-        struct adapter_fops    *fops;
+        struct adapter_fops   *fops;
 };
 
 typedef struct _adapter adapter_t;
 
 int adapter_dynload (adapter_t *adp);
+adapter_t *adapter_new (struct bigfiles *bfs);
 
 #endif /* __ADAPTER_H__ */
