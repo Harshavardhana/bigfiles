@@ -34,10 +34,10 @@
 #include "bigfiles.h"
 #include "bigfiles-private.h"
 #include "uri.h"
-#include "adapter.h"
+#include "driver.h"
 
 static bURI *
-bigfile_parse_adapter_uri (const char *filename)
+bigfile_parse_driver_uri (const char *filename)
 {
         bURI *uri = NULL;
 
@@ -51,7 +51,7 @@ bigfile_parse_adapter_uri (const char *filename)
                 errno = -ENOMEM;
                 goto out;
         }
-        if (!(is_valid_adapter(uri))) {
+        if (!(is_valid_driver(uri))) {
                 errno = -EINVAL;
                 goto out;
         }
@@ -82,15 +82,15 @@ bigfile_new (const char *filename)
         if (!bfs)
                 return NULL;
 
-        uri = bigfile_parse_adapter_uri(filename);
+        uri = bigfile_parse_driver_uri(filename);
         if (!uri)
                 return NULL;
 
         bfs->ctx = ctx;
-        bfs->adapter_scheme = strdup (uri->scheme);
-        bfs->adapter_port   = uri->port;
-        bfs->adapter_path   = strdup (uri->path);
-        bfs->adapter_server = strdup (uri->server);
+        bfs->driver_scheme = strdup (uri->scheme);
+        bfs->driver_port   = uri->port;
+        bfs->driver_path   = strdup (uri->path);
+        bfs->driver_server = strdup (uri->server);
 
         BF_URI_FREE(uri);
 
@@ -102,13 +102,13 @@ int
 bigfile_init_common (struct bigfiles *bfs)
 {
         int  ret = -1;
-        adapter_t  *adp = NULL;
+        driver_t  *adp = NULL;
 
-        adp = adapter_new(bfs);
+        adp = driver_new(bfs);
         if (!adp)
                 goto out;
 
-        ret = adapter_dynload(adp);
+        ret = driver_dynload(adp);
         if (!ret)
                 goto out;
 out:

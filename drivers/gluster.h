@@ -1,8 +1,4 @@
 /*
-  gfapi.h: Common exposed functions
-
-  Author: Harshavardhana <fharshav@redhat.com>
-
   Copyright (c) 2013 Red Hat, Inc. <http://www.redhat.com>
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 
-
+  Author: Harshavardhana <fharshav@redhat.com>
 */
 
 #ifndef __GLUSTER_H__

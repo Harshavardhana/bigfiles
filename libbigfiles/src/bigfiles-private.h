@@ -33,8 +33,8 @@ enum _bfs_boolean
 
 typedef enum _bfs_boolean bfs_boolean_t;
 
-#define ADAPTER_GLUSTER "gluster"
-#define ADAPTER_FILE    "file"
+#define DRIVER_GLUSTER "gluster"
+#define DRIVER_FILE    "file"
 
 struct _bigfile_ctx {
         char               *process_uuid;
@@ -44,16 +44,16 @@ typedef struct _bigfile_ctx bigfile_ctx_t;
 
 struct bigfiles;
 struct bigfiles {
-        char             *adapter_scheme;
-        int               adapter_port;
-        char             *adapter_path;
-        char             *adapter_server;
+        char             *driver_scheme;
+        int               driver_port;
+        char             *driver_path;
+        char             *driver_server;
         bigfile_ctx_t    *ctx;
 };
 
 bigfile_ctx_t *bigfile_ctx_new ();
 int bigfile_ctx_defaults_init (bigfile_ctx_t *ctx);
 
-bfs_boolean_t is_valid_adapter (bURI *uri);
+bfs_boolean_t is_valid_driver (bURI *uri);
 
 #endif /* !_BIGFILES_PRIVATE_H */

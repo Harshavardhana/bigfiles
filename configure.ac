@@ -35,7 +35,7 @@ AC_CONFIG_FILES([Makefile
                 bigfiles.pc
                 bigfile/Makefile
                 bigfile/src/Makefile
-                adapters/Makefile
+                drivers/Makefile
                 libbigfiles/Makefile
                 libbigfiles/src/Makefile
                 tests/Makefile

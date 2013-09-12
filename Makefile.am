@@ -1,6 +1,6 @@
 EXTRA_DIST = autogen.sh COPYING INSTALL README AUTHORS NEWS bigfiles.pc.in
 
-SUBDIRS = libbigfiles adapters $(BIGFILE_SUBDIR) tests
+SUBDIRS = libbigfiles drivers $(BIGFILE_SUBDIR) tests
 
 CLEANFILES = *~
 

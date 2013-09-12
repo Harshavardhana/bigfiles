@@ -160,7 +160,7 @@ static void bigfile_gluster_close(BigFileGlusterState *bs)
         glfs_fini(bs->glfs);
 }
 
-static adapter_fops fops = {
+static driver_fops fops = {
         .open             = bigfile_gluster_open,
         .close            = bigfile_gluster_close,
         .create           = bigfile_gluster_create,

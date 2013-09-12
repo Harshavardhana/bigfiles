@@ -19,12 +19,12 @@
 #include <stdio.h>
 #include <dlfcn.h>
 
-#include "adapter.h"
+#include "driver.h"
 
-adapter_t *
-adapter_new (struct bigfiles *bfs)
+driver_t *
+driver_new (struct bigfiles *bfs)
 {
-        adapter_t  *adp = NULL;
+        driver_t  *adp = NULL;
 
         if (!bfs)
                 return NULL;
@@ -35,18 +35,18 @@ adapter_new (struct bigfiles *bfs)
                 return NULL;
         }
 
-        adp->type = bfs->adapter_scheme;
+        adp->type = bfs->driver_scheme;
         return adp;
 }
 
 int
-adapter_dynload (adapter_t *adp)
+driver_dynload (driver_t *adp)
 {
         int                ret = 0;
         char              *name = NULL;
         void              *handle = NULL;
 
-        ret = asprintf (&name, "%s/%s.so", ADAPTERDIR, adp->type);
+        ret = asprintf (&name, "%s/%s.so", DRIVERDIR, adp->type);
         if (ret < 0)
                 goto out;
 

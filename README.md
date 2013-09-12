@@ -22,9 +22,9 @@ $ bigfile get [options] <FILENAME>
 $ bigfile put [options] <FILENAME>
 ~~~
 
-Migrate from one storage adapter another in parallel
+Migrate from one storage driver another in parallel
 ~~~
-$ bigfile --hosts <hostfile> migrate <old_storage_adapter> <new_storage_adapter>
+$ bigfile --hosts <hostfile> migrate <old_storage_driver> <new_storage_driver>
 ~~~
 
 Parallel Get/Put
@@ -49,7 +49,7 @@ bigfile_append(**)
 ...
 }
 ~~~
-Storage Adapter API
+Storage Driver API
 =====
 1. GlusterFS - gluster.so
 2. Local-FS - local-fs.so (Developers/Testing)

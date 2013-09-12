@@ -75,19 +75,19 @@ err:
 }
 
 bfs_boolean_t
-is_valid_adapter (bURI *uri)
+is_valid_driver (bURI *uri)
 {
         bfs_boolean_t val = _bfs_false;
 
         if (!uri)
                 return val;
 
-        if (!strcasecmp(uri->scheme, ADAPTER_GLUSTER))
+        if (!strcasecmp(uri->scheme, DRIVER_GLUSTER))
                 val = _bfs_true;
-        else if (!strcasecmp(uri->scheme, ADAPTER_FILE))
+        else if (!strcasecmp(uri->scheme, DRIVER_FILE))
                 val = _bfs_true;
         else
-                fprintf(stderr, "Unrecognized adapter type %s.\n",
+                fprintf(stderr, "Unrecognized driver type %s.\n",
                         uri->scheme);
         return val;
 }

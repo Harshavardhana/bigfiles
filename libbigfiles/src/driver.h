@@ -17,41 +17,41 @@
  *
  */
 
-#ifndef __ADAPTER_H__
-#define __ADAPTER_H__
+#ifndef __DRIVER_H__
+#define __DRIVER_H__
 
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
 #include "bigfiles-private.h"
 
-struct _adapter;
-typedef struct _adapter adapter_t;
+struct _driver;
+typedef struct _driver driver_t;
 
 typedef int32_t fd_t;
 
-typedef int32_t (*fop_open_t) (adapter_t *this, int32_t flags,
+typedef int32_t (*fop_open_t) (driver_t *this, int32_t flags,
                                fd_t *fd);
-typedef int32_t (*fop_create_t) (adapter_t *this, int32_t flags,
+typedef int32_t (*fop_create_t) (driver_t *this, int32_t flags,
                                  mode_t mode, mode_t umask, fd_t *fd);
-typedef int32_t (*fop_close_t)  (adapter_t *this, fd_t *fd);
+typedef int32_t (*fop_close_t)  (driver_t *this, fd_t *fd);
 
-struct adapter_fops {
+struct driver_fops {
         fop_close_t   close;
         fop_open_t    open;
         fop_create_t  create;
 };
 
-struct _adapter {
+struct _driver {
         char                  *type;
         /* Set after doing dlopen() */
         void                  *dlhandle;
-        struct adapter_fops   *fops;
+        struct driver_fops   *fops;
 };
 
-typedef struct _adapter adapter_t;
+typedef struct _driver driver_t;
 
-int adapter_dynload (adapter_t *adp);
-adapter_t *adapter_new (struct bigfiles *bfs);
+int driver_dynload (driver_t *adp);
+driver_t *driver_new (struct bigfiles *bfs);
 
-#endif /* __ADAPTER_H__ */
+#endif /* __DRIVER_H__ */

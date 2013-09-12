@@ -1,7 +1,7 @@
 CLEANFILES = *~
 
-adapters_LTLIBRARIES = gluster.la
-adaptersdir = $(libdir)/bigfiles/$(PACKAGE_VERSION)/adapters/
+drivers_LTLIBRARIES = gluster.la
+driversdir = $(libdir)/bigfiles/$(PACKAGE_VERSION)/drivers/
 
 gluster_la_SOURCES = gluster.c
 
@@ -14,4 +14,4 @@ AM_CPPFLAGS =  -I$(top_srcdir)/libbigfiles/src
 AM_CFLAGS = -Wall $(GFAPI_CFLAGS)
 
 uninstall-local:
-	rm -f $(DESTDIR)$(adaptersdir)/gluster.so
+	rm -f $(DESTDIR)$(driversdir)/gluster.so
