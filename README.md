@@ -7,7 +7,11 @@ Architecture
 
 ## Diagram
 <center>
-<img src="https://github.com/BigFiles/BigFiles/raw/master/BigFiles-Architecture.png" alt="BigFiles Architecture Diagram">
+<picture>
+    <source src=https://github.com/BigFiles/BigFiles/raw/master/BigFiles-Architecture.webp type=image/webp >
+    <source src=https://github.com/BigFiles/BigFiles/raw/master/BigFiles-Architecture.png type=image/png >
+    <img src="https://github.com/BigFiles/BigFiles/raw/master/BigFiles-Architecture.png" alt="BigFiles Architecture Diagram">
+</picture>
 </center>
 
 BigFile Format
