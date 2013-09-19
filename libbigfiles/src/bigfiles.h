@@ -77,7 +77,7 @@ typedef struct bigfiles bigfiles_t;
 
 */
 
-bigfiles_t *bigfile_new (const char *filename);
+bigfiles_t *bigfile_new (const char *uristr);
 
 /*
   SYNOPSIS

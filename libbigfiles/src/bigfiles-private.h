@@ -25,16 +25,6 @@
 #include <string.h>
 #include "uri.h"
 
-enum _bfs_boolean
-{
-        _bfs_false = 0,
-        _bfs_true = 1
-};
-
-typedef enum _bfs_boolean bfs_boolean_t;
-
-#define DRIVER_GLUSTER "gluster"
-#define DRIVER_FILE    "file"
 
 struct _bigfile_ctx {
         char               *process_uuid;
@@ -53,7 +43,5 @@ struct bigfiles {
 
 bigfile_ctx_t *bigfile_ctx_new ();
 int bigfile_ctx_defaults_init (bigfile_ctx_t *ctx);
-
-bfs_boolean_t is_valid_driver (bURI *uri);
 
 #endif /* !_BIGFILES_PRIVATE_H */

@@ -19,6 +19,7 @@
 #include <stdio.h>
 #include <dlfcn.h>
 
+#include "common.h"
 #include "driver.h"
 
 driver_t *
@@ -65,4 +66,24 @@ out:
         if (name)
                 free (name);
         return ret;
+}
+
+bfs_boolean_t
+is_driver_valid (const char *scheme)
+{
+        bfs_boolean_t val = _bfs_false;
+
+        if (!scheme) {
+                errno = -EINVAL;
+                return _bfs_false;
+        }
+
+        if (!strcasecmp(scheme, STORAGE_DRIVER_GLUSTER))
+                val = _bfs_true;
+        else if (!strcasecmp(scheme, STORAGE_DRIVER_FILE))
+                val = _bfs_true;
+        else
+                fprintf(stderr, "Unrecognized driver type %s.\n",
+                        scheme);
+        return val;
 }

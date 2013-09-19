@@ -37,21 +37,21 @@
 #include "driver.h"
 
 static bURI *
-bigfile_parse_driver_uri (const char *filename)
+bigfile_parse_driver_uri (const char *uristr)
 {
         bURI *uri = NULL;
 
-        if (!filename) {
+        if (!uristr) {
                 errno = -EINVAL;
                 goto out;
         }
 
-        uri = bigfile_uri_parse(filename);
+        uri = bigfile_uri_parse(uristr);
         if (!uri) {
                 errno = -ENOMEM;
                 goto out;
         }
-        if (!(is_valid_driver(uri))) {
+        if (!(is_driver_valid(uri->scheme))) {
                 errno = -EINVAL;
                 goto out;
         }
@@ -64,27 +64,32 @@ out:
 }
 
 struct bigfiles *
-bigfile_new (const char *filename)
+bigfile_new (const char *uristr)
 {
         struct bigfiles *bfs = NULL;
         bigfile_ctx_t   *ctx = NULL;
         bURI            *uri = NULL;
 
         ctx = bigfile_ctx_new();
-        if (!ctx) {
-                return NULL;
+        if (!ctx)
+                goto err;
+
+        if (bigfile_ctx_defaults_init (ctx)) {
+                errno = -ENOMEM;
+                goto err;
         }
 
-        if (bigfile_ctx_defaults_init (ctx))
-                return NULL;
-
         bfs = calloc (1, sizeof (*bfs));
-        if (!bfs)
-                return NULL;
+        if (!bfs) {
+                errno = -ENOMEM;
+                goto err;
+        }
 
-        uri = bigfile_parse_driver_uri(filename);
-        if (!uri)
-                return NULL;
+        uri = bigfile_parse_driver_uri(uristr);
+        if (!uri) {
+                errno = -EINVAL;
+                goto err;
+        }
 
         bfs->ctx = ctx;
         bfs->driver_scheme = strdup (uri->scheme);
@@ -95,10 +100,12 @@ bigfile_new (const char *filename)
         BF_URI_FREE(uri);
 
         return bfs;
+err:
+        return NULL;
 }
 
 
-int
+static int
 bigfile_init_common (struct bigfiles *bfs)
 {
         int  ret = -1;

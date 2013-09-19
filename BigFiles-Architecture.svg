@@ -14,7 +14,10 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.48.3.1 r9886"
-   sodipodi:docname="BigFiles-Architecture.svg">
+   sodipodi:docname="BigFiles-Architecture.svg"
+   inkscape:export-filename="/home/harsha/repos/BigFiles.git/BigFiles-Architecture.png"
+   inkscape:export-xdpi="138.82001"
+   inkscape:export-ydpi="138.82001">
   <defs
      id="defs4">
     <marker
@@ -79,13 +82,13 @@
      inkscape:pageshadow="2"
      inkscape:zoom="1.979899"
      inkscape:cx="367.98625"
-     inkscape:cy="453.76491"
+     inkscape:cy="583.49382"
      inkscape:document-units="px"
-     inkscape:current-layer="g6816"
+     inkscape:current-layer="g6512"
      showgrid="false"
-     inkscape:window-width="1855"
-     inkscape:window-height="1056"
-     inkscape:window-x="1431"
+     inkscape:window-width="1301"
+     inkscape:window-height="744"
+     inkscape:window-x="65"
      inkscape:window-y="24"
      inkscape:window-maximized="1" />
   <metadata
@@ -131,7 +134,7 @@
            y="655.61676"
            x="140.92349"
            id="tspan3762"
-           sodipodi:role="line">Storage Adapters</tspan></text>
+           sodipodi:role="line">Storage Drivers</tspan></text>
       <g
          id="g6497">
         <g

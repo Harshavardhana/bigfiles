@@ -32,6 +32,7 @@ bigfile_ctx_new ()
         ctx = calloc (1, sizeof (*ctx));
         if (!ctx) {
                 errno = -ENOMEM;
+                ctx = NULL;
                 goto out;
         }
 out:
@@ -64,30 +65,12 @@ generate_bigfiles_ctx_id (void)
 int
 bigfile_ctx_defaults_init (bigfile_ctx_t *ctx)
 {
-        int  ret = -1;
+        int  ret = 0;
         ctx->process_uuid = generate_bigfiles_ctx_id ();
         if (!ctx->process_uuid) {
+                ret = -1;
                 goto err;
         }
-        ret = 0;
 err:
         return ret;
-}
-
-bfs_boolean_t
-is_valid_driver (bURI *uri)
-{
-        bfs_boolean_t val = _bfs_false;
-
-        if (!uri)
-                return val;
-
-        if (!strcasecmp(uri->scheme, DRIVER_GLUSTER))
-                val = _bfs_true;
-        else if (!strcasecmp(uri->scheme, DRIVER_FILE))
-                val = _bfs_true;
-        else
-                fprintf(stderr, "Unrecognized driver type %s.\n",
-                        uri->scheme);
-        return val;
 }
