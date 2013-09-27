@@ -23,25 +23,27 @@
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
-#include "uri.h"
 
+struct bigfiles;
+
+#include "driver.h"
 
 struct _bigfile_ctx {
         char               *process_uuid;
+        driver_t           *driver;
 };
 
 typedef struct _bigfile_ctx bigfile_ctx_t;
 
-struct bigfiles;
 struct bigfiles {
         char             *driver_scheme;
-        int               driver_port;
-        char             *driver_path;
+        int32_t           driver_port;
+        char             *driver_volname;
         char             *driver_server;
         bigfile_ctx_t    *ctx;
 };
 
-bigfile_ctx_t *bigfile_ctx_new ();
-int bigfile_ctx_defaults_init (bigfile_ctx_t *ctx);
+bigfile_ctx_t *bigfile_ctx_new (void);
+int32_t bigfile_ctx_defaults_init (bigfile_ctx_t *);
 
 #endif /* !_BIGFILES_PRIVATE_H */

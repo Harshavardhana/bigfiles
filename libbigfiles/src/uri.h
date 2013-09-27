@@ -49,6 +49,8 @@
 #ifndef __URI_H__
 #define __URI_H__
 
+#include "common.h"
+
 /**
  * MAX_URI_LENGTH:
  *
@@ -203,12 +205,6 @@
          ISA_PCT_ENCODED(p) ||                                          \
          ISA_SUB_DELIM(p) ||                                            \
          ((*(p) == ':')) || ((*(p) == '@')))
-
-#define FREE(ptr)                               \
-        if (ptr != NULL) {                      \
-                free ((void *)ptr);             \
-                ptr = (void *)0xeeeeeeee;       \
-        }
 
 #define BF_URI_TRIM(uri)                        \
         if (uri != NULL) {                      \

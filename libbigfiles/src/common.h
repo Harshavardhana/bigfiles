@@ -1,6 +1,12 @@
 #ifndef _COMMON_H_
 #define _COMMON_H_
 
+#define FREE(ptr)                               \
+        if (ptr != NULL) {                      \
+                free ((void *)ptr);             \
+                ptr = (void *)0xeeeeeeee;       \
+        }
+
 enum _bfs_boolean
 {
         _bfs_false = 0,

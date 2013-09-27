@@ -86,7 +86,7 @@ bigfiles_t *bigfile_new (const char *uristr);
 
   DESCRIPTION
 
-  This function initializes the bigfiles_t object.
+  This function initializes the bigfiles_t structure.
 
   PARAMETERS
 
@@ -101,6 +101,49 @@ bigfiles_t *bigfile_new (const char *uristr);
 
 int32_t bigfile_init (bigfiles_t *);
 int32_t bigfile_fini (bigfiles_t *);
+
+
+/*
+  SYNOPSIS
+
+  bigfile_get: Retrieve a file from durable storage
+
+  DESCRIPTION
+
+  This function retrieves specified 'filename' from bigfiles_t structure
+
+  PARAMETERS
+
+  @bfs: The bigfile API populated with necessary arguments
+
+  RETURN VALUES
+
+   N : Success, number of bytes retrieved
+  -1 : Failure, errno set appropriately
+*/
+
+int32_t bigfile_get (bigfiles_t *);
+
+/*
+  SYNOPSIS
+
+  bigfile_put: Upload a file to durable storage
+
+  DESCRIPTION
+
+  This function uploads a specified 'filename' from bigfiles_t structure
+
+  PARAMETERS
+
+  @bfs: The bigfile API populated with necessary arguments
+
+  RETURN VALUES
+
+   N : Success, number of bytes uploaded
+  -1 : Failure, errno set appropriately
+*/
+
+int32_t bigfile_put (bigfiles_t *);
 
 __END_DECLS
 

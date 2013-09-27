@@ -34,6 +34,7 @@
 #include "bigfiles.h"
 #include "bigfiles-private.h"
 #include "uri.h"
+#include "common.h"
 #include "driver.h"
 
 static bURI *
@@ -94,7 +95,7 @@ bigfile_new (const char *uristr)
         bfs->ctx = ctx;
         bfs->driver_scheme = strdup (uri->scheme);
         bfs->driver_port   = uri->port;
-        bfs->driver_path   = strdup (uri->path);
+        bfs->driver_volname = strdup (uri->path);
         bfs->driver_server = strdup (uri->server);
 
         BF_URI_FREE(uri);
@@ -104,36 +105,50 @@ err:
         return NULL;
 }
 
+int32_t
+bigfile_put (struct bigfiles *bfs)
+{
+        int32_t ret = -1;
+        return ret;
+}
 
-static int
+int32_t
+bigfile_get (struct bigfiles *bfs)
+{
+        int32_t ret = -1;
+        return ret;
+}
+
+static int32_t
 bigfile_init_common (struct bigfiles *bfs)
 {
-        int  ret = -1;
-        driver_t  *adp = NULL;
+        int32_t    ret = 0;
+        driver_t  *driver = NULL;
 
-        adp = driver_new(bfs);
-        if (!adp)
+        driver = driver_new(bfs);
+        if (!driver) {
+                ret = -1;
                 goto out;
+        }
 
-        ret = driver_dynload(adp);
-        if (!ret)
-                goto out;
+        bfs->ctx->driver = driver;
 out:
+        if (driver)
+                FREE(driver);
+
         return ret;
 }
 
-int
+int32_t
 bigfile_init (struct bigfiles *bfs)
 {
-        int  ret = -1;
-        ret = bigfile_init_common(bfs);
-        return ret;
+        return bigfile_init_common(bfs);
 }
 
 
-int
+int32_t
 bigfile_fini (struct bigfiles *bfs)
 {
-        int  ret = -1;
+        int32_t  ret = -1;
         return ret;
 }

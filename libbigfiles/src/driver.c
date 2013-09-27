@@ -18,36 +18,22 @@
 
 #include <stdio.h>
 #include <dlfcn.h>
+#include <stdint.h>
+#include <errno.h>
+#include <strings.h>
+#include <stdlib.h>
 
 #include "common.h"
-#include "driver.h"
+#include "bigfiles-private.h"
 
-driver_t *
-driver_new (struct bigfiles *bfs)
-{
-        driver_t  *adp = NULL;
-
-        if (!bfs)
-                return NULL;
-
-        adp = calloc (1, sizeof(*adp));
-        if (!adp) {
-                errno = -ENOMEM;
-                return NULL;
-        }
-
-        adp->type = bfs->driver_scheme;
-        return adp;
-}
-
-int
-driver_dynload (driver_t *adp)
+static int32_t
+driver_dynload (driver_t *driver)
 {
         int                ret = 0;
         char              *name = NULL;
         void              *handle = NULL;
 
-        ret = asprintf (&name, "%s/%s.so", DRIVERDIR, adp->type);
+        ret = asprintf (&name, "%s/%s.so", DRIVERDIR, driver->type);
         if (ret < 0)
                 goto out;
 
@@ -57,8 +43,8 @@ driver_dynload (driver_t *adp)
                 goto out;
         }
 
-        adp->dlhandle = handle;
-        if (!(adp->fops = dlsym (handle, "fops"))) {
+        driver->dlhandle = handle;
+        if (!(driver->fops = dlsym (handle, "fops"))) {
                 ret = -1;
                 goto out;
         }
@@ -67,6 +53,31 @@ out:
                 free (name);
         return ret;
 }
+
+driver_t *
+driver_new (struct bigfiles *bfs)
+{
+        driver_t  *driver = NULL;
+
+        if (!bfs) {
+                errno = -EINVAL;
+                return NULL;
+        }
+
+        driver = calloc (1, sizeof(*driver));
+        if (!driver) {
+                errno = -ENOMEM;
+                return NULL;
+        }
+
+        driver->type = bfs->driver_scheme;
+
+        if (driver_dynload(driver) < 0)
+                return NULL;
+
+        return driver;
+}
+
 
 bfs_boolean_t
 is_driver_valid (const char *scheme)

@@ -25,7 +25,6 @@
 #include <string.h>
 
 #include "common.h"
-#include "bigfiles-private.h"
 
 struct _driver;
 typedef struct _driver driver_t;
@@ -58,8 +57,7 @@ typedef enum {
         DRIVER_FILE,
 } driver_type_t;
 
-int driver_dynload (driver_t *adp);
-driver_t *driver_new (struct bigfiles *bfs);
-bfs_boolean_t is_driver_valid (const char *scheme);
+driver_t *driver_new (struct bigfiles *);
+bfs_boolean_t is_driver_valid (const char *);
 
 #endif /* __DRIVER_H__ */
