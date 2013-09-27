@@ -80,8 +80,8 @@ def put(parser, args):
         pass
 
     def _uri():
-        bf_ref = load_library("bigfiles")
-        bf_ref.bigfile_uri_parse(args)
+        bf_ref = load_library("bigobjects")
+        bf_ref.bigobject_uri_parse(args)
 
 
 def migrate(parser, args):
@@ -135,7 +135,7 @@ Examples:
     signal.signal(signal.SIGINT, abort)
 
     if options.debug:
-        logger = logging.getLogger("bigfile")
+        logger = logging.getLogger("bigobject")
         logging.basicConfig(level=logging.DEBUG)
 
     parser.usage = globals()['%s_help' % args[0]]

@@ -1,0 +1,16 @@
+POC:
+
+- get/put interface (parallel)
+- args URI=gluster://server:port/volname filename=<filename>
+
+Design:
+
+GET/PUT API blocksize 64MB
+
+Future:
+----------------
+- Versioning
+
+- Authentication
+
+- BlinkDB integration

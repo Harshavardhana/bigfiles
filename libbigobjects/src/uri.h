@@ -267,18 +267,18 @@ struct _bURI {
 *                                                                      *
 ************************************************************************/
 
-int bigfile_uri_parse_into(bURI *, const char *);
-char *bigfile_uri_resolve_relative (const char *, const char *);
-bURI *bigfile_uri_parse(const char *);
-bURI *bigfile_uri_parse_raw(const char *, int);
-bURI *bigfile_uri_new(void);
-char *bigfile_uri_to_string(bURI *);
-char *bigfile_uri_string_unescape(const char *, int, char *);
-char *bigfile_uri_string_escape(const char *, const char *);
+int bigobject_uri_parse_into(bURI *, const char *);
+char *bigobject_uri_resolve_relative (const char *, const char *);
+bURI *bigobject_uri_parse(const char *);
+bURI *bigobject_uri_parse_raw(const char *, int);
+bURI *bigobject_uri_new(void);
+char *bigobject_uri_to_string(bURI *);
+char *bigobject_uri_string_unescape(const char *, int, char *);
+char *bigobject_uri_string_escape(const char *, const char *);
 
 /* Not used moved to uri-unused.c
-char *bigfile_uri_resolve(const char *, const char *);
-char *bigfile_uri_resolve_relative (const char *, const char *);
+char *bigobject_uri_resolve(const char *, const char *);
+char *bigobject_uri_resolve_relative (const char *, const char *);
 */
 
 #endif /* __URI_H__ */

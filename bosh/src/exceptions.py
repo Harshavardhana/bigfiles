@@ -17,7 +17,7 @@
 # Author: Harshavardhana <fharshav@redhat.com>
 #
 
-class BFException(Exception):
+class BOException(Exception):
 
     def __init__(self, msg, err):
         Exception.__init__(self, msg)

@@ -22,12 +22,12 @@
 #include <unistd.h>
 
 #include "uri.h"
-#include "bigfiles-private.h"
+#include "bigobjects-private.h"
 
-bigfile_ctx_t *
-bigfile_ctx_new ()
+bigobject_ctx_t *
+bigobject_ctx_new ()
 {
-        bigfile_ctx_t     *ctx = NULL;
+        bigobject_ctx_t     *ctx = NULL;
 
         ctx = calloc (1, sizeof (*ctx));
         if (!ctx) {
@@ -40,7 +40,7 @@ out:
 }
 
 static char *
-generate_bigfiles_ctx_id (void)
+generate_bigobject_ctx_id (void)
 {
         char           tmp_str[1024] = {0,};
         char           hostname[256] = {0,};
@@ -63,10 +63,10 @@ generate_bigfiles_ctx_id (void)
 }
 
 int
-bigfile_ctx_defaults_init (bigfile_ctx_t *ctx)
+bigobject_ctx_defaults_init (bigobject_ctx_t *ctx)
 {
         int  ret = 0;
-        ctx->process_uuid = generate_bigfiles_ctx_id ();
+        ctx->process_uuid = generate_bigobject_ctx_id ();
         if (!ctx->process_uuid) {
                 ret = -1;
                 goto err;

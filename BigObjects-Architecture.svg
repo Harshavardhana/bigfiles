@@ -82,15 +82,20 @@
      inkscape:pageshadow="2"
      inkscape:zoom="1.979899"
      inkscape:cx="367.98625"
-     inkscape:cy="583.49382"
+     inkscape:cy="414.28218"
      inkscape:document-units="px"
-     inkscape:current-layer="g6512"
-     showgrid="false"
+     inkscape:current-layer="g6618-5"
+     showgrid="true"
      inkscape:window-width="1301"
      inkscape:window-height="744"
      inkscape:window-x="65"
      inkscape:window-y="24"
-     inkscape:window-maximized="1" />
+     inkscape:window-maximized="1"
+     inkscape:snap-grids="true">
+    <inkscape:grid
+       type="xygrid"
+       id="grid3044" />
+  </sodipodi:namedview>
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -153,13 +158,13 @@
              transform="scale(1.0019945,0.99800948)"
              sodipodi:linespacing="125%"
              id="text3764"
-             y="688.1402"
-             x="153.42348"
+             y="688.42792"
+             x="152.87529"
              style="font-size:12.02393341px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
              xml:space="preserve"><tspan
                style="font-size:10.01994514px"
-               y="688.1402"
-               x="153.42348"
+               y="688.42792"
+               x="152.87529"
                id="tspan3766"
                sodipodi:role="line">LocalFS</tspan></text>
         </g>
@@ -207,15 +212,15 @@
              transform="scale(1.0019945,0.99800948)"
              sodipodi:linespacing="125%"
              id="text3764-9-2"
-             y="687.21484"
-             x="374.91306"
+             y="688.42792"
+             x="363.58261"
              style="font-size:12.02393341px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
              xml:space="preserve"><tspan
                style="font-size:10.01994514px"
-               y="687.21484"
-               x="374.91306"
+               y="688.42792"
+               x="363.58261"
                id="tspan3766-1-9"
-               sodipodi:role="line">HDFS</tspan></text>
+               sodipodi:role="line">Amazon S3</tspan></text>
         </g>
         <g
            id="g6745"
@@ -233,15 +238,15 @@
              transform="scale(1.0019945,0.99800948)"
              sodipodi:linespacing="125%"
              id="text3764-9-2-0"
-             y="688.22711"
-             x="491.85559"
+             y="688.42792"
+             x="497.18857"
              style="font-size:12.02393341px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
              xml:space="preserve"><tspan
                style="font-size:10.01994514px"
-               y="688.22711"
-               x="491.85559"
+               y="688.42792"
+               x="497.18857"
                id="tspan3766-1-9-7"
-               sodipodi:role="line">FutureFS</tspan></text>
+               sodipodi:role="line">Others</tspan></text>
         </g>
         <path
            style="fill:none;stroke:#000000;stroke-width:1.6451329;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:3.29026582, 3.29026582;stroke-dashoffset:0"
@@ -288,7 +293,7 @@
                y="577.59052"
                x="276.595"
                id="tspan6579"
-               sodipodi:role="line">BigFiles Library Interface</tspan></text>
+               sodipodi:role="line">BigObjects Library Interface</tspan></text>
         </g>
         <g
            id="g6791"
@@ -309,16 +314,16 @@
             <text
                xml:space="preserve"
                style="font-size:12px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-               x="-500.88348"
-               y="353.67307"
+               x="-508.06522"
+               y="353.99496"
                id="text6614"
                sodipodi:linespacing="125%"
                transform="matrix(0,-1,1,0,0,0)"><tspan
                  sodipodi:role="line"
                  id="tspan6616"
-                 x="-500.88348"
-                 y="353.67307"
-                 style="font-size:10px;font-weight:normal;-inkscape-font-specification:Sans">BigFile Shell</tspan></text>
+                 x="-508.06522"
+                 y="353.99496"
+                 style="font-size:10px;font-weight:normal;-inkscape-font-specification:Sans">BigObjects Shell</tspan></text>
           </g>
           <g
              transform="translate(-41.379587,4.420699)"
@@ -382,16 +387,16 @@
                id="rect6612-64"
                width="41.961624"
                height="90.534241"
-               x="329.90057"
-               y="421.33157"
+               x="334.24707"
+               y="421.64581"
                inkscape:export-filename="/home/harsha/repos/BigFiles.git/BigFiles-Architecture.png"
                inkscape:export-xdpi="138.82001"
                inkscape:export-ydpi="138.82001" />
             <text
                xml:space="preserve"
                style="font-size:12px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-               x="-506.43933"
-               y="353.67307"
+               x="-502.18005"
+               y="356.20868"
                id="text6614-7"
                sodipodi:linespacing="125%"
                transform="matrix(0,-1,1,0,0,0)"
@@ -400,9 +405,9 @@
                inkscape:export-ydpi="138.82001"><tspan
                  sodipodi:role="line"
                  id="tspan6616-8"
-                 x="-506.43933"
-                 y="353.67307"
-                 style="font-size:10px;font-weight:normal;-inkscape-font-specification:Sans">Future Bindings</tspan></text>
+                 x="-502.18005"
+                 y="356.20868"
+                 style="font-size:10px;font-weight:normal;-inkscape-font-specification:Sans">Other Bindings</tspan></text>
             <g
                id="g6816"
                transform="translate(0,4.0406105)">

@@ -21,20 +21,12 @@
 #include <string.h>
 #include <time.h>
 
-#include "gluster.h"
-#include "bigfiles.h"
+#include <api/glfs.h>
+
+#include "bigobjects.h"
 #include "uri.h"
 
-static void bigfile_gluster_gconf_free(GlusterConf *conf)
-{
-        free(conf->server);
-        free(conf->volname);
-        free(conf->file);
-        free(conf->transport);
-        free(conf);
-}
-
-static int gluster_volume_options(GlusterConf *conf, char *path)
+static int gluster_volume_options(struct bigobjects *bfs, char *path)
 {
         char *p, *q;
 
@@ -48,7 +40,7 @@ static int gluster_volume_options(GlusterConf *conf, char *path)
         if (*p == '\0') {
                 return -EINVAL;
         }
-        conf->volname = strndup(q, p - q);
+        ->volname = strndup(q, p - q);
 
         /* image */
         p += strspn(p, "/");
@@ -59,12 +51,13 @@ static int gluster_volume_options(GlusterConf *conf, char *path)
         return 0;
 }
 
-static int bigfile_gluster_uri_parse (GlusterConf *conf, const char *filename)
+static int bigobject_gluster_uri_parse (struct bigobjects *bfs,
+                                      const char *filename)
 {
         bURI *uri = NULL;
         int ret  = 0;
 
-        uri = bigfile_uri_parse(filename);
+        uri = bigobject_uri_parse(filename);
         if (!uri) {
                 return -EINVAL;
         }
@@ -91,13 +84,14 @@ out:
         return ret;
 }
 
-static struct glfs *bigfile_gluster_init(GlusterConf *conf, const char *filename)
+static struct glfs *bigobject_gluster_init (struct bigobjects *bfs,
+                                          const char *filename)
 {
         struct glfs *glfs = NULL;
         int ret;
         int old_errno;
 
-        ret = bigfile_gluster_uri_parse(conf, filename);
+        ret = bigobject_gluster_uri_parse(conf, filename);
         if (ret < 0) {
                 fprintf(stderr,"Usage: file=[filesystem][+transport]://[server[:port]]/"
                         "volname/file]");
@@ -144,24 +138,24 @@ out:
         return NULL;
 }
 
-static int bigfile_gluster_open(BigFileGlusterState *bs, int bf_adp_flags)
+static int bigobject_gluster_open()
 {
         return 0;
 }
 
-static int bigfile_gluster_create(const char *filename)
+static int bigobject_gluster_create(const char *filename)
 {
         return 0;
 }
 
-static void bigfile_gluster_close(BigFileGlusterState *bs)
+static void bigobject_gluster_close()
 {
         glfs_close(bs->fd);
         glfs_fini(bs->glfs);
 }
 
 static driver_fops fops = {
-        .open             = bigfile_gluster_open,
-        .close            = bigfile_gluster_close,
-        .create           = bigfile_gluster_create,
+        .open             = bigobject_gluster_open,
+        .close            = bigobject_gluster_close,
+        .create           = bigobject_gluster_create,
 };

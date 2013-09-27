@@ -1,11 +1,11 @@
-EXTRA_DIST = autogen.sh COPYING INSTALL README AUTHORS NEWS bigfiles.pc.in
+EXTRA_DIST = autogen.sh COPYING INSTALL README AUTHORS NEWS bigobjects.pc.in
 
-SUBDIRS = libbigfiles drivers $(BIGFILE_SUBDIR) tests
+SUBDIRS = libbigobjects drivers $(BIGOBJECT_SUBDIR) tests
 
 CLEANFILES = *~
 
 pkgconfigdir = @pkgconfigdir@
-pkgconfig_DATA = bigfiles.pc
+pkgconfig_DATA = bigobjects.pc
 
 gitclean: distclean
 	find . -name Makefile.in -exec rm -f {} \;

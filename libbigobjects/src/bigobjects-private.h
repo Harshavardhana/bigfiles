@@ -17,33 +17,33 @@
  *
  */
 
-#ifndef _BIGFILES_PRIVATE_H
-#define _BIGFILES_PRIVATE_H
+#ifndef _BIGOBJECTS_PRIVATE_H_
+#define _BIGOBJECTS_PRIVATE_H_
 
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
 
-struct bigfiles;
+struct bigobjects;
 
 #include "driver.h"
 
-struct _bigfile_ctx {
+struct _bigobject_ctx {
         char               *process_uuid;
         driver_t           *driver;
 };
 
-typedef struct _bigfile_ctx bigfile_ctx_t;
+typedef struct _bigobject_ctx bigobject_ctx_t;
 
-struct bigfiles {
+struct bigobjects {
         char             *driver_scheme;
         int32_t           driver_port;
         char             *driver_volname;
         char             *driver_server;
-        bigfile_ctx_t    *ctx;
+        bigobject_ctx_t    *ctx;
 };
 
-bigfile_ctx_t *bigfile_ctx_new (void);
-int32_t bigfile_ctx_defaults_init (bigfile_ctx_t *);
+bigobject_ctx_t *bigobject_ctx_new (void);
+int32_t bigobject_ctx_defaults_init (bigobject_ctx_t *);
 
-#endif /* !_BIGFILES_PRIVATE_H */
+#endif /* _BIGOBJECTS_PRIVATE_H_ */

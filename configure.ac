@@ -1,7 +1,7 @@
 dnl  Copyright (c) 2013 Red Hat, Inc. <http://www.redhat.com>
-dnl  This file is part of BigFiles.
+dnl  This object is part of BigObjects.
 dnl  Licensed under the Apache License, Version 2.0 (the "License");
-dnl  you may not use this file except in compliance with the License.
+dnl  you may not use this object except in compliance with the License.
 dnl  You may obtain a copy of the License at
 dnl         http://www.apache.org/licenses/LICENSE-2.0
 dnl  Unless required by applicable law or agreed to in writing, software
@@ -11,7 +11,7 @@ dnl  See the License for the specific language governing permissions and
 dnl  limitations under the License.
 
 
-AC_INIT([bigfiles],[0.1alpha],[fharshav@redhat.com],,[https://github.com/harshavardhana/bigfiles.git])
+AC_INIT([bigobjects],[0.1alpha],[fharshav@redhat.com],,[https://github.com/bigobjects/bigobjects.git])
 
 AM_INIT_AUTOMAKE
 
@@ -31,13 +31,13 @@ fi
 
 AC_CONFIG_HEADERS([config.h])
 
-AC_CONFIG_FILES([Makefile
-                bigfiles.pc
-                bigfile/Makefile
-                bigfile/src/Makefile
+AC_CONFIG_OBJECTS([Makeobject
+                bigobjects.pc
+                bosh/Makefile
+                bosh/src/Makefile
                 drivers/Makefile
-                libbigfiles/Makefile
-                libbigfiles/src/Makefile
+                libbigobjects/Makefile
+                libbigobjects/src/Makefile
                 tests/Makefile
                 tests/src/Makefile])
 
@@ -48,7 +48,7 @@ AC_DISABLE_STATIC
 AC_PROG_LIBTOOL
 
 AC_ARG_WITH(pkgconfigdir,
-            [  --with-pkgconfigdir=DIR      pkgconfig file in DIR @<:@LIBDIR/pkgconfig@:>@],
+            [  --with-pkgconfigdir=DIR      pkgconfig object in DIR @<:@LIBDIR/pkgconfig@:>@],
             [pkgconfigdir=$withval],
             [pkgconfigdir='${libdir}/pkgconfig'])
 AC_SUBST(pkgconfigdir)
@@ -130,17 +130,17 @@ AC_CHECK_HEADER([malloc.h], AC_DEFINE(HAVE_MALLOC_H, 1, [have malloc.h]))
 
 dnl Check the distribution
 BF_DISTRIBUTION=
-AC_CHECK_FILE([/etc/debian_version])
-AC_CHECK_FILE([/etc/SuSE-release])
-AC_CHECK_FILE([/etc/redhat-release])
+AC_CHECK_OBJECT([/etc/debian_version])
+AC_CHECK_OBJECT([/etc/SuSE-release])
+AC_CHECK_OBJECT([/etc/redhat-release])
 
-if test "x$ac_cv_file__etc_debian_version" = "xyes"; then
+if test "x$ac_cv_object__etc_debian_version" = "xyes"; then
    BF_DISTRIBUTION=Debian
 fi
-if test "x$ac_cv_file__etc_SuSE_release" = "xyes"; then
+if test "x$ac_cv_object__etc_SuSE_release" = "xyes"; then
    BF_DISTRIBUTION=SuSE
 fi
-if test "x$ac_cv_file__etc_redhat_release" = "xyes"; then
+if test "x$ac_cv_object__etc_redhat_release" = "xyes"; then
    BF_DISTRIBUTION=Redhat
 fi
 
@@ -193,8 +193,8 @@ if test "x$RLLIBS" != "x"; then
    BUILD_READLINE=yes
 fi
 
-dnl bigfile section - enabled by default
-BUILD_BIGFILE=no
+dnl bigobject section - enabled by default
+BUILD_BIGOBJECT=no
 have_python2=no
 have_Python_h=no
 
@@ -205,19 +205,19 @@ fi
 AC_CHECK_HEADERS([python$PYTHON_VERSION/Python.h],[have_Python_h=yes],[])
 
 if test "x$have_python2" = "xyes" -a "x$have_Python_h" = "xyes"; then
-   BUILD_BIGFILE=yes
+   BUILD_BIGOBJECT=yes
 else
-   AC_MSG_ERROR([bigfile requires python-devel/python-dev package - disabling proactively])
+   AC_MSG_ERROR([bigobject requires python-devel/python-dev package - disabling proactively])
 fi
 
-if test "x$BUILD_BIGFILE" = "xyes"; then
+if test "x$BUILD_BIGOBJECT" = "xyes"; then
    BUILD_PYTHON_INC=`$PYTHON -c "from distutils import sysconfig; print sysconfig.get_python_inc()"`
    BUILD_PYTHON_LIB=python$PYTHON_VERSION
-   BIGFILE_SUBDIR=bigfile
-   echo "building bigfile with -isystem $BUILD_PYTHON_INC -l $BUILD_PYTHON_LIB"
+   BIGOBJECT_SUBDIR=bigobject
+   echo "building bigobject with -isystem $BUILD_PYTHON_INC -l $BUILD_PYTHON_LIB"
    AC_SUBST(BUILD_PYTHON_INC)
    AC_SUBST(BUILD_PYTHON_LIB)
-   AC_SUBST(BIGFILE_SUBDIR)
+   AC_SUBST(BIGOBJECT_SUBDIR)
 fi
 
 AC_SUBST(BF_HOST_OS)
@@ -235,8 +235,8 @@ AC_SUBST([BF_CPPFLAGS])
 AC_OUTPUT
 
 echo
-echo "Bigfiles configure summary"
+echo "BigObjects configure summary"
 echo "==========================="
 echo "readline             : $BUILD_READLINE"
-echo "bigfile              : $BUILD_BIGFILE"
+echo "bigobject              : $BUILD_BIGOBJECT"
 echo

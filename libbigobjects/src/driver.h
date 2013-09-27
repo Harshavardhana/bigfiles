@@ -57,7 +57,7 @@ typedef enum {
         DRIVER_FILE,
 } driver_type_t;
 
-driver_t *driver_new (struct bigfiles *);
+driver_t *driver_new (struct bigobjects *);
 bfs_boolean_t is_driver_valid (const char *);
 
 #endif /* __DRIVER_H__ */

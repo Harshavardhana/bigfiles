@@ -240,7 +240,7 @@ done_cd:
 }
 
 /**
- * bigfile_uri_resolve:
+ * bigobject_uri_resolve:
  * @URI:  the URI instance found in the document
  * @base:  the base value
  *
@@ -256,7 +256,7 @@ done_cd:
  */
 
 char *
-bigfile_uri_resolve(const char *uri, const char *base)
+bigobject_uri_resolve(const char *uri, const char *base)
 {
         char *val = NULL;
         int ret, len, indx, cur, out;
@@ -276,10 +276,10 @@ bigfile_uri_resolve(const char *uri, const char *base)
                 ret = -1;
         else {
                 if (*uri) {
-                        ref = bigfile_uri_new();
+                        ref = bigobject_uri_new();
                         if (ref == NULL)
                                 goto done;
-                        ret = bigfile_uri_parse_into(ref, uri);
+                        ret = bigobject_uri_parse_into(ref, uri);
                 }
                 else
                         ret = 0;
@@ -296,14 +296,14 @@ bigfile_uri_resolve(const char *uri, const char *base)
         if (base == NULL)
                 ret = -1;
         else {
-                bas = bigfile_uri_new();
+                bas = bigobject_uri_new();
                 if (bas == NULL)
                         goto done;
-                ret = bigfile_uri_parse_into(bas, base);
+                ret = bigobject_uri_parse_into(bas, base);
         }
         if (ret != 0) {
                 if (ref)
-                        val = bigfile_uri_to_string(ref);
+                        val = bigobject_uri_to_string(ref);
                 goto done;
         }
         if (ref == NULL) {
@@ -314,7 +314,7 @@ bigfile_uri_resolve(const char *uri, const char *base)
                         free(bas->fragment);
                         bas->fragment = NULL;
                 }
-                val = bigfile_uri_to_string(bas);
+                val = bigobject_uri_to_string(bas);
                 goto done;
         }
 
@@ -330,7 +330,7 @@ bigfile_uri_resolve(const char *uri, const char *base)
          *    defined while still treating this as a reference to the current
          *    document.
          */
-        res = bigfile_uri_new();
+        res = bigobject_uri_new();
         if (res == NULL)
                 goto done;
         if ((ref->scheme == NULL) && (ref->path == NULL) &&
@@ -363,7 +363,7 @@ bigfile_uri_resolve(const char *uri, const char *base)
          *    scheme is inherited from the base URI's scheme component.
          */
         if (ref->scheme != NULL) {
-                val = bigfile_uri_to_string(ref);
+                val = bigobject_uri_to_string(ref);
                 goto done;
         }
         if (bas->scheme != NULL)
@@ -478,7 +478,7 @@ step_7:
          *    base URI, are recombined to give the absolute form of the URI
          *    reference.
          */
-        val = bigfile_uri_to_string(res);
+        val = bigobject_uri_to_string(res);
 
 done:
         if (ref != NULL)
@@ -491,7 +491,7 @@ done:
 }
 
 /**
- * bigfile_uri_resolve_relative:
+ * bigobject_uri_resolve_relative:
  * @URI:  the URI reference under consideration
  * @base:  the base value
  *
@@ -523,7 +523,7 @@ done:
  * error.
  */
 char *
-bigfile_uri_resolve_relative (const char *uri, const char * base)
+bigobject_uri_resolve_relative (const char *uri, const char * base)
 {
         char *val = NULL;
         int ret;
@@ -542,12 +542,12 @@ bigfile_uri_resolve_relative (const char *uri, const char * base)
         /*
          * First parse URI into a standard form
          */
-        ref = bigfile_uri_new ();
+        ref = bigobject_uri_new ();
         if (ref == NULL)
                 return NULL;
         /* If URI not already in "relative" form */
         if (uri[0] != '.') {
-                ret = bigfile_uri_parse_into (ref, uri);
+                ret = bigobject_uri_parse_into (ref, uri);
                 if (ret != 0)
                         goto done; /* Error in URI, return NULL */
         } else
@@ -560,11 +560,11 @@ bigfile_uri_resolve_relative (const char *uri, const char * base)
                 val = strdup (uri);
                 goto done;
         }
-        bas = bigfile_uri_new ();
+        bas = bigobject_uri_new ();
         if (bas == NULL)
                 goto done;
         if (base[0] != '.') {
-                ret = bigfile_uri_parse_into (bas, base);
+                ret = bigobject_uri_parse_into (bas, base);
                 if (ret != 0)
                         goto done;    /* Error in base, return NULL */
         } else
@@ -605,7 +605,7 @@ bigfile_uri_resolve_relative (const char *uri, const char * base)
                         if (*uptr == '/')
                                 uptr++;
                         /* exception characters from uri_to_string */
-                        val = bigfile_uri_string_escape(uptr, "/;&=+$,");
+                        val = bigobject_uri_string_escape(uptr, "/;&=+$,");
                 }
                 goto done;
         }
@@ -670,7 +670,7 @@ bigfile_uri_resolve_relative (const char *uri, const char * base)
         if (nbslash == 0) {
                 if (uptr != NULL)
                         /* exception characters from uri_to_string */
-                        val = bigfile_uri_string_escape(uptr, "/;&=+$,");
+                        val = bigobject_uri_string_escape(uptr, "/;&=+$,");
                 goto done;
         }
 
@@ -708,7 +708,7 @@ bigfile_uri_resolve_relative (const char *uri, const char * base)
         /* escape the freshly-built path */
         vptr = val;
         /* exception characters from uri_to_string */
-        val = bigfile_uri_string_escape(vptr, "/;&=+$,");
+        val = bigobject_uri_string_escape(vptr, "/;&=+$,");
         free(vptr);
 
 done:

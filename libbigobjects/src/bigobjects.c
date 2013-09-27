@@ -31,14 +31,14 @@
 #include "config.h"
 #endif
 
-#include "bigfiles.h"
-#include "bigfiles-private.h"
+#include "bigobjects.h"
+#include "bigobjects-private.h"
 #include "uri.h"
 #include "common.h"
 #include "driver.h"
 
 static bURI *
-bigfile_parse_driver_uri (const char *uristr)
+bigobject_parse_driver_uri (const char *uristr)
 {
         bURI *uri = NULL;
 
@@ -47,7 +47,7 @@ bigfile_parse_driver_uri (const char *uristr)
                 goto out;
         }
 
-        uri = bigfile_uri_parse(uristr);
+        uri = bigobject_uri_parse(uristr);
         if (!uri) {
                 errno = -ENOMEM;
                 goto out;
@@ -64,18 +64,18 @@ out:
         return NULL;
 }
 
-struct bigfiles *
-bigfile_new (const char *uristr)
+static struct bigobjects *
+bigobject_new (const char *uristr)
 {
-        struct bigfiles *bfs = NULL;
-        bigfile_ctx_t   *ctx = NULL;
+        struct bigobjects *bfs = NULL;
+        bigobject_ctx_t   *ctx = NULL;
         bURI            *uri = NULL;
 
-        ctx = bigfile_ctx_new();
+        ctx = bigobject_ctx_new();
         if (!ctx)
                 goto err;
 
-        if (bigfile_ctx_defaults_init (ctx)) {
+        if (bigobject_ctx_defaults_init (ctx)) {
                 errno = -ENOMEM;
                 goto err;
         }
@@ -86,7 +86,7 @@ bigfile_new (const char *uristr)
                 goto err;
         }
 
-        uri = bigfile_parse_driver_uri(uristr);
+        uri = bigobject_parse_driver_uri(uristr);
         if (!uri) {
                 errno = -EINVAL;
                 goto err;
@@ -106,21 +106,21 @@ err:
 }
 
 int32_t
-bigfile_put (struct bigfiles *bfs)
+bigobject_put (struct bigobjects *bfs)
 {
         int32_t ret = -1;
         return ret;
 }
 
 int32_t
-bigfile_get (struct bigfiles *bfs)
+bigobject_get (struct bigobjects *bfs)
 {
         int32_t ret = -1;
         return ret;
 }
 
 static int32_t
-bigfile_init_common (struct bigfiles *bfs)
+bigobject_init_common (struct bigobjects *bfs)
 {
         int32_t    ret = 0;
         driver_t  *driver = NULL;
@@ -136,19 +136,5 @@ out:
         if (driver)
                 FREE(driver);
 
-        return ret;
-}
-
-int32_t
-bigfile_init (struct bigfiles *bfs)
-{
-        return bigfile_init_common(bfs);
-}
-
-
-int32_t
-bigfile_fini (struct bigfiles *bfs)
-{
-        int32_t  ret = -1;
         return ret;
 }

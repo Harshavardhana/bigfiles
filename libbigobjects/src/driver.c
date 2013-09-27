@@ -24,7 +24,7 @@
 #include <stdlib.h>
 
 #include "common.h"
-#include "bigfiles-private.h"
+#include "bigobjects-private.h"
 
 static int32_t
 driver_dynload (driver_t *driver)
@@ -55,7 +55,7 @@ out:
 }
 
 driver_t *
-driver_new (struct bigfiles *bfs)
+driver_new (struct bigobjects *bfs)
 {
         driver_t  *driver = NULL;
 

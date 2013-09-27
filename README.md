@@ -1,6 +1,6 @@
 Introduction
 =====
-BigFiles - Very-large-file support for distributed storage systems.
+BigObjects - Petascale Object support for gluster, s3 and other distributed storage systems.
 
 Architecture
 =====
@@ -8,13 +8,13 @@ Architecture
 ## Diagram
 <center>
 <picture>
-    <source src=https://github.com/BigFiles/BigFiles/raw/master/BigFiles-Architecture.webp type=image/webp >
-    <source src=https://github.com/BigFiles/BigFiles/raw/master/BigFiles-Architecture.png type=image/png >
-    <img src="https://github.com/BigFiles/BigFiles/raw/master/BigFiles-Architecture.png" alt="BigFiles Architecture Diagram">
+    <source src=https://github.com/BigObjects/BigObjects/raw/master/BigObjects-Architecture.webp type=image/webp >
+    <source src=https://github.com/BigObjects/BigObjects/raw/master/BigObjects-Architecture.png type=image/png >
+    <img src="https://github.com/BigObjects/BigObjects/raw/master/BigObjects-Architecture.png" alt="BigObjects Architecture Diagram">
 </picture>
 </center>
 
-BigFile Format
+BigObject Format
 =====
 
 Command-line Interface
@@ -22,42 +22,38 @@ Command-line Interface
 
 Get/Put
 ~~~
-$ bigfile get [options] <FILENAME>
-$ bigfile put [options] <FILENAME>
+$ bigobject get [options] <FILENAME>
+$ bigobject put [options] <FILENAME>
 ~~~
 
 Migrate from one storage driver another in parallel
 ~~~
-$ bigfile --hosts <hostfile> migrate <old_storage_driver> <new_storage_driver>
+$ bigobject --hosts <hostfile> migrate <old_storage_driver> <new_storage_driver>
 ~~~
 
 Parallel Get/Put
 ~~~
-$ bigfile --parallel get [options] <FILENAME>
-$ bigfile --parallel put [options] <FILENAME>
+$ bigobject --parallel get [options] <FILENAME>
+$ bigobject --parallel put [options] <FILENAME>
 ~~~
 
 Usage:
 ~~~
-$ bigfile --help
+$ bigobject --help
 ~~~
 
-BigFile API
+BigObject API
 =====
 ~~~
-bigfile_fops {
-...
-bigfile_open(**)
-bigfile_close(**)
-bigfile_append(**)
-...
-}
+bigobject_put(**)
+bigobject_get(**)
+bigobject_delete(**)
 ~~~
-Storage Driver API
+
+Storage Drivers
 =====
 1. GlusterFS - gluster.so
-2. Local-FS - local-fs.so (Developers/Testing)
-3. HDFS - hdfs.so
+2. s3 - s3.so
 
 Security
 =====

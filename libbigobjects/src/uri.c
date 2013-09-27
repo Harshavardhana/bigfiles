@@ -53,7 +53,7 @@
 #include "uri.h"
 
 /**
- * bigfile_rfc3986_scheme:
+ * bigobject_rfc3986_scheme:
  * @uri:  pointer to an URI structure
  * @str:  pointer to the string to analyze
  *
@@ -65,7 +65,7 @@
  */
 
 static int
-bigfile_rfc3986_scheme(bURI *uri, const char **str)
+bigobject_rfc3986_scheme(bURI *uri, const char **str)
 {
         const char *cur = NULL;
 
@@ -88,7 +88,7 @@ bigfile_rfc3986_scheme(bURI *uri, const char **str)
 }
 
 /**
- * bigfile_rfc3986_fragment:
+ * bigobject_rfc3986_fragment:
  * @uri:  pointer to an URI structure
  * @str:  pointer to the string to analyze
  *
@@ -103,7 +103,7 @@ bigfile_rfc3986_scheme(bURI *uri, const char **str)
  * Returns 0 or the error code
  */
 static int
-bigfile_rfc3986_fragment(bURI *uri, const char **str)
+bigobject_rfc3986_fragment(bURI *uri, const char **str)
 {
         const char *cur = NULL;
 
@@ -122,7 +122,7 @@ bigfile_rfc3986_fragment(bURI *uri, const char **str)
                 if (uri->cleanup & 2)
                         uri->fragment = strndup(*str, cur - *str);
                 else
-                        uri->fragment = bigfile_uri_string_unescape(*str,
+                        uri->fragment = bigobject_uri_string_unescape(*str,
                                                                     cur - *str,
                                                                     NULL);
         }
@@ -132,7 +132,7 @@ bigfile_rfc3986_fragment(bURI *uri, const char **str)
 }
 
 /**
- * bigfile_rfc3986_query:
+ * bigobject_rfc3986_query:
  * @uri:  pointer to an URI structure
  * @str:  pointer to the string to analyze
  *
@@ -143,7 +143,7 @@ bigfile_rfc3986_fragment(bURI *uri, const char **str)
  * Returns 0 or the error code
  */
 static int
-bigfile_rfc3986_query(bURI *uri, const char **str)
+bigobject_rfc3986_query(bURI *uri, const char **str)
 {
         const char *cur = NULL;
 
@@ -161,7 +161,7 @@ bigfile_rfc3986_query(bURI *uri, const char **str)
                 if (uri->cleanup & 2)
                         uri->query = strndup(*str, cur - *str);
                 else
-                        uri->query = bigfile_uri_string_unescape(*str, cur - *str,
+                        uri->query = bigobject_uri_string_unescape(*str, cur - *str,
                                                          NULL);
                 /* Save the raw bytes of the query as well.
                  * See: http://mail.gnome.org/archives/xml/2007-April/thread.html#00114
@@ -175,7 +175,7 @@ bigfile_rfc3986_query(bURI *uri, const char **str)
 }
 
 /**
- * bigfile_rfc3986_port:
+ * bigobject_rfc3986_port:
  * @uri:  pointer to an URI structure
  * @str:  the string to analyze
  *
@@ -187,7 +187,7 @@ bigfile_rfc3986_query(bURI *uri, const char **str)
  * Returns 0 or the error code
  */
 static int
-bigfile_rfc3986_port(bURI *uri, const char **str)
+bigobject_rfc3986_port(bURI *uri, const char **str)
 {
         const char *cur = NULL;
         if (str == NULL)
@@ -210,7 +210,7 @@ bigfile_rfc3986_port(bURI *uri, const char **str)
 }
 
 /**
- * bigfile_rfc3986_user_info:
+ * bigobject_rfc3986_user_info:
  * @uri:  pointer to an URI structure
  * @str:  the string to analyze
  *
@@ -223,7 +223,7 @@ bigfile_rfc3986_port(bURI *uri, const char **str)
  */
 
 static int
-bigfile_rfc3986_user_info(bURI *uri, const char **str)
+bigobject_rfc3986_user_info(bURI *uri, const char **str)
 {
         const char *cur = NULL;
 
@@ -240,7 +240,7 @@ bigfile_rfc3986_user_info(bURI *uri, const char **str)
                         if (uri->cleanup & 2)
                                 uri->user = strndup(*str, cur - *str);
                         else
-                                uri->user = bigfile_uri_string_unescape(*str,
+                                uri->user = bigobject_uri_string_unescape(*str,
                                                                 cur - *str,
                                                                 NULL);
                 }
@@ -251,7 +251,7 @@ bigfile_rfc3986_user_info(bURI *uri, const char **str)
 }
 
 /**
- * bigfile_rfc3986_dec_octet:
+ * bigobject_rfc3986_dec_octet:
  * @str:  the string to analyze
  *
  *    dec-octet     = DIGIT                 ; 0-9
@@ -265,7 +265,7 @@ bigfile_rfc3986_user_info(bURI *uri, const char **str)
  * Returns 0 if found and skipped, 1 otherwise
  */
 static int
-bigfile_rfc3986_dec_octet(const char **str)
+bigobject_rfc3986_dec_octet(const char **str)
 {
         const char *cur = NULL;
         if (str == NULL)
@@ -292,7 +292,7 @@ bigfile_rfc3986_dec_octet(const char **str)
         return 0;
 }
 /**
- * bigfile_rfc3986_host:
+ * bigobject_rfc3986_host:
  * @uri:  pointer to an URI structure
  * @str:  the string to analyze
  *
@@ -307,7 +307,7 @@ bigfile_rfc3986_dec_octet(const char **str)
  * Returns 0 or the error code
  */
 static int
-bigfile_rfc3986_host(bURI *uri, const char **str)
+bigobject_rfc3986_host(bURI *uri, const char **str)
 {
         const char *cur  = NULL;
         const char *host = NULL;
@@ -336,20 +336,20 @@ bigfile_rfc3986_host(bURI *uri, const char **str)
          * try to parse an IPv4
          */
         if (ISA_DIGIT(cur)) {
-                if (bigfile_rfc3986_dec_octet(&cur) != 0)
+                if (bigobject_rfc3986_dec_octet(&cur) != 0)
                         goto notipv4;
                 if (*cur != '.')
                         goto notipv4;
                 cur++;
-                if (bigfile_rfc3986_dec_octet(&cur) != 0)
+                if (bigobject_rfc3986_dec_octet(&cur) != 0)
                         goto notipv4;
                 if (*cur != '.')
                         goto notipv4;
-                if (bigfile_rfc3986_dec_octet(&cur) != 0)
+                if (bigobject_rfc3986_dec_octet(&cur) != 0)
                         goto notipv4;
                 if (*cur != '.')
                         goto notipv4;
-                if (bigfile_rfc3986_dec_octet(&cur) != 0)
+                if (bigobject_rfc3986_dec_octet(&cur) != 0)
                         goto notipv4;
                 goto found;
         notipv4:
@@ -372,7 +372,7 @@ found:
                         if (uri->cleanup & 2)
                                 uri->server = strndup(host, cur - host);
                         else
-                                uri->server = bigfile_uri_string_unescape(host,
+                                uri->server = bigobject_uri_string_unescape(host,
                                                                   cur - host,
                                                                   NULL);
                 } else
@@ -383,7 +383,7 @@ found:
 }
 
 /**
- * bigfile_rfc3986_authority:
+ * bigobject_rfc3986_authority:
  * @uri:  pointer to an URI structure
  * @str:  the string to analyze
  *
@@ -395,7 +395,7 @@ found:
  * Returns 0 or the error code
  */
 static int
-bigfile_rfc3986_authority(bURI *uri, const char **str)
+bigobject_rfc3986_authority(bURI *uri, const char **str)
 {
         const char *cur = NULL;
         int ret         = 0;
@@ -405,17 +405,17 @@ bigfile_rfc3986_authority(bURI *uri, const char **str)
 
         cur = *str;
 
-        ret = bigfile_rfc3986_user_info(uri, &cur);
+        ret = bigobject_rfc3986_user_info(uri, &cur);
 
         if ((ret != 0) || (*cur != '@'))
                 cur = *str;
         else
                 cur++;
-        if (bigfile_rfc3986_host(uri, &cur) != 0)
+        if (bigobject_rfc3986_host(uri, &cur) != 0)
                 return 1;
         if (*cur == ':') {
                 cur++;
-                if (bigfile_rfc3986_port(uri, &cur) != 0)
+                if (bigobject_rfc3986_port(uri, &cur) != 0)
                         return 1;
         }
         *str = cur;
@@ -423,7 +423,7 @@ bigfile_rfc3986_authority(bURI *uri, const char **str)
 }
 
 /**
- * bigfile_rfc3986_segment:
+ * bigobject_rfc3986_segment:
  * @str:  the string to analyze
  * @forbid: an optional forbidden character
  * @empty: allow an empty segment
@@ -439,7 +439,7 @@ bigfile_rfc3986_authority(bURI *uri, const char **str)
  * Returns 0 or the error code
  */
 static int
-bigfile_rfc3986_segment(const char **str, char forbid, int empty)
+bigobject_rfc3986_segment(const char **str, char forbid, int empty)
 {
         const char *cur = NULL;
         int ret         = 0;
@@ -462,7 +462,7 @@ out:
 }
 
 /**
- * bigfile_rfc3986_path_ab_empty:
+ * bigobject_rfc3986_path_ab_empty:
  * @uri:  pointer to an URI structure
  * @str:  the string to analyze
  *
@@ -474,7 +474,7 @@ out:
  * Returns 0 or the error code
  */
 static int
-bigfile_rfc3986_path_ab_empty(bURI *uri, const char **str)
+bigobject_rfc3986_path_ab_empty(bURI *uri, const char **str)
 {
         const char *cur = NULL;
         int ret         = 0;
@@ -488,7 +488,7 @@ bigfile_rfc3986_path_ab_empty(bURI *uri, const char **str)
 
         while (*cur == '/') {
                 cur++;
-                ret = bigfile_rfc3986_segment(&cur, 0, 1);
+                ret = bigobject_rfc3986_segment(&cur, 0, 1);
                 if (ret != 0)
                         goto out;
         }
@@ -499,7 +499,7 @@ bigfile_rfc3986_path_ab_empty(bURI *uri, const char **str)
                         if (uri->cleanup & 2)
                                 uri->path = strndup(*str, cur - *str);
                         else
-                                uri->path = bigfile_uri_string_unescape(*str,
+                                uri->path = bigobject_uri_string_unescape(*str,
                                                                 cur - *str,
                                                                 NULL);
                 } else {
@@ -512,7 +512,7 @@ out:
 }
 
 /**
- * bigfile_rfc3986_path_absolute:
+ * bigobject_rfc3986_path_absolute:
  * @uri:  pointer to an URI structure
  * @str:  the string to analyze
  *
@@ -524,7 +524,7 @@ out:
  * Returns 0 or the error code
  */
 static int
-bigfile_rfc3986_path_absolute(bURI *uri, const char **str)
+bigobject_rfc3986_path_absolute(bURI *uri, const char **str)
 {
         const char *cur = NULL;
         int ret         = 0;
@@ -541,11 +541,11 @@ bigfile_rfc3986_path_absolute(bURI *uri, const char **str)
         }
 
         cur++;
-        ret = bigfile_rfc3986_segment(&cur, 0, 0);
+        ret = bigobject_rfc3986_segment(&cur, 0, 0);
         if (ret == 0) {
                 while (*cur == '/') {
                         cur++;
-                        ret = bigfile_rfc3986_segment(&cur, 0, 1);
+                        ret = bigobject_rfc3986_segment(&cur, 0, 1);
                         if (ret != 0)
                                 goto out;
                 }
@@ -557,7 +557,7 @@ bigfile_rfc3986_path_absolute(bURI *uri, const char **str)
                         if (uri->cleanup & 2)
                                 uri->path = strndup(*str, cur - *str);
                         else
-                                uri->path = bigfile_uri_string_unescape(*str,
+                                uri->path = bigobject_uri_string_unescape(*str,
                                                                 cur - *str,
                                                                 NULL);
                 } else {
@@ -570,7 +570,7 @@ out:
 }
 
 /**
- * bigfile_rfc3986_path_rootless:
+ * bigobject_rfc3986_path_rootless:
  * @uri:  pointer to an URI structure
  * @str:  the string to analyze
  *
@@ -582,19 +582,19 @@ out:
  * Returns 0 or the error code
  */
 static int
-bigfile_rfc3986_path_rootless(bURI *uri, const char **str)
+bigobject_rfc3986_path_rootless(bURI *uri, const char **str)
 {
         const char *cur;
         int ret;
 
         cur = *str;
 
-        ret = bigfile_rfc3986_segment(&cur, 0, 0);
+        ret = bigobject_rfc3986_segment(&cur, 0, 0);
         if (ret != 0)
                 return ret;
         while (*cur == '/') {
                 cur++;
-                ret = bigfile_rfc3986_segment(&cur, 0, 1);
+                ret = bigobject_rfc3986_segment(&cur, 0, 1);
                 if (ret != 0)
                         return ret;
         }
@@ -604,7 +604,7 @@ bigfile_rfc3986_path_rootless(bURI *uri, const char **str)
                         if (uri->cleanup & 2)
                                 uri->path = strndup(*str, cur - *str);
                         else
-                                uri->path = bigfile_uri_string_unescape(*str,
+                                uri->path = bigobject_uri_string_unescape(*str,
                                                                 cur - *str,
                                                                 NULL);
                 } else {
@@ -616,7 +616,7 @@ bigfile_rfc3986_path_rootless(bURI *uri, const char **str)
 }
 
 /**
- * bigfile_rfc3986_path_no_scheme:
+ * bigobject_rfc3986_path_no_scheme:
  * @uri:  pointer to an URI structure
  * @str:  the string to analyze
  *
@@ -628,20 +628,20 @@ bigfile_rfc3986_path_rootless(bURI *uri, const char **str)
  * Returns 0 or the error code
  */
 static int
-bigfile_rfc3986_path_no_scheme(bURI *uri, const char **str)
+bigobject_rfc3986_path_no_scheme(bURI *uri, const char **str)
 {
         const char *cur;
         int ret;
 
         cur = *str;
 
-        ret = bigfile_rfc3986_segment(&cur, ':', 0);
+        ret = bigobject_rfc3986_segment(&cur, ':', 0);
         if (ret != 0)
                 return ret;
 
         while (*cur == '/') {
                 cur++;
-                ret = bigfile_rfc3986_segment(&cur, 0, 1);
+                ret = bigobject_rfc3986_segment(&cur, 0, 1);
                 if (ret != 0)
                         return ret;
         }
@@ -652,7 +652,7 @@ bigfile_rfc3986_path_no_scheme(bURI *uri, const char **str)
                         if (uri->cleanup & 2)
                                 uri->path = strndup(*str, cur - *str);
                         else
-                                uri->path = bigfile_uri_string_unescape(*str,
+                                uri->path = bigobject_uri_string_unescape(*str,
                                                                 cur - *str,
                                                                 NULL);
                 } else {
@@ -664,7 +664,7 @@ bigfile_rfc3986_path_no_scheme(bURI *uri, const char **str)
 }
 
 /**
- * bigfile_rfc3986_hier_part:
+ * bigobject_rfc3986_hier_part:
  * @uri:  pointer to an URI structure
  * @str:  the string to analyze
  *
@@ -679,7 +679,7 @@ bigfile_rfc3986_path_no_scheme(bURI *uri, const char **str)
  * Returns 0 or the error code
  */
 static int
-bigfile_rfc3986_hier_part(bURI *uri, const char **str)
+bigobject_rfc3986_hier_part(bURI *uri, const char **str)
 {
         const char *cur;
         int ret;
@@ -688,17 +688,17 @@ bigfile_rfc3986_hier_part(bURI *uri, const char **str)
 
         if ((*cur == '/') && (*(cur + 1) == '/')) {
                 cur += 2;
-                ret = bigfile_rfc3986_authority(uri, &cur);
+                ret = bigobject_rfc3986_authority(uri, &cur);
                 if (ret != 0) return ret;
-                ret = bigfile_rfc3986_path_ab_empty(uri, &cur);
+                ret = bigobject_rfc3986_path_ab_empty(uri, &cur);
                 if (ret != 0) return ret;
                 *str = cur;
                 return 0;
         } else if (*cur == '/') {
-                ret = bigfile_rfc3986_path_absolute(uri, &cur);
+                ret = bigobject_rfc3986_path_absolute(uri, &cur);
                 if (ret != 0) return ret;
         } else if (ISA_PCHAR(cur)) {
-                ret = bigfile_rfc3986_path_rootless(uri, &cur);
+                ret = bigobject_rfc3986_path_rootless(uri, &cur);
                 if (ret != 0) return ret;
         } else {
                 /* path-empty is effectively empty */
@@ -712,7 +712,7 @@ bigfile_rfc3986_hier_part(bURI *uri, const char **str)
 }
 
 /**
- * bigfile_rfc3986_relative_ref:
+ * bigobject_rfc3986_relative_ref:
  * @uri:  pointer to an URI structure
  * @str:  the string to analyze
  *
@@ -728,21 +728,21 @@ bigfile_rfc3986_hier_part(bURI *uri, const char **str)
  * Returns 0 or the error code
  */
 static int
-bigfile_rfc3986_relative_ref(bURI *uri, const char *str)
+bigobject_rfc3986_relative_ref(bURI *uri, const char *str)
 {
         int ret;
 
         if ((*str == '/') && (*(str + 1) == '/')) {
                 str += 2;
-                ret = bigfile_rfc3986_authority(uri, &str);
+                ret = bigobject_rfc3986_authority(uri, &str);
                 if (ret != 0) return(ret);
-                ret = bigfile_rfc3986_path_ab_empty(uri, &str);
+                ret = bigobject_rfc3986_path_ab_empty(uri, &str);
                 if (ret != 0) return(ret);
         } else if (*str == '/') {
-                ret = bigfile_rfc3986_path_absolute(uri, &str);
+                ret = bigobject_rfc3986_path_absolute(uri, &str);
                 if (ret != 0) return(ret);
         } else if (ISA_PCHAR(str)) {
-                ret = bigfile_rfc3986_path_no_scheme(uri, &str);
+                ret = bigobject_rfc3986_path_no_scheme(uri, &str);
                 if (ret != 0) return(ret);
         } else {
                 /* path-empty is effectively empty */
@@ -754,13 +754,13 @@ bigfile_rfc3986_relative_ref(bURI *uri, const char *str)
 
         if (*str == '?') {
                 str++;
-                ret = bigfile_rfc3986_query(uri, &str);
+                ret = bigobject_rfc3986_query(uri, &str);
                 if (ret != 0)
                         return ret;
         }
         if (*str == '#') {
                 str++;
-                ret = bigfile_rfc3986_fragment(uri, &str);
+                ret = bigobject_rfc3986_fragment(uri, &str);
                 if (ret != 0)
                         return ret;
         }
@@ -773,7 +773,7 @@ bigfile_rfc3986_relative_ref(bURI *uri, const char *str)
 
 
 /**
- * bigfile_rfc3986:
+ * bigobject_rfc3986:
  * @uri:  pointer to an URI structure
  * @str:  the string to analyze
  *
@@ -785,29 +785,29 @@ bigfile_rfc3986_relative_ref(bURI *uri, const char *str)
  * Returns 0 or the error code
  */
 static int
-bigfile_rfc3986(bURI *uri, const char *str)
+bigobject_rfc3986(bURI *uri, const char *str)
 {
         int ret;
 
-        ret = bigfile_rfc3986_scheme(uri, &str);
+        ret = bigobject_rfc3986_scheme(uri, &str);
         if (ret != 0)
                 return ret;
         if (*str != ':')
                 return 1;
         str++;
 
-        ret = bigfile_rfc3986_hier_part(uri, &str);
+        ret = bigobject_rfc3986_hier_part(uri, &str);
         if (ret != 0)
                 return ret;
         if (*str == '?') {
                 str++;
-                ret = bigfile_rfc3986_query(uri, &str);
+                ret = bigobject_rfc3986_query(uri, &str);
                 if (ret != 0)
                         return ret;
         }
         if (*str == '#') {
                 str++;
-                ret = bigfile_rfc3986_fragment(uri, &str);
+                ret = bigobject_rfc3986_fragment(uri, &str);
                 if (ret != 0)
                         return ret;
         }
@@ -819,7 +819,7 @@ bigfile_rfc3986(bURI *uri, const char *str)
 }
 
 /**
- * bigfile_rfc3986_uri_reference:
+ * bigobject_rfc3986_uri_reference:
  * @uri:  pointer to an URI structure
  * @str:  the string to analyze
  *
@@ -831,7 +831,7 @@ bigfile_rfc3986(bURI *uri, const char *str)
  * Returns 0 or the error code
  */
 static int
-bigfile_rfc3986_uri_reference(bURI *uri, const char *str)
+bigobject_rfc3986_uri_reference(bURI *uri, const char *str)
 {
         int ret;
 
@@ -843,10 +843,10 @@ bigfile_rfc3986_uri_reference(bURI *uri, const char *str)
          * Try first to parse absolute refs, then fallback to relative if
          * it fails.
          */
-        ret = bigfile_rfc3986(uri, str);
+        ret = bigobject_rfc3986(uri, str);
         if (ret != 0) {
                 BF_URI_TRIM(uri);
-                ret = bigfile_rfc3986_relative_ref(uri, str);
+                ret = bigobject_rfc3986_relative_ref(uri, str);
                 if (ret != 0) {
                         BF_URI_TRIM(uri);
                         return ret;
@@ -861,7 +861,7 @@ bigfile_rfc3986_uri_reference(bURI *uri, const char *str)
  ************************************************************************/
 
 /**
- * bigfile_uri_parse_into:
+ * bigobject_uri_parse_into:
  * @uri:  pointer to an URI structure
  * @str:  the string to analyze
  *
@@ -873,13 +873,13 @@ bigfile_rfc3986_uri_reference(bURI *uri, const char *str)
  * Returns 0 or the error code
  */
 int
-bigfile_uri_parse_into(bURI *uri, const char *str)
+bigobject_uri_parse_into(bURI *uri, const char *str)
 {
-        return (bigfile_rfc3986_uri_reference(uri, str));
+        return (bigobject_rfc3986_uri_reference(uri, str));
 }
 
 /**
- * bigfile_uri_parse:
+ * bigobject_uri_parse:
  * @str:  the bURI string to analyze
  *
  * Parse an bURI based on RFC 3986
@@ -889,16 +889,16 @@ bigfile_uri_parse_into(bURI *uri, const char *str)
  * Returns a newly built bURI or NULL in case of error
  */
 bURI *
-bigfile_uri_parse(const char *str)
+bigobject_uri_parse(const char *str)
 {
         bURI *uri = NULL;
 
         if (str == NULL)
                 goto out;
 
-        uri = bigfile_uri_new();
+        uri = bigobject_uri_new();
         if (uri != NULL) {
-                if (bigfile_uri_parse_into(uri, str)) {
+                if (bigobject_uri_parse_into(uri, str)) {
                         BF_URI_FREE(uri);
                         goto out;
                 }
@@ -908,7 +908,7 @@ out:
 }
 
 /**
- * bigfile_uri_parse_raw:
+ * bigobject_uri_parse_raw:
  * @str:  the bURI string to analyze
  * @raw:  if 1 unescaping of bURI pieces are disabled
  *
@@ -919,18 +919,18 @@ out:
  * Returns a newly built URI or NULL in case of error
  */
 bURI *
-bigfile_uri_parse_raw(const char *str, int raw)
+bigobject_uri_parse_raw(const char *str, int raw)
 {
         bURI *uri = NULL;
 
         if (str == NULL)
                 goto out;
-        uri = bigfile_uri_new();
+        uri = bigobject_uri_new();
         if (uri != NULL) {
                 if (raw) {
                         uri->cleanup |= 2;
                 }
-                if (bigfile_uri_parse_into(uri, str)) {
+                if (bigobject_uri_parse_into(uri, str)) {
                         BF_URI_FREE(uri);
                         goto out;
                 }
@@ -940,14 +940,14 @@ out:
 }
 
 /**
- * bigfile_uri_new:
+ * bigobject_uri_new:
  *
  * Simply creates an empty URI
  *
  * Returns the new structure or NULL in case of error
  */
 bURI *
-bigfile_uri_new(void)
+bigobject_uri_new(void)
 {
         bURI *tmp_uri;
         tmp_uri = (bURI *) malloc(sizeof(bURI));
@@ -974,7 +974,7 @@ realloc2n(char *ret, int *max)
 }
 
 /**
- * bigfile_uri_to_string:
+ * bigobject_uri_to_string:
  * @uri:  pointer to an bURI
  *
  * Save the bURI as an escaped string
@@ -982,7 +982,7 @@ realloc2n(char *ret, int *max)
  * Returns a new string (to be deallocated by caller)
  */
 char *
-bigfile_uri_to_string(bURI *uri)
+bigobject_uri_to_string(bURI *uri)
 {
         char *ret = NULL;
         char *temp;
@@ -1243,7 +1243,7 @@ mem_error:
 
 
 /**
- * bigfile_uri_string_unescape:
+ * bigobject_uri_string_unescape:
  * @str:  the string to unescape
  * @len:   the length in bytes to unescape (or <= 0 to indicate full string)
  * @target:  optional destination buffer
@@ -1257,7 +1257,7 @@ mem_error:
  * of error
  */
 char *
-bigfile_uri_string_unescape(const char *str, int len, char *target)
+bigobject_uri_string_unescape(const char *str, int len, char *target)
 {
         char *ret, *out;
         const char *in;
@@ -1304,7 +1304,7 @@ bigfile_uri_string_unescape(const char *str, int len, char *target)
 }
 
 /**
- * bigfile_uri_string_escape:
+ * bigobject_uri_string_escape:
  * @str:  string to escape
  * @list: exception list string of chars not to escape
  *
@@ -1314,7 +1314,7 @@ bigfile_uri_string_unescape(const char *str, int len, char *target)
  * Returns a new escaped string or NULL in case of error.
  */
 char *
-bigfile_uri_string_escape(const char *str, const char *list)
+bigobject_uri_string_escape(const char *str, const char *list)
 {
         char *ret, ch;
         char *temp;
