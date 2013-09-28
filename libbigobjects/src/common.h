@@ -19,4 +19,6 @@ typedef enum _bfs_boolean bfs_boolean_t;
 #define STORAGE_DRIVER_GLUSTER "gluster"
 #define STORAGE_DRIVER_FILE "file"
 
+//TODO
+#define DEFAULT_DRIVERDIR "/usr/lib/bigobjects/driver"
 #endif /* _COMMON_H_ */

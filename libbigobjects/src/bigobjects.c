@@ -26,11 +26,6 @@
 #include <unistd.h>
 #include <limits.h>
 
-#ifndef _CONFIG_H
-#define _CONFIG_H
-#include "config.h"
-#endif
-
 #include "bigobjects.h"
 #include "bigobjects-private.h"
 #include "uri.h"

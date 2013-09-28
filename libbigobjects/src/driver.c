@@ -33,7 +33,7 @@ driver_dynload (driver_t *driver)
         char              *name = NULL;
         void              *handle = NULL;
 
-        ret = asprintf (&name, "%s/%s.so", DRIVERDIR, driver->type);
+        ret = asprintf (&name, "%s/%s.so", DEFAULT_DRIVERDIR, driver->type);
         if (ret < 0)
                 goto out;
 
