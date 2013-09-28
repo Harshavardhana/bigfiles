@@ -1,0 +1,11 @@
+get_filename_component(LIBBIGOBJECTS_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+
+if (EXISTS "${LIBBIGOBJECTS_CMAKE_DIR}/CMakeCache.txt")
+    # In build tree
+    include(${LIBBIGOBJECTS_CMAKE_DIR}/libbigobjects-build-tree-settings.cmake)
+else()
+    set(LIBBIGOBJECTS_INCLUDE_DIR @INCLUDE_INSTALL_DIR@)
+endif()
+
+set(LIBBIGOBJECTS_LIRBARY @LIB_INSTALL_DIR@/libbigobjects.so)
+set(LIBBIGOBJECTS_LIRBARIES @LIB_INSTALL_DIR@/libbigobjects.so)

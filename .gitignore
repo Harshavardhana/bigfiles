@@ -1,2 +1,9 @@
 build*
 *~
+*.a
+*.o
+.*
+*.swp
+*~$
+cscope.*
+tags
