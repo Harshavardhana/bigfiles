@@ -24,7 +24,7 @@
 #include <errno.h>
 #include <string.h>
 
-#include "common.h"
+#include "bigobjects/common.h"
 
 struct _driver;
 typedef struct _driver driver_t;
@@ -49,8 +49,6 @@ struct _driver {
         void                  *dlhandle;
         struct driver_fops   *fops;
 };
-
-typedef struct _driver driver_t;
 
 typedef enum {
         DRIVER_GLUSTER,

@@ -26,11 +26,14 @@
 #include <unistd.h>
 #include <limits.h>
 
-#include "bigobjects.h"
-#include "bigobjects-private.h"
-#include "uri.h"
-#include "common.h"
-#include "driver.h"
+#include <bigobjects/api.h>
+
+/* INTERNAL HEADERS */
+#include "bigobjects/uri.h"
+#include "bigobjects/common.h"
+#include "bigobjects/driver.h"
+#include "bigobjects/internal.h"
+/********************/
 
 static bURI *
 bigobject_parse_driver_uri (const char *uristr)
@@ -104,6 +107,7 @@ int32_t
 bigobject_put (struct bigobjects *bfs)
 {
         int32_t ret = -1;
+
         return ret;
 }
 

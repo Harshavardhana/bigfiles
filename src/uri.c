@@ -50,7 +50,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "uri.h"
+#include "bigobjects/uri.h"
 
 /**
  * bigobject_rfc3986_scheme:

@@ -46,9 +46,6 @@ int main(void){ return 0; }
 endif(CMAKE_COMPILER_IS_GNUCC AND NOT MINGW AND NOT OS2)
 
 # HEADER FILES
-check_include_file(argp.h HAVE_ARGP_H)
-check_include_file(pty.h HAVE_PTY_H)
-check_include_file(termios.h HAVE_TERMIOS_H)
 check_include_file(unistd.h HAVE_UNISTD_H)
 
 if (WIN32)
@@ -59,52 +56,20 @@ if (WIN32)
   check_include_files("winsock2.h;ws2tcpip.h" HAVE_WS2TCPIP_H)
 endif (WIN32)
 
-set(CMAKE_REQUIRED_INCLUDES ${OPENSSL_INCLUDE_DIRS})
-check_include_file(openssl/aes.h HAVE_OPENSSL_AES_H)
-
-set(CMAKE_REQUIRED_INCLUDES ${OPENSSL_INCLUDE_DIRS})
-check_include_file(openssl/blowfish.h HAVE_OPENSSL_BLOWFISH_H)
-
-set(CMAKE_REQUIRED_INCLUDES ${OPENSSL_INCLUDE_DIRS})
-check_include_file(openssl/des.h HAVE_OPENSSL_DES_H)
-
-set(CMAKE_REQUIRED_INCLUDES ${OPENSSL_INCLUDE_DIRS})
-check_include_file(openssl/ecdh.h HAVE_OPENSSL_ECDH_H)
-
-set(CMAKE_REQUIRED_INCLUDES ${OPENSSL_INCLUDE_DIRS})
-check_include_file(openssl/ec.h HAVE_OPENSSL_EC_H)
-
-set(CMAKE_REQUIRED_INCLUDES ${OPENSSL_INCLUDE_DIRS})
-check_include_file(openssl/ecdsa.h HAVE_OPENSSL_ECDSA_H)
-
 if (CMAKE_HAVE_PTHREAD_H)
   set(HAVE_PTHREAD_H 1)
 endif (CMAKE_HAVE_PTHREAD_H)
-
-if (NOT WITH_GCRYPT)
-    if (HAVE_OPENSSL_EC_H AND HAVE_OPENSSL_ECDSA_H)
-        set(HAVE_OPENSSL_ECC 1)
-    endif (HAVE_OPENSSL_EC_H AND HAVE_OPENSSL_ECDSA_H)
-
-    if (HAVE_OPENSSL_ECC)
-        set(HAVE_ECC 1)
-    endif (HAVE_OPENSSL_ECC)
-endif (NOT WITH_GCRYPT)
 
 # FUNCTIONS
 
 check_function_exists(strncpy HAVE_STRNCPY)
 check_function_exists(vsnprintf HAVE_VSNPRINTF)
 check_function_exists(snprintf HAVE_SNPRINTF)
-check_function_exists(poll HAVE_POLL)
-check_function_exists(select HAVE_SELECT)
-check_function_exists(getaddrinfo HAVE_GETADDRINFO)
 check_function_exists(ntohll HAVE_NTOHLL)
 check_function_exists(htonll HAVE_HTONLL)
 
 if (WIN32)
     check_function_exists(_strtoui64 HAVE__STRTOUI64)
-
     check_function_exists(_vsnprintf_s HAVE__VSNPRINTF_S)
     check_function_exists(_vsnprintf HAVE__VSNPRINTF)
     check_function_exists(_snprintf HAVE__SNPRINTF)
@@ -154,19 +119,6 @@ endif (UNIX)
 
 set(LIBBIGOBJECTS_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} CACHE INTERNAL "libbigobjects required system libraries")
 
-# LIBRARIES
-if (OPENSSL_FOUND)
-  set(HAVE_LIBCRYPTO 1)
-endif (OPENSSL_FOUND)
-
-if (GCRYPT_FOUND)
-    set(HAVE_LIBGCRYPT 1)
-    if (GCRYPT_VERSION VERSION_GREATER "1.4.6")
-        #set(HAVE_GCRYPT_ECC 1)
-        #set(HAVE_ECC 1)
-    endif (GCRYPT_VERSION VERSION_GREATER "1.4.6")
-endif (GCRYPT_FOUND)
-
 if (CMAKE_HAVE_THREADS_LIBRARY)
     if (CMAKE_USE_PTHREADS_INIT)
         set(HAVE_PTHREAD 1)
@@ -200,17 +152,13 @@ int main(void)
     return 0;
 }" HAVE_GCC_VOLATILE_MEMORY_PROTECTION)
 
-if (WITH_DEBUG_CRYPTO)
-  set(DEBUG_CRYPTO 1)
-endif (WITH_DEBUG_CRYPTO)
-
 if (WITH_DEBUG_CALLTRACE)
   set(DEBUG_CALLTRACE 1)
 endif (WITH_DEBUG_CALLTRACE)
 
-if (WITH_GSSAPI AND NOT GSSAPI_FOUND)
-    set(WITH_GSSAPI 0)
-endif (WITH_GSSAPI AND NOT GSSAPI_FOUND)
+if (WITH_GFAPI AND NOT GFAPI_FOUND)
+    set(WITH_GFAPI 0)
+endif (WITH_GFAPI AND NOT GFAPI_FOUND)
 
 # ENDIAN
 if (NOT WIN32)

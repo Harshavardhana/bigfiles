@@ -41,7 +41,7 @@ include(MacroAddPlugin)
 include(MacroCopyFile)
 
 if (WITH_GFAPI)
-  find_package(glusterfs-api 5 REQUIRED)
+  find_package(gfapi 0 REQUIRED)
   if (NOT GFAPI_FOUND)
     message(FATAL_ERROR "Could not find GlusterFS API")
   endif (NOT GFAPI_FOUND)
@@ -54,8 +54,9 @@ find_package(Threads)
 configure_file(config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
 add_subdirectory(bosh)
-add_subdirectory(libbigobjects)
-add_subdirectory(drivers)
+add_subdirectory(include)
+add_subdirectory(src)
+#add_subdirectory(drivers)
 
 # pkg-config file
 configure_file(libbigobjects.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/libbigobjects.pc)

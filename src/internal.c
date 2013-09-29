@@ -21,8 +21,8 @@
 #include <inttypes.h>
 #include <unistd.h>
 
-#include "uri.h"
-#include "bigobjects-private.h"
+#include "bigobjects/uri.h"
+#include "bigobjects/internal.h"
 
 bigobject_ctx_t *
 bigobject_ctx_new ()
@@ -44,7 +44,7 @@ generate_bigobject_ctx_id (void)
 {
         char           tmp_str[1024] = {0,};
         char           hostname[256] = {0,};
-        struct timeval tv = {0,};
+        struct timeval tv = {0,0};
 
         if (gettimeofday (&tv, NULL) == -1) {
                 fprintf (stderr, "gettimeofday: failed %s",

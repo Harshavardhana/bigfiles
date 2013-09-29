@@ -38,8 +38,8 @@ if (WITH_STATIC_LIB)
 endif (WITH_STATIC_LIB)
 
 SET (libbigobjects_SRCS
-  bigobjects.c
-  bigobjects-private.c
+  api.c
+  internal.c
   driver.c
   uri.c)
 

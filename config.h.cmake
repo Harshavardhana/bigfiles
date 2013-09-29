@@ -14,50 +14,10 @@
 
 /************************** HEADER FILES *************************/
 
-/* Define to 1 if you have the <argp.h> header file. */
-#cmakedefine HAVE_ARGP_H 1
-
-/* Define to 1 if you have the <pty.h> header file. */
-#cmakedefine HAVE_PTY_H 1
-
-/* Define to 1 if you have the <termios.h> header file. */
-#cmakedefine HAVE_TERMIOS_H 1
-
-/* Define to 1 if you have the <unistd.h> header file. */
-#cmakedefine HAVE_UNISTD_H 1
-
-/* Define to 1 if you have the <openssl/aes.h> header file. */
-#cmakedefine HAVE_OPENSSL_AES_H 1
-
-/* Define to 1 if you have the <wspiapi.h> header file. */
-#cmakedefine HAVE_WSPIAPI_H 1
-
-/* Define to 1 if you have the <openssl/blowfish.h> header file. */
-#cmakedefine HAVE_OPENSSL_BLOWFISH_H 1
-
-/* Define to 1 if you have the <openssl/des.h> header file. */
-#cmakedefine HAVE_OPENSSL_DES_H 1
-
-/* Define to 1 if you have the <openssl/ecdh.h> header file. */
-#cmakedefine HAVE_OPENSSL_ECDH_H 1
-
-/* Define to 1 if you have the <openssl/ec.h> header file. */
-#cmakedefine HAVE_OPENSSL_EC_H 1
-
-/* Define to 1 if you have the <openssl/ecdsa.h> header file. */
-#cmakedefine HAVE_OPENSSL_ECDSA_H 1
-
 /* Define to 1 if you have the <pthread.h> header file. */
 #cmakedefine HAVE_PTHREAD_H 1
 
-/* Define to 1 if you have eliptic curve cryptography in openssl */
-#cmakedefine HAVE_OPENSSL_ECC 1
-
-/* Define to 1 if you have eliptic curve cryptography in gcrypt */
-#cmakedefine HAVE_GCRYPT_ECC 1
-
-/* Define to 1 if you have eliptic curve cryptography */
-#cmakedefine HAVE_ECC 1
+#cmakedefine HAVE_GFAPI_H 1
 
 /*************************** FUNCTIONS ***************************/
 
@@ -78,6 +38,9 @@
 
 /* Define to 1 if you have the `_vsnprintf_s' function. */
 #cmakedefine HAVE__VSNPRINTF_S 1
+
+/* Define to 1 if you have the `asprintf' function. */
+#cmakedefine HAVE_ASPRINTF 1
 
 /* Define to 1 if you have the `strncpy' function. */
 #cmakedefine HAVE_STRNCPY 1

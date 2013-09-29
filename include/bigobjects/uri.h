@@ -49,7 +49,7 @@
 #ifndef __URI_H__
 #define __URI_H__
 
-#include "common.h"
+#include "bigobjects/common.h"
 
 /**
  * MAX_URI_LENGTH:
