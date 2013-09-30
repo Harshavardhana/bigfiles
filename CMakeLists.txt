@@ -1,4 +1,4 @@
-project(BigObjects C)
+project(bigobjects C)
 cmake_minimum_required(VERSION 2.6)
 
 # global needed variables

@@ -8,13 +8,6 @@ find_path(GFAPI_ROOT_DIR
 )
 mark_as_advanced(GFAPI_ROOT_DIR)
 
-find_path(GFAPI_INCLUDE_DIR
-    NAMES
-        api/glfs.h
-    PATHS
-        ${GSSAPI_ROOT_DIR}/include
-)
-
 if (UNIX)
   find_package(PkgConfig REQUIRED)
   if (PKG_CONFIG_FOUND)
