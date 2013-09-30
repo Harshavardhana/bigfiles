@@ -73,15 +73,6 @@ if (UNIX OR OS2)
     CACHE PATH "The install dir for translations (default prefix/share/locale)"
   )
 
-  SET(XDG_APPS_DIR
-    "${SHARE_INSTALL_PREFIX}/applications/"
-    CACHE PATH "The XDG apps dir"
-  )
-  SET(XDG_DIRECTORY_DIR
-    "${SHARE_INSTALL_PREFIX}/desktop-directories"
-    CACHE PATH "The XDG directory"
-  )
-
   SET(SYSCONF_INSTALL_DIR
     "${EXEC_INSTALL_PREFIX}/etc"
     CACHE PATH "The ${APPLICATION_NAME} sysconfig install dir (default prefix/etc)"
