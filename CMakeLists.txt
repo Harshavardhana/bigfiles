@@ -56,7 +56,7 @@ configure_file(config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 add_subdirectory(bosh)
 add_subdirectory(include)
 add_subdirectory(src)
-#add_subdirectory(drivers)
+add_subdirectory(drivers)
 
 # pkg-config file
 configure_file(libbigobjects.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/libbigobjects.pc)

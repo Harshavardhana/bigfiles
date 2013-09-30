@@ -22,117 +22,59 @@
 #include <time.h>
 
 #include <api/glfs.h>
+#include <bigobjects/api.h>
 
-#include "bigobjects.h"
-#include "uri.h"
-
-static int gluster_volume_options(struct bigobjects *bfs, char *path)
+static
+struct glfs *bigobject_gluster_init (bigobjects_t *bfs)
 {
-        char *p, *q;
-
-        if (!path) {
-                return -EINVAL;
-        }
-
-        /* volume */
-        p = q = path + strspn(path, "/");
-        p += strcspn(p, "/");
-        if (*p == '\0') {
-                return -EINVAL;
-        }
-        ->volname = strndup(q, p - q);
-
-        /* image */
-        p += strspn(p, "/");
-        if (*p == '\0') {
-                return -EINVAL;
-        }
-        conf->file = strdup(p);
-        return 0;
-}
-
-static int bigobject_gluster_uri_parse (struct bigobjects *bfs,
-                                      const char *filename)
-{
-        bURI *uri = NULL;
-        int ret  = 0;
-
-        uri = bigobject_uri_parse(filename);
-        if (!uri) {
-                return -EINVAL;
-        }
-
-        /* transport */
-        if (!strcmp(uri->scheme, "gluster")) {
-                conf->transport = strdup("tcp");
-        } else if (!strcmp(uri->scheme, "gluster+tcp")) {
-                conf->transport = strdup("tcp");
-        } else {
-                ret = -EINVAL;
-                goto out;
-        }
-
-        ret = gluster_volume_options(conf, uri->path);
-        if (ret < 0) {
-                goto out;
-        }
-
-        conf->server = strdup(uri->server);
-        conf->port = uri->port;
-out:
-        BF_URI_FREE(uri);
-        return ret;
-}
-
-static struct glfs *bigobject_gluster_init (struct bigobjects *bfs,
-                                          const char *filename)
-{
-        struct glfs *glfs = NULL;
-        int ret;
+        glfs_t *glfs = NULL;
         int old_errno;
+        int ret = 0;
 
-        ret = bigobject_gluster_uri_parse(conf, filename);
-        if (ret < 0) {
+        if (!bfs) {
                 fprintf(stderr,"Usage: file=[filesystem][+transport]://[server[:port]]/"
                         "volname/file]");
-                errno = -ret;
+                errno = -EINVAL;
                 goto out;
         }
 
-        glfs = glfs_new(conf->volname);
-        if (!glfs) {
-                goto out;
-        }
+        glfs = glfs_new (bfs->driver_volname);
 
-        ret = glfs_set_volfile_server(glfs, conf->transport, conf->server,
-                                      conf->port);
-        if (ret < 0) {
+        if (!glfs)
                 goto out;
-        }
+
+        ret = glfs_set_volfile_server (glfs, "tcp",
+                                       bfs->driver_server,
+                                       bfs->driver_port);
+        if (ret < 0)
+                goto out;
 
         /*
-         * TODO: Use GF_LOG_ERROR instead of hard code value of 4 here when
+         * FIXME: Use GF_LOG_ERROR instead of hard code value of 4 here when
          * GlusterFS makes GF_LOG_* macros available to libgfapi users.
          */
-        ret = glfs_set_logging(glfs, "-", 4);
-        if (ret < 0) {
+
+        ret = glfs_set_logging (glfs, "-", 4);
+        if (ret < 0)
                 goto out;
-        }
-        ret = glfs_init(glfs);
+
+        ret = glfs_init (glfs);
         if (ret) {
-                fprintf(stderr, "Gluster connection failed for server=%s port=%d "
-                        "volume=%s file=%s transport=%s", conf->server,
-                        conf->port,
-                        conf->volname,
-                        conf->file,
-                        conf->transport);
+                fprintf(stderr, "Gluster connection failed for"
+                        " server=%s port=%d "
+                        "volume=%s file=%s transport=tcp",
+                        bfs->driver_server,
+                        bfs->driver_port,
+                        bfs->driver_volname,
+                        bfs->driver_file);
                 goto out;
         }
+
         return glfs;
 out:
         if (glfs) {
                 old_errno = errno;
-                glfs_fini(glfs);
+                glfs_fini (glfs);
                 errno = old_errno;
         }
         return NULL;
@@ -143,19 +85,12 @@ static int bigobject_gluster_open()
         return 0;
 }
 
-static int bigobject_gluster_create(const char *filename)
+static int bigobject_gluster_create()
 {
         return 0;
 }
 
-static void bigobject_gluster_close()
+static int bigobject_gluster_close()
 {
-        glfs_close(bs->fd);
-        glfs_fini(bs->glfs);
+        return 0;
 }
-
-static driver_fops fops = {
-        .open             = bigobject_gluster_open,
-        .close            = bigobject_gluster_close,
-        .create           = bigobject_gluster_create,
-};

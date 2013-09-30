@@ -22,22 +22,6 @@
 #ifndef __BIGOBJECTS_H__
 #define __BIGOBJECTS_H__
 
-/*
-  Enforce the following flags
-*/
-
-#ifndef _FILE_OFFSET_BITS
-#define _FILE_OFFSET_BITS 64
-#endif
-
-#ifndef __USE_FILE_OFFSET64
-#define __USE_FILE_OFFSET64
-#endif
-
-#ifndef _GNU_SOURCE
-#define _GNU_SOURCE
-#endif
-
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -72,7 +56,7 @@ typedef struct bigobjects bigobjects_t;
   -1 : Failure, errno set appropriately
 */
 
-int32_t bigobject_get (bigobjects_t *);
+int32_t bigobject_get (const bigobjects_t *);
 
 /*
   SYNOPSIS
@@ -93,7 +77,7 @@ int32_t bigobject_get (bigobjects_t *);
   -1 : Failure, errno set appropriately
 */
 
-int32_t bigobject_put (bigobjects_t *);
+int32_t bigobject_put (const bigobjects_t *);
 
 __END_DECLS
 

@@ -26,7 +26,7 @@
 
 struct bigobjects;
 
-#include "driver.h"
+#include "bigobjects/driver.h"
 
 struct _bigobject_ctx {
         char               *process_uuid;
@@ -40,10 +40,13 @@ struct bigobjects {
         int32_t           driver_port;
         char             *driver_volname;
         char             *driver_server;
+        char             *driver_file;
         bigobject_ctx_t    *ctx;
 };
 
 bigobject_ctx_t *bigobject_ctx_new (void);
 int32_t bigobject_ctx_defaults_init (bigobject_ctx_t *);
+
+#define DEFAULT_BLOCKS 100000
 
 #endif /* _BIGOBJECTS_PRIVATE_H_ */

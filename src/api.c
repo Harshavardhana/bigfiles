@@ -35,6 +35,32 @@
 #include "bigobjects/internal.h"
 /********************/
 
+static int set_bigobject_options (struct bigobjects *bfs,
+                                  char *path)
+{
+        char *p, *q;
+
+        if (!path) {
+                return -EINVAL;
+        }
+
+        /* volume */
+        p = q = path + strspn(path, "/");
+        p += strcspn(p, "/");
+        if (*p == '\0')
+                return -EINVAL;
+
+        bfs->driver_volname = strndup(q, p - q);
+
+        /* image */
+        p += strspn(p, "/");
+        if (*p == '\0')
+                return -EINVAL;
+
+        bfs->driver_file = strdup(p);
+        return 0;
+}
+
 static bURI *
 bigobject_parse_driver_uri (const char *uristr)
 {
@@ -42,21 +68,22 @@ bigobject_parse_driver_uri (const char *uristr)
 
         if (!uristr) {
                 errno = -EINVAL;
-                goto out;
+                goto err;
         }
 
         uri = bigobject_uri_parse(uristr);
         if (!uri) {
                 errno = -ENOMEM;
-                goto out;
+                goto err;
         }
+
         if (!(is_driver_valid(uri->scheme))) {
                 errno = -EINVAL;
-                goto out;
+                goto err;
         }
 
         return uri;
-out:
+err:
         if (uri)
                 BF_URI_FREE(uri);
         return NULL;
@@ -92,19 +119,22 @@ bigobject_new (const char *uristr)
 
         bfs->ctx = ctx;
         bfs->driver_scheme = strdup (uri->scheme);
-        bfs->driver_port   = uri->port;
-        bfs->driver_volname = strdup (uri->path);
+        bfs->driver_port = uri->port;
+        if (set_bigobject_options(bfs, uri->path)) {
+                errno = -EINVAL;
+                goto err;
+        }
+
         bfs->driver_server = strdup (uri->server);
-
-        BF_URI_FREE(uri);
-
+        if (uri)
+                BF_URI_FREE(uri);
         return bfs;
 err:
         return NULL;
 }
 
 int32_t
-bigobject_put (struct bigobjects *bfs)
+bigobject_put (const struct bigobjects *bfs)
 {
         int32_t ret = -1;
 
@@ -112,28 +142,8 @@ bigobject_put (struct bigobjects *bfs)
 }
 
 int32_t
-bigobject_get (struct bigobjects *bfs)
+bigobject_get (const struct bigobjects *bfs)
 {
         int32_t ret = -1;
-        return ret;
-}
-
-static int32_t
-bigobject_init_common (struct bigobjects *bfs)
-{
-        int32_t    ret = 0;
-        driver_t  *driver = NULL;
-
-        driver = driver_new(bfs);
-        if (!driver) {
-                ret = -1;
-                goto out;
-        }
-
-        bfs->ctx->driver = driver;
-out:
-        if (driver)
-                FREE(driver);
-
         return ret;
 }

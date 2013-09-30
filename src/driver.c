@@ -23,9 +23,7 @@
 #include <strings.h>
 #include <stdlib.h>
 
-#include "bigobjects/common.h"
-#include "bigobjects/internal.h"
-#include "bigobjects/compat.h"
+#include "bigobjects/driver.h"
 
 static int32_t
 driver_dynload (driver_t *driver)

@@ -23,11 +23,14 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
-
-#include "bigobjects/common.h"
+#include <stdarg.h>
 
 struct _driver;
 typedef struct _driver driver_t;
+
+#include "bigobjects/common.h"
+#include "bigobjects/internal.h"
+#include "bigobjects/compat.h"
 
 typedef int32_t fd_t;
 

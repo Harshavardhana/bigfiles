@@ -20,44 +20,11 @@
 #ifndef __COMPAT_H__
 #define __COMPAT_H__
 
-#include "config.h"
+char *strndup (const char *, size_t);
+int strcasecmp (const char *, const char *);
+char *strchrnul (const char *, int);
+void *mempcpy (void *, const void *, size_t);
+int vasprintf (char **, const char *, va_list);
+int asprintf (char **, const char *, ...);
 
-#ifndef HAVE_ASPRINTF
-#include <stdarg.h>
-
-static int vasprintf(char **ret, const char *format, va_list ap)
-{
-        va_list ap2;
-        int len= 100;        /* First guess at the size */
-        if ((*ret= (char *)malloc(len)) == NULL)
-                return -1;
-        while (1)
-        {
-                int nchar;
-                va_copy(ap2, ap);
-                nchar = vsnprintf(*ret, len, format, ap2);
-                if (nchar > -1 && nchar < len)
-                        return nchar;
-                if (nchar > len)
-                        len= nchar+1;
-                else
-                        len*= 2;
-                if ((*ret= (char *)realloc(*ret, len)) == NULL) {
-                        free(*ret);
-                        return -1;
-                }
-        }
-}
-
-static int asprintf(char **ret, const char *format, ...)
-{
-        va_list ap;
-        int nc;
-        va_start (ap, format);
-        nc = vasprintf(ret, format, ap);
-        va_end(ap);
-        return nc;
-}
-
-#endif /* HAVE_ASPRINTF */
 #endif /* __COMPAT_H__ */

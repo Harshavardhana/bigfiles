@@ -41,7 +41,8 @@ SET (libbigobjects_SRCS
   api.c
   internal.c
   driver.c
-  uri.c)
+  uri.c
+  compat.c)
 
 include_directories(
   ${LIBBIGOBJECTS_PUBLIC_INCLUDE_DIRS}
