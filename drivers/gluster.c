@@ -22,30 +22,41 @@
 #include <time.h>
 
 #include <api/glfs.h>
-#include <bigobjects/api.h>
 
-static
-struct glfs *bigobject_gluster_init (bigobjects_t *bfs)
+#include "bigobjects/driver.h"
+#include "gluster.h"
+
+class_methods_t class_methods = {
+        .init           = bobjs_gluster_init,
+        .fini           = bobjs_gluster_fini
+};
+
+struct driver_ops ops = {
+        .put            = bobjs_gluster_put,
+        .get            = bobjs_gluster_get,
+        .delete         = bobjs_gluster_delete
+};
+
+int32_t
+bobjs_gluster_init (driver_t *this)
 {
         glfs_t *glfs = NULL;
-        int old_errno;
-        int ret = 0;
+        int32_t ret  = -1;
 
-        if (!bfs) {
-                fprintf(stderr,"Usage: file=[filesystem][+transport]://[server[:port]]/"
-                        "volname/file]");
+        if (!this) {
                 errno = -EINVAL;
                 goto out;
         }
 
-        glfs = glfs_new (bfs->driver_volname);
+        /* Bucket name is volume name for GlusterFS */
+        glfs = glfs_new (this->bucket);
 
         if (!glfs)
                 goto out;
 
         ret = glfs_set_volfile_server (glfs, "tcp",
-                                       bfs->driver_server,
-                                       bfs->driver_port);
+                                       this->server,
+                                       this->port);
         if (ret < 0)
                 goto out;
 
@@ -63,34 +74,33 @@ struct glfs *bigobject_gluster_init (bigobjects_t *bfs)
                 fprintf(stderr, "Gluster connection failed for"
                         " server=%s port=%d "
                         "volume=%s file=%s transport=tcp",
-                        bfs->driver_server,
-                        bfs->driver_port,
-                        bfs->driver_volname,
-                        bfs->driver_file);
+                        this->server,
+                        this->port,
+                        this->bucket,
+                        this->object);
                 goto out;
         }
 
-        return glfs;
+        this->private = glfs;
+
+        return 0;
 out:
-        if (glfs) {
-                old_errno = errno;
-                glfs_fini (glfs);
-                errno = old_errno;
+        return -1;
+}
+
+void bobjs_gluster_fini (driver_t *this)
+{
+        glfs_t *glfs = NULL;
+
+        if (!this) {
+                errno = -EINVAL;
+                goto out;
         }
-        return NULL;
-}
 
-static int bigobject_gluster_open()
-{
-        return 0;
-}
+        glfs = this->private;
 
-static int bigobject_gluster_create()
-{
-        return 0;
-}
-
-static int bigobject_gluster_close()
-{
-        return 0;
+        if (glfs)
+                glfs_fini (glfs);
+out:
+        return;
 }

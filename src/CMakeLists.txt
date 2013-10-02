@@ -42,7 +42,8 @@ SET (libbigobjects_SRCS
   internal.c
   driver.c
   uri.c
-  compat.c)
+  compat.c
+  driver-defaults.c)
 
 include_directories(
   ${LIBBIGOBJECTS_PUBLIC_INCLUDE_DIRS}

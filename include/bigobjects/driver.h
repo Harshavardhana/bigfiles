@@ -32,33 +32,47 @@ typedef struct _driver driver_t;
 #include "bigobjects/internal.h"
 #include "bigobjects/compat.h"
 
-typedef int32_t fd_t;
+typedef int32_t (*op_put_t) (driver_t *this);
+typedef int32_t (*op_get_t) (driver_t *this);
+typedef int32_t (*op_delete_t)  (driver_t *this);
 
-typedef int32_t (*fop_open_t) (driver_t *this, int32_t flags,
-                               fd_t *fd);
-typedef int32_t (*fop_create_t) (driver_t *this, int32_t flags,
-                                 mode_t mode, mode_t umask, fd_t *fd);
-typedef int32_t (*fop_close_t)  (driver_t *this, fd_t *fd);
-
-struct driver_fops {
-        fop_close_t   close;
-        fop_open_t    open;
-        fop_create_t  create;
+struct driver_ops {
+        op_put_t      put;
+        op_get_t      get;
+        op_delete_t   delete;
 };
+
+int32_t default_put (driver_t *this);
+
+int32_t default_get (driver_t *this);
+
+int32_t default_delete (driver_t *this);
+
+typedef struct {
+        int32_t               (*init) (driver_t *this);
+        void                  (*fini) (driver_t *this);
+} class_methods_t;
+
 
 struct _driver {
-        char                  *type;
+        char                  *name;
+        char                  *bucket;
+        char                  *server;
+        int32_t               port;
+        char                  *object;
+
+        /* Driver specific private structures */
+        void                  *private;
+
         /* Set after doing dlopen() */
         void                  *dlhandle;
-        struct driver_fops   *fops;
+        struct driver_ops     *ops;
+        int32_t               (*init) (driver_t *this);
+        void                  (*fini) (driver_t *this);
 };
-
-typedef enum {
-        DRIVER_GLUSTER,
-        DRIVER_FILE,
-} driver_type_t;
 
 driver_t *driver_new (struct bigobjects *);
 bfs_boolean_t is_driver_valid (const char *);
+int32_t driver_dynload (driver_t *);
 
 #endif /* __DRIVER_H__ */

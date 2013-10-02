@@ -25,33 +25,82 @@
 
 #include "bigobjects/driver.h"
 
-static int32_t
+#define SET_DEFAULT_OP(fn) do {                         \
+                if (!drv->ops->fn)                      \
+                        drv->ops->fn = default_##fn;    \
+        } while (0)
+
+static void
+driver_defaults (driver_t *drv)
+{
+        if (!drv) {
+                errno = -EINVAL;
+                return;
+        }
+
+        SET_DEFAULT_OP (put);
+        SET_DEFAULT_OP (get);
+        SET_DEFAULT_OP (delete);
+        /* Future OP's go here */
+}
+
+int32_t
 driver_dynload (driver_t *driver)
 {
-        int                ret = 0;
-        char              *name = NULL;
+        int               ret     = -1;
+        char              *name   = NULL;
         void              *handle = NULL;
+        class_methods_t   *cm     = NULL;
+        char              *error  = NULL;
 
-        ret = asprintf (&name, "%s/%s.so", DEFAULT_DRIVERDIR, driver->type);
+
+        ret = asprintf (&name, "%s/%s.so", DEFAULT_DRIVERDIR, driver->name);
         if (ret < 0)
                 goto out;
 
         handle = dlopen (name, RTLD_NOW|RTLD_GLOBAL);
-        if (!handle) {
-                ret = -1;
+        if (!handle)
                 goto out;
-        }
 
         driver->dlhandle = handle;
-        if (!(driver->fops = dlsym (handle, "fops"))) {
-                ret = -1;
+
+        if (!(driver->ops = dlsym (handle, "ops")))
                 goto out;
+
+        /*
+         * If class_methods exists, its contents override any definitions of
+         * init or fini for that driver.  Otherwise, we fall back to the
+         * older method of looking for init and fini directly.
+         */
+
+        cm = dlsym (handle, "class_methods");
+        if (cm) {
+                driver->init        = cm->init;
+                driver->fini        = cm->fini;
         }
+        else {
+                if (!(*VOID(&driver->init) = dlsym (handle, "init"))) {
+                        error = dlerror ();
+                        goto out;
+                }
+
+                if (!(*VOID(&(driver->fini)) = dlsym (handle, "fini"))) {
+                        error = dlerror ();
+                        goto out;
+                }
+
+        }
+
+        driver_defaults (driver);
+        ret = 0;
 out:
-        if (name)
-                free (name);
+        if (error)
+                fprintf (stderr, "dlsym returned %s\n", error);
+
+        FREE (name);
         return ret;
 }
+
 
 driver_t *
 driver_new (struct bigobjects *bfs)
@@ -69,7 +118,7 @@ driver_new (struct bigobjects *bfs)
                 return NULL;
         }
 
-        driver->type = bfs->driver_scheme;
+        driver->name = bfs->driver_scheme;
 
         if (driver_dynload(driver) < 0)
                 return NULL;

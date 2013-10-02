@@ -15,6 +15,8 @@ enum _bfs_boolean
 
 typedef enum _bfs_boolean bfs_boolean_t;
 
+#define VOID(ptr) ((void **) ((void *) ptr))
+
 /* Supported storage drivers */
 #define STORAGE_DRIVER_GLUSTER "gluster"
 #define STORAGE_DRIVER_FILE "file"

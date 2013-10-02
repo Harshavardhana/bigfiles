@@ -35,7 +35,7 @@
 #include "bigobjects/internal.h"
 /********************/
 
-static int set_bigobject_options (struct bigobjects *bfs,
+static int set_bigobject_options (struct bigobjects *bobjs,
                                   char *path)
 {
         char *p, *q;
@@ -50,14 +50,14 @@ static int set_bigobject_options (struct bigobjects *bfs,
         if (*p == '\0')
                 return -EINVAL;
 
-        bfs->driver_volname = strndup(q, p - q);
+        bobjs->driver_volname = strndup(q, p - q);
 
         /* image */
         p += strspn(p, "/");
         if (*p == '\0')
                 return -EINVAL;
 
-        bfs->driver_file = strdup(p);
+        bobjs->driver_file = strdup(p);
         return 0;
 }
 
@@ -92,7 +92,7 @@ err:
 static struct bigobjects *
 bigobject_new (const char *uristr)
 {
-        struct bigobjects *bfs = NULL;
+        struct bigobjects *bobjs = NULL;
         bigobject_ctx_t   *ctx = NULL;
         bURI            *uri = NULL;
 
@@ -105,8 +105,8 @@ bigobject_new (const char *uristr)
                 goto err;
         }
 
-        bfs = calloc (1, sizeof (*bfs));
-        if (!bfs) {
+        bobjs = calloc (1, sizeof (*bobjs));
+        if (!bobjs) {
                 errno = -ENOMEM;
                 goto err;
         }
@@ -117,24 +117,24 @@ bigobject_new (const char *uristr)
                 goto err;
         }
 
-        bfs->ctx = ctx;
-        bfs->driver_scheme = strdup (uri->scheme);
-        bfs->driver_port = uri->port;
-        if (set_bigobject_options(bfs, uri->path)) {
+        bobjs->ctx = ctx;
+        bobjs->driver_scheme = strdup (uri->scheme);
+        bobjs->driver_port = uri->port;
+        if (set_bigobject_options(bobjs, uri->path)) {
                 errno = -EINVAL;
                 goto err;
         }
 
-        bfs->driver_server = strdup (uri->server);
+        bobjs->driver_server = strdup (uri->server);
         if (uri)
                 BF_URI_FREE(uri);
-        return bfs;
+        return bobjs;
 err:
         return NULL;
 }
 
 int32_t
-bigobject_put (const struct bigobjects *bfs)
+bigobject_put (const struct bigobjects *bobjs)
 {
         int32_t ret = -1;
 
@@ -142,7 +142,7 @@ bigobject_put (const struct bigobjects *bfs)
 }
 
 int32_t
-bigobject_get (const struct bigobjects *bfs)
+bigobject_get (const struct bigobjects *bobjs)
 {
         int32_t ret = -1;
         return ret;
