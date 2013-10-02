@@ -47,6 +47,13 @@ if (WITH_GFAPI)
   endif (NOT GFAPI_FOUND)
 endif(WITH_GFAPI)
 
+if (WITH_LIBCURL)
+  find_package(libcurl 0 REQUIRED)
+  if (NOT LIBCURL_FOUND)
+    message(FATAL_ERROR "Could not find libcurl")
+  endif (NOT LIBCURL_FOUND)
+endif(WITH_LIBCURL)
+
 # Find out if we have threading available
 set(CMAKE_THREAD_PREFER_PTHREADS ON)
 find_package(Threads)
@@ -57,6 +64,7 @@ add_subdirectory(bosh)
 add_subdirectory(include)
 add_subdirectory(src)
 add_subdirectory(drivers)
+add_subdirectory(s3)
 
 # pkg-config file
 configure_file(libbigobjects.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/libbigobjects.pc)
