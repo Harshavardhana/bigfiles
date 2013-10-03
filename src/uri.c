@@ -765,7 +765,7 @@ bigobject_rfc3986_relative_ref(bURI *uri, const char *str)
                         return ret;
         }
         if (*str != 0) {
-                BF_URI_TRIM(uri);
+                URI_TRIM(uri);
                 return 1;
         }
         return 0;
@@ -812,7 +812,7 @@ bigobject_rfc3986(bURI *uri, const char *str)
                         return ret;
         }
         if (*str != 0) {
-                BF_URI_TRIM(uri);
+                URI_TRIM(uri);
                 return 1;
         }
         return 0;
@@ -838,17 +838,17 @@ bigobject_rfc3986_uri_reference(bURI *uri, const char *str)
         if (str == NULL)
                 return -1;
 
-        BF_URI_TRIM(uri);
+        URI_TRIM(uri);
         /*
          * Try first to parse absolute refs, then fallback to relative if
          * it fails.
          */
         ret = bigobject_rfc3986(uri, str);
         if (ret != 0) {
-                BF_URI_TRIM(uri);
+                URI_TRIM(uri);
                 ret = bigobject_rfc3986_relative_ref(uri, str);
                 if (ret != 0) {
-                        BF_URI_TRIM(uri);
+                        URI_TRIM(uri);
                         return ret;
                 }
         }
@@ -899,7 +899,7 @@ bigobject_uri_parse(const char *str)
         uri = bigobject_uri_new();
         if (uri != NULL) {
                 if (bigobject_uri_parse_into(uri, str)) {
-                        BF_URI_FREE(uri);
+                        URI_FREE(uri);
                         goto out;
                 }
         }
@@ -931,7 +931,7 @@ bigobject_uri_parse_raw(const char *str, int raw)
                         uri->cleanup |= 2;
                 }
                 if (bigobject_uri_parse_into(uri, str)) {
-                        BF_URI_FREE(uri);
+                        URI_FREE(uri);
                         goto out;
                 }
         }

@@ -40,44 +40,65 @@ typedef struct bigobjects bigobjects_t;
 /*
   SYNOPSIS
 
-  bigobject_get: Retrieve a file from durable storage
+  bigobject_get: retrieve 'object' from durable storage
 
   DESCRIPTION
 
-  This function retrieves specified 'filename' from bigobjects_t structure
+  This function retrieves an 'object' specified by 'URI'
 
   PARAMETERS
 
-  @bfs: The bigobject API populated with necessary arguments
+  @uri: The uri string
 
   RETURN VALUES
 
-   N : Success, number of bytes retrieved
+   0 : Success, object retrieved
   -1 : Failure, errno set appropriately
 */
 
-int32_t bigobject_get (const bigobjects_t *);
+int32_t bigobject_get (const char *);
 
 /*
   SYNOPSIS
 
-  bigobject_put: Upload a file to durable storage
+  bigobject_put: upload an 'object' to a durable storage
 
   DESCRIPTION
 
-  This function uploads a specified 'filename' from bigobjects_t structure
+  This function uploads an 'object' specified by 'URI'
 
   PARAMETERS
 
-  @bfs: The bigobject API populated with necessary arguments
+  @uri: The uri string
 
   RETURN VALUES
 
-   N : Success, number of bytes uploaded
+   0 : Success, object uploaded
   -1 : Failure, errno set appropriately
 */
 
-int32_t bigobject_put (const bigobjects_t *);
+int32_t bigobject_put (const char *);
+
+/*
+  SYNOPSIS
+
+  bigobject_delete: delete an object from a durable storage
+
+  DESCRIPTION
+
+  This function deletes object specified by 'URI'
+
+  PARAMETERS
+
+  @uri: The uri string
+
+  RETURN VALUES
+
+   0 : Success, object deleted
+  -1 : Failure, errno set appropriately
+*/
+
+int32_t bigobject_delete (const char *);
 
 __END_DECLS
 

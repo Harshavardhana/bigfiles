@@ -206,7 +206,7 @@
          ISA_SUB_DELIM(p) ||                                            \
          ((*(p) == ':')) || ((*(p) == '@')))
 
-#define BF_URI_TRIM(uri)                        \
+#define URI_TRIM(uri)                           \
         if (uri != NULL) {                      \
                 if (uri->scheme != NULL)        \
                         FREE(uri->scheme);      \
@@ -226,9 +226,9 @@
                         FREE(uri->query);       \
         }
 
-#define BF_URI_FREE(uri)                        \
+#define URI_FREE(uri)                           \
         if (uri != NULL) {                      \
-                BF_URI_TRIM(uri);               \
+                URI_TRIM(uri);                  \
                 FREE(uri);                      \
         }
 

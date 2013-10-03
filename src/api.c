@@ -35,8 +35,9 @@
 #include "bigobjects/internal.h"
 /********************/
 
-static int set_bigobject_options (struct bigobjects *bobjs,
-                                  char *path)
+static
+int32_t set_bigobject_options (struct bigobjects *bobjs,
+                               char *path)
 {
         char *p, *q;
 
@@ -85,25 +86,16 @@ bigobject_parse_driver_uri (const char *uristr)
         return uri;
 err:
         if (uri)
-                BF_URI_FREE(uri);
+                URI_FREE(uri);
         return NULL;
 }
 
-static struct bigobjects *
+static
+struct bigobjects *
 bigobject_new (const char *uristr)
 {
         struct bigobjects *bobjs = NULL;
-        bigobject_ctx_t   *ctx = NULL;
-        bURI            *uri = NULL;
-
-        ctx = bigobject_ctx_new();
-        if (!ctx)
-                goto err;
-
-        if (bigobject_ctx_defaults_init (ctx)) {
-                errno = -ENOMEM;
-                goto err;
-        }
+        bURI              *uri = NULL;
 
         bobjs = calloc (1, sizeof (*bobjs));
         if (!bobjs) {
@@ -117,9 +109,9 @@ bigobject_new (const char *uristr)
                 goto err;
         }
 
-        bobjs->ctx = ctx;
         bobjs->driver_scheme = strdup (uri->scheme);
         bobjs->driver_port = uri->port;
+
         if (set_bigobject_options(bobjs, uri->path)) {
                 errno = -EINVAL;
                 goto err;
@@ -127,23 +119,105 @@ bigobject_new (const char *uristr)
 
         bobjs->driver_server = strdup (uri->server);
         if (uri)
-                BF_URI_FREE(uri);
+                URI_FREE(uri);
+
         return bobjs;
 err:
         return NULL;
 }
 
-int32_t
-bigobject_put (const struct bigobjects *bobjs)
+static
+int32_t __bigobject_put_internal (struct bigobjects *bobjs)
 {
         int32_t ret = -1;
 
+        if (!bobjs)
+                goto out;
+
+out:
+        return ret;
+}
+
+static
+int32_t __bigobject_get_internal (struct bigobjects *bobjs)
+{
+        int32_t ret = -1;
+
+        if (!bobjs)
+                goto out;
+
+out:
+        return ret;
+}
+
+static
+int32_t __bigobject_delete_internal (struct bigobjects *bobjs)
+{
+        int32_t ret = -1;
+
+        if (!bobjs)
+                goto out;
+
+out:
         return ret;
 }
 
 int32_t
-bigobject_get (const struct bigobjects *bobjs)
+bigobject_put (const char *uristr)
 {
-        int32_t ret = -1;
+        struct bigobjects *bobjs = NULL;
+        int32_t ret              = -1;
+
+        if (!uristr)
+                goto out;
+
+        bobjs = bigobject_new (uristr);
+        if (!bobjs) {
+                errno = -ENOMEM;
+                goto out;
+        }
+
+        ret = __bigobject_put_internal (bobjs);
+out:
+        return ret;
+}
+
+int32_t
+bigobject_get (const char *uristr)
+{
+        struct bigobjects *bobjs = NULL;
+        int32_t ret              = -1;
+
+        if (!uristr)
+                goto out;
+
+        bobjs = bigobject_new (uristr);
+        if (!bobjs) {
+                errno = -ENOMEM;
+                goto out;
+        }
+
+        ret = __bigobject_get_internal (bobjs);
+out:
+        return ret;
+}
+
+int32_t
+bigobject_delete (const char *uristr)
+{
+        struct bigobjects *bobjs = NULL;
+        int32_t  ret             = -1;
+
+        if (!uristr)
+                goto out;
+
+        bobjs = bigobject_new (uristr);
+        if (!bobjs) {
+                errno = -ENOMEM;
+                goto out;
+        }
+
+        ret = __bigobject_delete_internal (bobjs);
+out:
         return ret;
 }

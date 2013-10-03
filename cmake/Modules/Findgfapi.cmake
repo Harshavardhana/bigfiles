@@ -18,9 +18,9 @@ endif (UNIX)
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(GFAPI DEFAULT_MSG GFAPI_LIBRARY_DIRS GFAPI_INCLUDE_DIRS)
 
-if (GFAPI_INCLUDE_DIRS AND GFAPI_LIBRARY_DIRS)
+if (GFAPI_INCLUDE_DIRS AND GFAPI_LIBRARIES)
     set(GFAPI_FOUND TRUE)
-endif (GFAPI_INCLUDE_DIRS AND GFAPI_LIBRARY_DIRS)
+endif (GFAPI_INCLUDE_DIRS AND GFAPI_LIBRARIES)
 
-# show the GFAPI_INCLUDE_DIRS and GFAPI_LIBRARY_DIRS variables only in the advanced view
-mark_as_advanced(GFAPI_INCLUDE_DIRS GFAPI_LIBRARY_DIRS)
+# show the GFAPI_INCLUDE_DIRS and GFAPI_LIBRARIES variables only in the advanced view
+mark_as_advanced(GFAPI_INCLUDE_DIRS GFAPI_LIBRARIES)
