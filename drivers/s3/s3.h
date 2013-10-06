@@ -14,3 +14,30 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 */
+
+struct s3_conf;
+typedef struct s3_conf s3_conf_t;
+
+#include "s3-iobuf.h"
+
+/*
+  INIT/FINI
+*/
+
+s3_conf_t *s3_init (const char *account_id,
+                    const char *awskey_id,
+                    const char *awskey,
+                    const char *s3host,
+                    const char *bktname);
+void s3_fini (s3_conf_t *s3conf);
+
+/*
+  S3 Bucket/Object I/O functions
+*/
+
+int32_t s3_get (iobuf_t *buf, s3_conf_t *s3conf,
+                const char *object);
+int32_t s3_put (iobuf_t *buf, s3_conf_t *s3conf,
+                const char *object);
+int32_t s3_delete (iobuf_t *buf, s3_conf_t *s3conf,
+                   const char *object);

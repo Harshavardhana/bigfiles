@@ -16,3 +16,5 @@ if (WITH_GFAPI)
 else (WITH_GFAPI)
   message(WARNING "Cound not find gfapi - skipping building gluster driver..")
 endif (WITH_GFAPI)
+
+add_subdirectory(s3)

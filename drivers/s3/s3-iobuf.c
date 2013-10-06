@@ -15,7 +15,9 @@
   limitations under the License.
 */
 
-#include "io-buf.h"
+#include <string.h>
+
+#include "s3-iobuf.h"
 
 iobuf_t *s3_iobuf_new (void)
 {
@@ -107,8 +109,8 @@ void s3_iobuf_free (iobuf_t *iob)
 
         if (!iobnode)
                 return;
-        if (iob->result)
-                free (iob->result);
+        if (iob->reply)
+                free (iob->reply);
         if (iob->lastmod)
                 free (iob->lastmod);
         if (iob->etag)
@@ -116,7 +118,7 @@ void s3_iobuf_free (iobuf_t *iob)
         free (iob);
 
         while (iobnode->next) {
-                iobnode *tmp_iobnode = iobnode->next;
+                iobufnode_t *tmp_iobnode = iobnode->next;
                 if (iobnode->buf)
                         free (iobnode->buf);
                 free(iobnode);

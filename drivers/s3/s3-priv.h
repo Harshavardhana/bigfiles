@@ -15,6 +15,15 @@
   limitations under the License.
 */
 
+#include <stdint.h>
+#include <string.h>
+
+#include <openssl/sha.h>
+#include <openssl/hmac.h>
+#include <openssl/evp.h>
+#include <openssl/bio.h>
+#include <openssl/buffer.h>
+
 typedef unsigned char uchar_t;
 
 struct s3_conf {
@@ -29,3 +38,6 @@ struct s3_conf {
         char *mime_type; /* Mimetype */
         char *acls;
 };
+
+char *_base64_encode (const uchar_t *input);
+void _chomp (char *str);

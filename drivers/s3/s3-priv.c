@@ -15,40 +15,39 @@
   limitations under the License.
 */
 
-static
-char *_base64_encode(const unsigned char *input, int32_t length)
+#include "s3-priv.h"
+
+char *_base64_encode(const uchar_t *input)
 {
         BIO *bmem;
         BIO *b64;
         BIO *bio;
-        BUF_MEM *bptr;
+        BUF_MEM *bptr = {0,};
         char *buf = NULL;
 
-        b64 = BIO_new(BIO_f_base64());
-        bmem = BIO_new(BIO_s_mem());
-        bio = BIO_push(b64, bmem);
+        b64 = BIO_new (BIO_f_base64());
+        bmem = BIO_new (BIO_s_mem());
+        bio = BIO_push (b64, bmem);
 
-        BIO_set_flags(bio, BIO_FLAGS_BASE64_NO_NL);
-        BIO_write(bio, input, length);
+        BIO_set_flags (bio, BIO_FLAGS_BASE64_NO_NL);
+        BIO_write (bio, input, strlen((char *)input));
 
         if(BIO_flush(bio) <= 0)
                 return NULL;
 
-        BIO_get_mem_ptr(bio, &bptr);
+        BIO_get_mem_ptr (bio, &bptr);
 
-        buf = (char *) calloc(1, bptr->length);
+        buf = calloc (1, bptr->length);
         if (!buf)
                 return NULL;
 
-        memcpy(buf, bptr->data, (bptr->length - 1));
-        buf[bptr->length - 1] = 0;
+        memcpy (buf, bptr->data, (bptr->length - 1));
+        buf [bptr->length - 1] = 0;
 
-        BIO_free_all(bio);
-
+        BIO_free_all (bio);
         return buf;
 }
 
-static
 void _chomp(char *str)
 {
         while(*str && *str != '\n' && *str != '\r')

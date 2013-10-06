@@ -21,18 +21,15 @@
 struct _iobufnode;
 typedef struct _iobufnode iobufnode_t;
 
-struct _iobufnode
-{
+struct _iobufnode {
         char *buf;
-        struct _iobufnode *next;
+        iobufnode_t *next;
 };
-
 
 struct _iobuf;
 typedef struct _iobuf iobuf_t;
 
-struct iobuf
-{
+struct _iobuf {
         iobufnode_t *first;
         iobufnode_t *current;
         char        *pos;
@@ -45,11 +42,13 @@ struct iobuf
         int32_t     code;
 };
 
+
+
 /*
   Common functions for internal buffer allocator's
  */
 
 iobuf_t *s3_iobuf_new (void);
-in32_t s3_iobuf_add (iobuf_t *iob, char *data, int32_t len);
+int32_t s3_iobuf_add (iobuf_t *iob, char *data, int32_t len);
 int32_t s3_iobuf_getline (iobuf_t *iob, char *line, int32_t size);
 void s3_iobuf_free (iobuf_t *iob);

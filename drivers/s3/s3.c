@@ -20,6 +20,8 @@
 #include <stdarg.h>
 #include <string.h>
 #include <unistd.h>
+#include <stdint.h>
+#include <errno.h>
 #include <sys/stat.h>
 #include <curl/curl.h>
 #include <openssl/hmac.h>
@@ -27,8 +29,9 @@
 #include <openssl/bio.h>
 #include <openssl/buffer.h>
 
-#include "s3.h"
 #include "s3-priv.h"
+#include "s3.h"
+
 
 /*
   SYNOPSIS
@@ -94,20 +97,34 @@ static size_t process_header (void *ptr, size_t size, size_t nmemb,
                 return -1;
 
         if (!strncmp (ptr, "HTTP/1.1", 8)) {
-                buf->result = strdup (ptr + 9);
-                _chomp (buf->result);
-                buf->code = atoi (ptr + 9);
+                buf->reply = strdup ((char *)ptr + 9);
+                _chomp (buf->reply);
+                buf->code = atoi ((char *)ptr + 9);
         } else if (!strncmp (ptr, "Etag: ", 6)) {
-                buf->etag = strdup (ptr + 6);
+                buf->etag = strdup ((char *)ptr + 6);
                 _chomp (buf->etag);
         } else if (!strncmp (ptr, "Last-Modified: ", 14)) {
-                buf->lastmod = strdup (ptr + 15);
+                buf->lastmod = strdup ((char *)ptr + 15);
                 _chomp (buf->lastmod);
         } else if (!strncmp (ptr, "Content-Length: ", 15)) {
-                buf->contentlen = atoi (ptr + 16);
+                buf->contentlen = atoi ((char *)ptr + 16);
         }
 
         return (nmemb * size);
+}
+
+static
+char *__s3_sign (const char *str, const char *awskey)
+{
+        uchar_t   *MD;
+        char      *base64 = NULL;
+
+        MD = HMAC(EVP_sha1(), awskey, strlen(awskey), (uchar_t *) str,
+                  strlen(str), NULL, NULL);
+
+        base64 = _base64_encode (MD);
+
+        return base64;
 }
 
 /*
@@ -138,8 +155,8 @@ static
 int32_t get_http_date (char **date)
 {
         char tmp_date[256];
-        time_t t = NULL;
-        struct tm *utc = NULL;
+        time_t t = {0,};
+        const struct tm *utc = NULL;
 
         t = time (NULL);
 
@@ -148,7 +165,7 @@ int32_t get_http_date (char **date)
         if (!utc)
                 return -1;
 
-        strftime (date, sizeof(date), "%a, %d %b %Y %H:%M:%S %Z", utc);
+        strftime (tmp_date, sizeof(tmp_date), "%a, %d %b %Y %H:%M:%S %Z", utc);
 
         *date = tmp_date;
 
@@ -156,118 +173,40 @@ int32_t get_http_date (char **date)
 }
 
 static
-int32_t s3_set_signature_request(char *resource, const char *method,
-                                 const char *object, const char *date,
-                                 int32_t use_rrs, const  char *acls,
-                                 const char *awskey, const char *mime_type,
+int32_t s3_set_signature_request(char *resource, const char *date,
+                                 const char *method, const char *object,
+                                 const struct s3_conf *s3conf,
                                  char **signature)
 {
         char  sign_hdr [2048];
         char  acl [32];
         char  rrs [64];
 
+        if (!s3conf)
+                return 0;
+
         if (object)
                 snprintf (resource, strlen(resource), "%s", object);
 
-        if (acls)
-                snprintf(acl, sizeof(acl), "x-amz-acl:%s\n", acls);
+        if (s3conf->acls)
+                snprintf(acl, sizeof(acl), "x-amz-acl:%s\n", s3conf->acls);
         else
                 acl[0] = 0;
 
-        if (use_rrs)
+        if (s3conf->use_rrs)
                 strncpy(rrs, "x-amz-storage-class:REDUCED_REDUNDANCY\n",
                         sizeof(rrs));
         else
                 rrs[0] = 0;
 
         snprintf (sign_hdr, sizeof(sign_hdr), "%s\n\n%s\n%s\n%s%s/%s",
-                  method, mime_type ? mime_type : "", date, acl, rrs, resource);
+                  method, s3conf->mime_type ? s3conf->mime_type : "",
+                  date, acl, rrs, resource);
 
-        *signature = __s3_sign (sign_hdr, awskey);
+        *signature = __s3_sign (sign_hdr, s3conf->awskey);
 
         return 0;
 }
-
-int32_ s3_put (iobuf_t *iob, struct s3_conf *s3conf, const char*object)
-{
-        char  resource [1024] = "";
-        char *date            = NULL;
-        char *signature       = NULL;
-        int32_t ret           = -1;
-
-        if ((!s3conf) || (!object) || (!iob))
-                goto out;
-
-        get_http_date (&date);
-
-        s3_set_signature_request (resource, date, "PUT",
-                                  object, 0, NULL,
-                                  s3conf->awskey,
-                                  s3conf->mime_type,
-                                  &signature);
-
-        ret = s3_do_put (iob, signature, date, resource, s3conf);
-
-        if (signature)
-                free (signature);
-out:
-        return ret;
-}
-
-
-int s3_get (iobuf_t *iob, struct s3_conf *s3conf, const char *object)
-{
-        char  resource [1024] = "";
-        char  *date           = NULL;
-        char  *signature      = NULL;
-        int32_t ret           = -1;
-
-        if ((!s3conf) || (!object) || (!iob))
-                goto out;
-
-        get_http_date (&date);
-
-        s3_set_signature_request (resource, date, "GET",
-                                  object, 0, NULL,
-                                  s3conf->awskey,
-                                  s3conf->mime_type,
-                                  &signature);
-
-        ret = s3_do_get (iob, signature, date, resource, s3conf);
-
-        if (signature)
-                free (signature);
-out:
-        return ret;
-}
-
-int s3_delete (iobuf_t *iob, struct s3_conf *s3conf, const char *object)
-{
-        char  resource [1024] = "";
-        char  *date           = NULL;
-        char  *signature      = NULL;
-        int32_t ret           = -1;
-
-        if ((!s3conf) || (!object) || (!iob))
-                goto out;
-
-        get_http_date (&date);
-
-        s3_set_signature_request (resource, date, "GET",
-                                  object, 0, NULL,
-                                  s3conf->awskey,
-                                  s3conf->mime_type,
-                                  &signature);
-
-        ret = s3_do_delete (iob, signature, date, resource, s3conf);
-
-        if (signature)
-                free (signature);
-out:
-        return ret;
-
-}
-
 
 
 static
@@ -292,7 +231,8 @@ int32_t s3_do_put (iobuf_t *iob, const char *signature,
         }
 
         if (s3conf->acls) {
-                snprintf (request, sizeof(request), "x-amz-acl: %s", acls);
+                snprintf (request, sizeof(request), "x-amz-acl: %s",
+                          s3conf->acls);
                 slist = curl_slist_append(slist, request);
         }
 
@@ -424,21 +364,80 @@ out:
 
 }
 
-static
-char *__s3_sign (const char *str, const char *awskey)
+
+int32_t s3_put (iobuf_t *iob, struct s3_conf *s3conf, const char*object)
 {
-        HMAC_CTX  ctx;
-        uchar_t   MD[256];
-        uint32_t  md_len;
-        char      *base64 = NULL;
+        char  resource [1024] = "";
+        char *date            = NULL;
+        char *signature       = NULL;
+        int32_t ret           = -1;
 
-        HMAC(EVP_sha1(), awskey, strlen(awskey), (uchar_t *) str,
-             strlen(str), &MD, &md_len);
+        if ((!s3conf) || (!object) || (!iob))
+                goto out;
 
-        base64 = _base64_encode (MD, md_len);
+        get_http_date (&date);
 
-        return base64;
+        s3_set_signature_request (resource, date, "PUT",
+                                  object, s3conf,
+                                  &signature);
+
+        ret = s3_do_put (iob, signature, date, resource, s3conf);
+
+        if (signature)
+                free (signature);
+out:
+        return ret;
 }
+
+int s3_get (iobuf_t *iob, struct s3_conf *s3conf, const char *object)
+{
+        char  resource [1024] = "";
+        char  *date           = NULL;
+        char  *signature      = NULL;
+        int32_t ret           = -1;
+
+        if ((!s3conf) || (!object) || (!iob))
+                goto out;
+
+        get_http_date (&date);
+
+        s3_set_signature_request (resource, date, "GET",
+                                  object, s3conf,
+                                  &signature);
+
+        ret = s3_do_get (iob, signature, date, resource, s3conf);
+
+        if (signature)
+                free (signature);
+out:
+        return ret;
+}
+
+int s3_delete (iobuf_t *iob, struct s3_conf *s3conf, const char *object)
+{
+        char  resource [1024] = "";
+        char  *date           = NULL;
+        char  *signature      = NULL;
+        int32_t ret           = -1;
+
+        if ((!s3conf) || (!object) || (!iob))
+                goto out;
+
+        get_http_date (&date);
+
+        s3_set_signature_request (resource, date, "GET",
+                                  object, s3conf,
+                                  &signature);
+
+        ret = s3_do_delete (iob, signature, date, resource, s3conf);
+
+        if (signature)
+                free (signature);
+out:
+        return ret;
+
+}
+
 
 struct s3_conf *s3_init (const char *account_id,
                          const char *awskey_id,
