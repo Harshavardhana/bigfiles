@@ -67,6 +67,16 @@ check_function_exists(vsnprintf HAVE_VSNPRINTF)
 check_function_exists(snprintf HAVE_SNPRINTF)
 check_function_exists(ntohll HAVE_NTOHLL)
 check_function_exists(htonll HAVE_HTONLL)
+check_function_exists(strndup HAVE_STRNDUP)
+check_function_exists(strcasecmp HAVE_STRCASECMP)
+check_function_exists(strchrnul HAVE_STRCHRNUL)
+check_function_exists(asprintf HAVE_ASPRINTF)
+check_function_exists(vasprintf HAVE_VASPRINTF)
+check_function_exists(mempcpy HAVE_MEMPCPY)
+
+if (HAVE_STRNCPY AND HAVE_STRNDUP AND HAVE_ASPRINTF AND HAVE_VASPRINTF AND HAVE_MEMPCPY AND HAVE_STRCHRNUL)
+  set(HAVE_GNU_EXT TRUE)
+endif (HAVE_STRNCPY AND HAVE_STRNDUP AND HAVE_ASPRINTF AND HAVE_VASPRINTF AND HAVE_MEMPCPY AND HAVE_STRCHRNUL)
 
 if (WIN32)
     check_function_exists(_strtoui64 HAVE__STRTOUI64)
@@ -156,9 +166,11 @@ if (WITH_DEBUG_CALLTRACE)
   set(DEBUG_CALLTRACE 1)
 endif (WITH_DEBUG_CALLTRACE)
 
-if (WITH_GFAPI AND NOT GFAPI_FOUND)
-    set(WITH_GFAPI 0)
-endif (WITH_GFAPI AND NOT GFAPI_FOUND)
+set(CMAKE_REQUIRED_INCLUDES ${GFAPI_INCLUDE_DIRS})
+check_include_file(glusterfs/api/glfs.h HAVE_GFAPI_H)
+
+set(CMAKE_REQUIRED_INCLUDE ${LIBCURL_INCLUDE_DIRS})
+check_include_file(curl/curl.h HAVE_LIBCURL_H)
 
 set(CMAKE_REQUIRED_INCLUDES ${OPENSSL_INCLUDE_DIRS})
 check_include_file(openssl/aes.h HAVE_OPENSSL_AES_H)
@@ -195,10 +207,6 @@ if (OPENSSL_FOUND)
   set(HAVE_LIBCRYPTO 1)
   set(WITH_OPENSSL 1)
 endif (OPENSSL_FOUND)
-
-if (WITH_LIBCURL and NOT LIBCURL_FOUND)
-  set (WITH_LIBCURL 0)
-endif (WITH_LIBCURL and NOT LIBCURL_FOUND)
 
 # ENDIAN
 if (NOT WIN32)

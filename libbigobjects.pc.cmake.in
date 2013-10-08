@@ -1,0 +1,5 @@
+Name: ${APPLICATION_NAME}
+Description: The BigObjects API
+Version: ${APPLICATION_VERSION}
+Libs: -L${LIB_INSTALL_DIR} -lbigobjects
+Cflags: -I${INCLUDE_INSTALL_DIR}

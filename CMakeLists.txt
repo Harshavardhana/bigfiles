@@ -65,6 +65,7 @@ endif (WITH_OPENSSL)
 set(CMAKE_THREAD_PREFER_PTHREADS ON)
 find_package(Threads)
 
+include(ConfigureChecks.cmake)
 configure_file(config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
 add_subdirectory(bosh)
@@ -73,7 +74,7 @@ add_subdirectory(src)
 add_subdirectory(drivers)
 
 # pkg-config file
-configure_file(libbigobjects.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/libbigobjects.pc)
+configure_file(libbigobjects.pc.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/libbigobjects.pc)
 install(
   FILES
     ${CMAKE_CURRENT_BINARY_DIR}/libbigobjects.pc

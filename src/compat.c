@@ -23,7 +23,9 @@
 #include <string.h>
 #include <stdarg.h>
 
-#ifndef _GNU_SOURCE
+#include "config.h"
+
+#ifndef HAVE_GNU_EXT
 #include "bigobjects/compat.h"
 
 char *strndup (const char *s, size_t size)

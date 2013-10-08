@@ -19,6 +19,8 @@
 
 #cmakedefine HAVE_GFAPI_H 1
 
+#cmakedefine HAVE_LIBCURL_H 1
+
 /*************************** FUNCTIONS ***************************/
 
 /* Define to 1 if you have the `snprintf' function. */
@@ -50,6 +52,18 @@
 
 /* Define to 1 if you have the `getaddrinfo' function. */
 #cmakedefine HAVE_GETADDRINFO 1
+
+/* Define to 1 if you have the `vasprintf' function. */
+#cmakedefine HAVE_VASPRINTF 1
+
+/* Define to 1 if you have the `mempcpy' function. */
+#cmakedefine HAVE_MEMPCPY 1
+
+/* Define to 1 if you have the `strchrnul' function. */
+#cmakedefine HAVE_STRCHRNUL 1
+
+/* Define to 1 if you have the `gnu_extensions'. */
+#cmakedefine HAVE_GNU_EXT 1
 
 /* Define to 1 if you have the `poll' function. */
 #cmakedefine HAVE_POLL 1

@@ -104,3 +104,8 @@ void bobjs_gluster_fini (driver_t *this)
 out:
         return;
 }
+
+int32_t bobjs_gluster_put (driver_t *this)
+{
+
+}
