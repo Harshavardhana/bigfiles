@@ -107,5 +107,28 @@ out:
 
 int32_t bobjs_gluster_put (driver_t *this)
 {
+        int32_t ret = 0;
+        glfs_t *glfs = NULL;
 
+        if (!this) {
+                errno = -EINVAL;
+                ret = -1;
+                goto out;
+        }
+
+        glfs = this->private;
+
+        if (!glfs) {
+                errno = -ENODATA;
+                ret = -1;
+                goto out;
+        }
+
+        ret = glfs_mkdir (glfs, this->object, 0755);
+        if (ret) {
+                ret = -1;
+                goto out;
+        }
+out:
+        return ret;
 }
