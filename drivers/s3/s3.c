@@ -96,6 +96,10 @@ static size_t process_header (void *ptr, size_t size, size_t nmemb,
         if (!stream)
                 return -1;
 
+        buf = s3_iobuf_new();
+        if (!buf)
+                return -1;
+
         if (!strncmp (ptr, "HTTP/1.1", 8)) {
                 buf->reply = strdup ((char *)ptr + 9);
                 _chomp (buf->reply);
