@@ -1,5 +1,5 @@
 /**
- * bigobjects.h: Common bigobjects structures
+ * api.h: Common bigobjects structures
  *
  * Copyright (C) 2013 Red Hat, Inc. <http://www.redhat.com>
  *

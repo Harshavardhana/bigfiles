@@ -1,4 +1,6 @@
 /**
+ * compat.h: Common cross platform functions
+ *
  * Copyright (C) 2013 Red Hat, Inc. <http://www.redhat.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
