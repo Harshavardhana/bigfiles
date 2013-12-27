@@ -43,7 +43,6 @@ static char *
 generate_bigobject_ctx_id (void)
 {
         char           tmp_str[1024] = {0,};
-        char           hostname[256] = {0,};
         struct timeval tv = {0,0};
 
         if (gettimeofday (&tv, NULL) == -1) {
@@ -51,13 +50,8 @@ generate_bigobject_ctx_id (void)
                          strerror (errno));
         }
 
-        if (gethostname (hostname, 256) == -1) {
-                fprintf (stderr, "gethostname: failed %s",
-                         strerror (errno));
-        }
-
-        snprintf (tmp_str, sizeof(tmp_str), "%s-%d-%"PRId64":%"PRId64,
-                  hostname, getpid(), tv.tv_sec, tv.tv_usec);
+        snprintf (tmp_str, sizeof(tmp_str), "%d-%"PRId64":%"PRId64,
+                  getpid(), tv.tv_sec, tv.tv_usec);
 
         return strdup (tmp_str);
 }

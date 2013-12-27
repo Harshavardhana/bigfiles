@@ -26,6 +26,13 @@
 #include <unistd.h>
 #include <limits.h>
 
+#ifdef _UNUSED
+#elif defined(__GNUC__)
+#define _UNUSED __attribute__ ((unused))
+#else
+#define _UNUSED
+#endif
+
 #include <bigobjects/api.h>
 
 /* INTERNAL HEADERS */

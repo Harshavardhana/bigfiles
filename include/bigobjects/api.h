@@ -22,16 +22,26 @@
 #ifndef __BIGOBJECTS_H__
 #define __BIGOBJECTS_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <sys/types.h>
 #include <sys/stat.h>
+#if !defined(_WIN32)
 #include <fcntl.h>
 #include <sys/uio.h>
 #include <unistd.h>
 #include <sys/cdefs.h>
 #include <dirent.h>
 #include <sys/statvfs.h>
+#endif /* !defined(_WIN32) */
 
-__BEGIN_DECLS
+#ifdef DLL
+#define BIGOBJECTS_API __declspec(dllexport)
+#else
+#define BIGOBJECTS_API
+#endif  /* DLL */
 
 /* The Bigobject object.*/
 struct bigobjects;
@@ -56,7 +66,7 @@ typedef struct bigobjects bigobjects_t;
   -1 : Failure, errno set appropriately
 */
 
-int32_t bigobject_get (const char *);
+BIGOBJECTS_API int32_t bigobject_get (const char *);
 
 /*
   SYNOPSIS
@@ -77,7 +87,7 @@ int32_t bigobject_get (const char *);
   -1 : Failure, errno set appropriately
 */
 
-int32_t bigobject_put (const char *);
+BIGOBJECTS_API int32_t bigobject_put (const char *);
 
 /*
   SYNOPSIS
@@ -98,8 +108,11 @@ int32_t bigobject_put (const char *);
   -1 : Failure, errno set appropriately
 */
 
-int32_t bigobject_delete (const char *);
+BIGOBJECTS_API int32_t bigobject_delete (const char *);
 
 __END_DECLS
-
+#
+#ifdef __cplusplus
+}
+#endif
 #endif /* __BIGOBJECTS_H__ */
